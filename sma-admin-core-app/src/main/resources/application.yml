@@ -1,0 +1,217 @@
+server:
+  port: 9090
+
+##########################################################################################
+## Actuator configuration
+##########################################################################################
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      enabled: true
+
+##########################################################################################
+## Eureka Configuration
+##########################################################################################
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL}
+    instance:
+      preferIpAddress: true
+    fetchRegistry: true
+    registerWithEureka: true
+  instance:
+    statusPageUrlPath: ${APP_HOSTNAME}/swagger-ui.html#
+    healthCheckUrl: https://${eureka.hostname}:${server.port}/health
+    homePageUrl: https://${eureka.hostname}/
+
+##########################################################################################
+## Spring Application Name
+##########################################################################################
+spring:
+  application:
+    name: SMA Admin Core Service
+  
+  ##########################################################################################
+  ## Postgresql connection props
+  ##########################################################################################
+  datasource:
+    url: jdbc:postgresql://${PG_ADDRESS}:${PG_PORT}/${DB_NAME}
+    username: ${PG_ADDRESS_USERID}
+    password: ${PG_ADDRESS_PASSWORD}
+  
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          create_namespaces: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+##########################################################################################
+## Security Configuration
+##########################################################################################
+app:
+  security:
+    jwt-secret: ${JWT_SECRET:SmaSchoolManagementApplicationSecretKeyForJWTTokenGeneration2026}
+    jwt-expiration-in-ms: 86400000
+    jwt-refresh-expiration-in-ms: 604800000
+    enable-cors: true
+    exclude-patterns: /auth/**,/public/**,/actuator/**,/swagger-ui.html,/swagger-ui/**,/v2/api-docs,/swagger-resources/**,/webjars/**
+
+##########################################################################################
+## App basic configuration
+##########################################################################################
+sma:
+  app:
+    base:
+      componentName: SMA_Admin_Core_Component
+      logginEnabled: false
+      payloadLogginEnabled: false
+
+    ##########################################################################################
+    ## AMQP CLEP Sender configuration
+    ##########################################################################################
+    amqp:
+      commonlog:
+        sender:
+          config:
+            address: ${AMQP_ADDRESS}
+            port: ${AMQP_PORT}
+            userName: ${AMQP_USERID}
+            password: ${AMQP_PASSWORD}
+            virtual-host: /sma
+            dest:
+              sender:
+                exchangeName: cle
+                routingKey: sma-cle
+                deliveryMode: 2
+      
+      ##########################################################################################
+      ## AMQP School register configuration
+      ##########################################################################################
+      school:
+        register:
+          config:
+            address: ${AMQP_ADDRESS}
+            port: ${AMQP_PORT}
+            userName: ${AMQP_USERID}
+            password: ${AMQP_PASSWORD}
+            virtual-host: /sma
+            dest:
+              sender:
+                exchangeName: school
+                routingKey: school-register
+                deliveryMode: 2
+              receiver:
+                queueName: school-register
+        
+        ##########################################################################################
+        ## AMQP School update configuration
+        ##########################################################################################
+        update:
+          config:
+            address: ${AMQP_ADDRESS}
+            port: ${AMQP_PORT}
+            userName: ${AMQP_USERID}
+            password: ${AMQP_PASSWORD}
+            virtual-host: /sma
+            dest:
+              sender:
+                exchangeName: school
+                routingKey: school-update
+                deliveryMode: 2
+              receiver:
+                queueName: school-update
+      
+      ##########################################################################################
+      ## AMQP Student register configuration
+      ##########################################################################################
+      student:
+        register:
+          config:
+            address: ${AMQP_ADDRESS}
+            port: ${AMQP_PORT}
+            userName: ${AMQP_USERID}
+            password: ${AMQP_PASSWORD}
+            virtual-host: /sma
+            dest:
+              sender:
+                exchangeName: student
+                routingKey: student-register
+                deliveryMode: 2
+              receiver:
+                queueName: student-register
+        
+        ##########################################################################################
+        ## AMQP Student update configuration
+        ##########################################################################################
+        update:
+          config:
+            address: ${AMQP_ADDRESS}
+            port: ${AMQP_PORT}
+            userName: ${AMQP_USERID}
+            password: ${AMQP_PASSWORD}
+            virtual-host: /sma
+            dest:
+              sender:
+                exchangeName: student
+                routingKey: student-update
+                deliveryMode: 2
+              receiver:
+                queueName: student-update
+      
+      ##########################################################################################
+      ## AMQP Staff register configuration
+      ##########################################################################################
+      staff:
+        register:
+          config:
+            address: ${AMQP_ADDRESS}
+            port: ${AMQP_PORT}
+            userName: ${AMQP_USERID}
+            password: ${AMQP_PASSWORD}
+            virtual-host: /sma
+            dest:
+              sender:
+                exchangeName: staff
+                routingKey: staff-register
+                deliveryMode: 2
+              receiver:
+                queueName: staff-register
+        
+        ##########################################################################################
+        ## AMQP Staff update configuration
+        ##########################################################################################
+        update:
+          config:
+            address: ${AMQP_ADDRESS}
+            port: ${AMQP_PORT}
+            userName: ${AMQP_USERID}
+            password: ${AMQP_PASSWORD}
+            virtual-host: /sma
+            dest:
+              sender:
+                exchangeName: staff
+                routingKey: staff-update
+                deliveryMode: 2
+              receiver:
+                queueName: staff-update
+
+##########################################################################################
+## Logging
+##########################################################################################
+logging:
+  level:
+    root: INFO
+    org.sma: DEBUG
+    org.springframework: INFO

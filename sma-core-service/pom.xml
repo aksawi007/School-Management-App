@@ -44,6 +44,13 @@
             <version>${sma-app-version}</version>
         </dependency>
 
+        <!-- Security Auth Module -->
+        <dependency>
+            <groupId>org.sma.app</groupId>
+            <artifactId>sma-security-auth</artifactId>
+            <version>${sma-app-version}</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 
 

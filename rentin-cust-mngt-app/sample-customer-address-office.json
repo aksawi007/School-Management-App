@@ -1,0 +1,18 @@
+{
+  "_comment": "Sample customer address - Office address",
+  "customerId": 1,
+  "addressType": "OFFICE",
+  "addressLabel": "Office",
+  "flatNo": "5th Floor",
+  "buildingName": "Tech Tower",
+  "streetAddress": "456 Bandra Kurla Complex",
+  "landmark": "Near Trade Center",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "pincode": "400051",
+  "country": "India",
+  "contactName": "John Doe",
+  "contactPhone": "+91-9876543210",
+  "isDefault": false,
+  "isActive": true
+}
