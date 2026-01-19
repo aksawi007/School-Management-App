@@ -1,0 +1,67 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.classpath
+.project
+.settings/
+*.iml
+*.iws
+*.ipr
+.factorypath
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Java
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+!*.jar
+*.log
+.gradle/
+.gradle
+
+# Build
+build/
+dist/
+out/
+
+# Environment
+.env
+.env.local
+*.properties.local
+
+# Node modules (if applicable)
+node_modules/
+npm-debug.log
+
+# Misc
+*.bak
+*.tmp
+.sos

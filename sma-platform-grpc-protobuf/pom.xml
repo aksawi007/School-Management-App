@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.sma.app</groupId>
+        <artifactId>sma-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../sma-parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>sma-platform-grpc-protobuf</artifactId>
+    <name>Jio DigitalApi Platform Common gRPC and Protocol Buffer</name>
+    <properties>
+        <grpc.version>1.30.2</grpc.version>
+        <protobuf.version>3.12.2</protobuf.version>
+        <proto-google-common-protos.version>1.18.0</proto-google-common-protos.version>
+        <google-guava.version>23.6-jre</google-guava.version>
+    </properties>
+    <dependencies>
+        <!--
+        <dependency>
+           <groupId>io.grpc</groupId>
+           <artifactId>grpc-netty-shaded</artifactId>
+           <version>${grpc.version}</version>
+        </dependency> -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.api.grpc</groupId>
+            <artifactId>proto-google-common-protos</artifactId>
+            <version>${proto-google-common-protos.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java-util</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
+        <!--
+        <dependency>
+           <groupId>com.google.guava</groupId>
+           <artifactId>guava</artifactId>
+           <version>${google-guava.version}</version>
+        </dependency> -->
+    </dependencies>
+</project>
+
