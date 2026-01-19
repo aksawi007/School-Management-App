@@ -21,16 +21,63 @@
         <swagger.version>2.9.2</swagger.version>
         <spring-cloud.version>2020.0.3</spring-cloud.version>
         <sma-app-version>1.0.0-SNAPSHOT</sma-app-version>
+        <jjwt.version>0.11.5</jjwt.version>
+        <aspectj.version>1.9.7</aspectj.version>
     </properties>
 
     <modules>
        <module>../sma-common-datamodel</module>
+       <module>../sma-security-auth</module>
        <module>../sma-core-service</module>
        <module>../sma-api-platform-amqp-service</module>
         <module>../sma-jpa-postgresql</module>
        <module>../sma-platform-grpc-protobuf</module>
 
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- JWT Dependencies -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- AspectJ Dependencies -->
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
+            <!-- Spring Cloud Dependencies -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
 </project>
