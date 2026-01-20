@@ -1,0 +1,106 @@
+server:
+  port: 9091
+
+##########################################################################################
+## Actuator configuration
+##########################################################################################
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      enabled: true
+
+##########################################################################################
+## Eureka Configuration
+##########################################################################################
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL}
+    instance:
+      preferIpAddress: true
+    fetchRegistry: true
+    registerWithEureka: true
+  instance:
+    statusPageUrlPath: ${APP_HOSTNAME}/swagger-ui.html#
+    healthCheckUrl: https://${eureka.hostname}:${server.port}/health
+    homePageUrl: https://${eureka.hostname}/
+
+##########################################################################################
+## Spring Application Name
+##########################################################################################
+spring:
+  application:
+    name: SMA Student Management Service
+  
+  ##########################################################################################
+  ## PostgreSQL connection props
+  ##########################################################################################
+  datasource:
+    url: jdbc:postgresql://${PG_ADDRESS}:${PG_PORT}/${DB_NAME}
+    username: ${PG_ADDRESS_USERID}
+    password: ${PG_ADDRESS_PASSWORD}
+  
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        hbm2ddl:
+          create_namespaces: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+##########################################################################################
+## Security Configuration
+##########################################################################################
+app:
+  security:
+    jwt-secret: ${JWT_SECRET:SmaSchoolManagementApplicationSecretKeyForJWTTokenGeneration2026}
+    jwt-expiration-in-ms: 86400000
+    jwt-refresh-expiration-in-ms: 604800000
+    enable-cors: true
+    exclude-patterns: /auth/**,/public/**,/actuator/**,/swagger-ui.html,/swagger-ui/**,/v2/api-docs,/swagger-resources/**,/webjars/**
+
+##########################################################################################
+## App basic configuration
+##########################################################################################
+sma:
+  app:
+    base:
+      componentName: SMA_Student_Management_Component
+      logginEnabled: false
+      payloadLogginEnabled: false
+
+    ##########################################################################################
+    ## AMQP Student Event Publisher configuration
+    ##########################################################################################
+    amqp:
+      student:
+        events:
+          config:
+            address: ${AMQP_ADDRESS}
+            port: ${AMQP_PORT}
+            userName: ${AMQP_USERID}
+            password: ${AMQP_PASSWORD}
+            virtual-host: /sma
+            dest:
+              sender:
+                exchangeName: student-events
+                routingKey: student.created
+                deliveryMode: 2
+
+##########################################################################################
+## Logging
+##########################################################################################
+logging:
+  level:
+    root: INFO
+    org.sma: DEBUG
+    org.springframework: INFO

@@ -2,9 +2,9 @@ package org.sma.jpa.model.transport;
 
 import org.sma.jpa.model.BaseEntity;
 import org.sma.jpa.model.school.AcademicYear;
-import org.sma.jpa.model.student.Student;
 
 import javax.persistence.*;
+import java.util.UUID;
 import java.time.LocalDate;
 
 /**
@@ -14,9 +14,8 @@ import java.time.LocalDate;
 @Table(name = "student_transport", schema = "sma_admin")
 public class StudentTransport extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @Column(name = "student_id", nullable = false)
+    private UUID studentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id", nullable = false)
@@ -47,12 +46,12 @@ public class StudentTransport extends BaseEntity {
     private String remarks;
 
     // Getters and Setters
-    public Student getStudent() {
-        return student;
+    public UUID getStudentId() {
+        return studentId;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setStudentId(UUID studentId) {
+        this.studentId = studentId;
     }
 
     public TransportRoute getRoute() {

@@ -6,7 +6,9 @@ import org.sma.jpa.model.master.ClassMaster;
 import org.sma.jpa.model.master.SectionMaster;
 import org.sma.jpa.model.staff.Staff;
 import org.sma.jpa.model.timetable.Timetable;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.List;
  * Repository for Timetable entity
  */
 @Repository
-public interface TimetableRepository extends JpaRepository<Timetable, Long> {
+public interface TimetableRepository extends JpaRepository<Timetable, UUID> {
     
     List<Timetable> findBySchoolAndAcademicYearAndClassMasterAndSection(SchoolProfile school, AcademicYear academicYear, ClassMaster classMaster, SectionMaster section);
     
@@ -23,3 +25,5 @@ public interface TimetableRepository extends JpaRepository<Timetable, Long> {
     
     List<Timetable> findByStaffAndAcademicYear(Staff staff, AcademicYear academicYear);
 }
+
+

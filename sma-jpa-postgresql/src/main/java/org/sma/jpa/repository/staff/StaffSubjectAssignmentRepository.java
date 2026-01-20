@@ -6,7 +6,9 @@ import org.sma.jpa.model.master.SectionMaster;
 import org.sma.jpa.model.master.SubjectMaster;
 import org.sma.jpa.model.staff.Staff;
 import org.sma.jpa.model.staff.StaffSubjectAssignment;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.List;
  * Repository for StaffSubjectAssignment entity
  */
 @Repository
-public interface StaffSubjectAssignmentRepository extends JpaRepository<StaffSubjectAssignment, Long> {
+public interface StaffSubjectAssignmentRepository extends JpaRepository<StaffSubjectAssignment, UUID> {
     
     List<StaffSubjectAssignment> findByStaffAndAcademicYear(Staff staff, AcademicYear academicYear);
     
@@ -23,3 +25,5 @@ public interface StaffSubjectAssignmentRepository extends JpaRepository<StaffSub
     
     List<StaffSubjectAssignment> findBySubjectAndAcademicYear(SubjectMaster subject, AcademicYear academicYear);
 }
+
+

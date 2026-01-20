@@ -4,7 +4,9 @@ import org.sma.jpa.model.master.ClassMaster;
 import org.sma.jpa.model.exam.Exam;
 import org.sma.jpa.model.exam.ExamSchedule;
 import org.sma.jpa.model.master.SubjectMaster;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -14,7 +16,7 @@ import java.util.List;
  * Repository for ExamSchedule entity
  */
 @Repository
-public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, Long> {
+public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, UUID> {
     
     List<ExamSchedule> findByExam(Exam exam);
     
@@ -22,3 +24,5 @@ public interface ExamScheduleRepository extends JpaRepository<ExamSchedule, Long
     
     List<ExamSchedule> findByExamAndExamDate(Exam exam, LocalDate examDate);
 }
+
+
