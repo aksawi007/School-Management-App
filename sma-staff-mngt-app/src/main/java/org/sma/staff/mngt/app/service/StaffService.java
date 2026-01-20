@@ -1,0 +1,181 @@
+package org.sma.staff.mngt.app.service;
+
+import org.sma.jpa.model.master.DepartmentMaster;
+import org.sma.jpa.model.school.SchoolProfile;
+import org.sma.jpa.model.staff.Staff;
+import org.sma.jpa.repository.master.DepartmentMasterRepository;
+import org.sma.jpa.repository.school.SchoolProfileRepository;
+import org.sma.jpa.repository.staff.StaffRepository;
+import org.sma.staff.mngt.app.dto.StaffRequestDTO;
+import org.sma.staff.mngt.app.dto.StaffResponseDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+/**
+ * Service for Staff Management
+ */
+@Service
+@Transactional
+public class StaffService {
+
+    @Autowired
+    private StaffRepository staffRepository;
+
+    @Autowired
+    private SchoolProfileRepository schoolProfileRepository;
+
+    @Autowired
+    private DepartmentMasterRepository departmentMasterRepository;
+
+    public StaffResponseDTO createStaff(StaffRequestDTO requestDTO) {
+        SchoolProfile school = schoolProfileRepository.findById(requestDTO.getSchoolId())
+                .orElseThrow(() -> new RuntimeException("School not found"));
+
+        // Check for duplicate employee code
+        Optional<Staff> existing = staffRepository.findBySchoolAndEmployeeCode(school, requestDTO.getEmployeeCode());
+        if (existing.isPresent()) {
+            throw new RuntimeException("Employee code already exists for this school");
+        }
+
+        Staff staff = new Staff();
+        mapRequestToEntity(requestDTO, staff, school);
+        
+        staff = staffRepository.save(staff);
+        return mapEntityToResponse(staff);
+    }
+
+    public StaffResponseDTO updateStaff(UUID staffId, StaffRequestDTO requestDTO) {
+        Staff staff = staffRepository.findById(staffId)
+                .orElseThrow(() -> new RuntimeException("Staff not found"));
+
+        SchoolProfile school = schoolProfileRepository.findById(requestDTO.getSchoolId())
+                .orElseThrow(() -> new RuntimeException("School not found"));
+
+        mapRequestToEntity(requestDTO, staff, school);
+        
+        staff = staffRepository.save(staff);
+        return mapEntityToResponse(staff);
+    }
+
+    public StaffResponseDTO getStaffById(UUID staffId) {
+        Staff staff = staffRepository.findById(staffId)
+                .orElseThrow(() -> new RuntimeException("Staff not found"));
+        return mapEntityToResponse(staff);
+    }
+
+    public List<StaffResponseDTO> getAllStaffBySchool(UUID schoolId) {
+        SchoolProfile school = schoolProfileRepository.findById(schoolId)
+                .orElseThrow(() -> new RuntimeException("School not found"));
+        
+        return staffRepository.findBySchoolAndStaffStatusAndIsActiveTrue(school, "ACTIVE")
+                .stream()
+                .map(this::mapEntityToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<StaffResponseDTO> getStaffByType(UUID schoolId, String staffType) {
+        SchoolProfile school = schoolProfileRepository.findById(schoolId)
+                .orElseThrow(() -> new RuntimeException("School not found"));
+        
+        return staffRepository.findBySchoolAndStaffType(school, staffType)
+                .stream()
+                .map(this::mapEntityToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteStaff(UUID staffId) {
+        Staff staff = staffRepository.findById(staffId)
+                .orElseThrow(() -> new RuntimeException("Staff not found"));
+        staff.setIsActive(false);
+        staff.setStaffStatus("TERMINATED");
+        staffRepository.save(staff);
+    }
+
+    private void mapRequestToEntity(StaffRequestDTO dto, Staff entity, SchoolProfile school) {
+        entity.setSchool(school);
+        entity.setEmployeeCode(dto.getEmployeeCode());
+        entity.setFirstName(dto.getFirstName());
+        entity.setMiddleName(dto.getMiddleName());
+        entity.setLastName(dto.getLastName());
+        entity.setDateOfBirth(dto.getDateOfBirth());
+        entity.setGender(dto.getGender());
+        entity.setBloodGroup(dto.getBloodGroup());
+        entity.setEmail(dto.getEmail());
+        entity.setPhoneNumber(dto.getPhoneNumber());
+        entity.setAddressLine1(dto.getAddressLine1());
+        entity.setAddressLine2(dto.getAddressLine2());
+        entity.setCity(dto.getCity());
+        entity.setState(dto.getState());
+        entity.setPostalCode(dto.getPostalCode());
+        entity.setStaffType(dto.getStaffType());
+        entity.setDesignation(dto.getDesignation());
+        
+        if (dto.getDepartmentId() != null) {
+            DepartmentMaster department = departmentMasterRepository.findById(dto.getDepartmentId())
+                    .orElse(null);
+            entity.setDepartment(department);
+        }
+        
+        entity.setQualification(dto.getQualification());
+        entity.setSpecialization(dto.getSpecialization());
+        entity.setExperienceYears(dto.getExperienceYears());
+        entity.setJoiningDate(dto.getJoiningDate());
+        entity.setEmploymentType(dto.getEmploymentType());
+        entity.setSalary(dto.getSalary());
+        entity.setStaffStatus(dto.getStaffStatus());
+        entity.setPhotoUrl(dto.getPhotoUrl());
+        entity.setAadharNumber(dto.getAadharNumber());
+        entity.setPanNumber(dto.getPanNumber());
+        entity.setBankAccountNumber(dto.getBankAccountNumber());
+        entity.setBankName(dto.getBankName());
+        entity.setBankIfscCode(dto.getBankIfscCode());
+    }
+
+    private StaffResponseDTO mapEntityToResponse(Staff entity) {
+        StaffResponseDTO dto = new StaffResponseDTO();
+        dto.setId(entity.getId());
+        dto.setSchoolId(entity.getSchool().getId());
+        dto.setEmployeeCode(entity.getEmployeeCode());
+        dto.setFirstName(entity.getFirstName());
+        dto.setMiddleName(entity.getMiddleName());
+        dto.setLastName(entity.getLastName());
+        dto.setFullName(entity.getFirstName() + 
+                (entity.getMiddleName() != null ? " " + entity.getMiddleName() : "") + 
+                " " + entity.getLastName());
+        dto.setDateOfBirth(entity.getDateOfBirth());
+        dto.setGender(entity.getGender());
+        dto.setBloodGroup(entity.getBloodGroup());
+        dto.setEmail(entity.getEmail());
+        dto.setPhoneNumber(entity.getPhoneNumber());
+        dto.setAddressLine1(entity.getAddressLine1());
+        dto.setAddressLine2(entity.getAddressLine2());
+        dto.setCity(entity.getCity());
+        dto.setState(entity.getState());
+        dto.setPostalCode(entity.getPostalCode());
+        dto.setStaffType(entity.getStaffType());
+        dto.setDesignation(entity.getDesignation());
+        
+        if (entity.getDepartment() != null) {
+            dto.setDepartmentId(entity.getDepartment().getId());
+            dto.setDepartmentName(entity.getDepartment().getDepartmentName());
+        }
+        
+        dto.setQualification(entity.getQualification());
+        dto.setSpecialization(entity.getSpecialization());
+        dto.setExperienceYears(entity.getExperienceYears());
+        dto.setJoiningDate(entity.getJoiningDate());
+        dto.setEmploymentType(entity.getEmploymentType());
+        dto.setSalary(entity.getSalary());
+        dto.setStaffStatus(entity.getStaffStatus());
+        dto.setPhotoUrl(entity.getPhotoUrl());
+        dto.setIsActive(entity.getIsActive());
+        
+        return dto;
+    }
+}
