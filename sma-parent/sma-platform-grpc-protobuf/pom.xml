@@ -6,7 +6,7 @@
         <groupId>org.sma.app</groupId>
         <artifactId>sma-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../sma-parent/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>sma-platform-grpc-protobuf</artifactId>
