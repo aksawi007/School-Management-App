@@ -3,17 +3,20 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve sma-student-ui-app --port 4200 --host 0.0.0.0",
+    "start": "ng serve sma-ui-app --port 4300 --host 0.0.0.0",
+    "start:main": "ng serve sma-ui-app --port 4300 --host 0.0.0.0",
     "start:student": "ng serve sma-student-ui-app --port 4200 --host 0.0.0.0",
     "start:staff": "ng serve sma-staff-ui-app --port 4201 --host 0.0.0.0",
     "start:admin": "ng serve sma-admin-ui-app --port 4202 --host 0.0.0.0",
     "build": "ng build",
+    "build:main": "ng build sma-ui-app",
     "build:student": "ng build sma-student-ui-app",
     "build:staff": "ng build sma-staff-ui-app",
     "build:admin": "ng build sma-admin-ui-app",
     "build:shared": "ng build sma-shared-lib",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "run:all": "node node_modules/@angular-architects/module-federation/src/server/mf-dev-server.js"
   },
   "private": true,
   "dependencies": {
@@ -32,6 +35,7 @@
     "zone.js": "~0.12.0"
   },
   "devDependencies": {
+    "@angular-architects/module-federation": "^15.0.3",
     "@angular-devkit/build-angular": "^15.2.4",
     "@angular/cli": "~15.2.4",
     "@angular/compiler-cli": "^15.2.0",
@@ -43,6 +47,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
     "ng-packagr": "^15.2.2",
+    "ngx-build-plus": "^15.0.0",
     "typescript": "~4.9.4"
   }
 }

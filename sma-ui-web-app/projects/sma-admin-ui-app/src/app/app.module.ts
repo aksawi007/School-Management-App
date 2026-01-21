@@ -32,6 +32,8 @@ import { StaffManagementComponent } from './components/staff-management/staff-ma
 import { StudentManagementComponent } from './components/student-management/student-management.component';
 import { SchoolProfileComponent } from './components/school-profile/school-profile.component';
 import { AcademicYearComponent } from './components/academic-year/academic-year.component';
+import { StudentModuleComponent } from './components/student-module/student-module.component';
+import { StaffModuleComponent } from './components/staff-module/staff-module.component';
 
 import { SmaSharedModule } from 'sma-shared-lib';
 
@@ -42,7 +44,9 @@ import { SmaSharedModule } from 'sma-shared-lib';
     SchoolProfileComponent,
     AcademicYearComponent,
     StaffManagementComponent,
-    StudentManagementComponent
+    StudentManagementComponent,
+    StudentModuleComponent,
+    StaffModuleComponent
   ],
   imports: [
     BrowserModule,

@@ -24,10 +24,10 @@
     ],
     "paths": {
       "sma-shared-lib": [
-        "dist/sma-shared-lib/sma-shared-lib",
         "dist/sma-shared-lib"
       ]
-    }
+    },
+    "preserveSymlinks": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
