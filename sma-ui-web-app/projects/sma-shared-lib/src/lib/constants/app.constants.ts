@@ -1,0 +1,33 @@
+export const API_ENDPOINTS = {
+  STUDENT_MGMT: '/api/schools',
+  STAFF_MGMT: '/api/staff',
+  ADMIN: '/api/admin'
+};
+
+export const STUDENT_STATUS = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  GRADUATED: 'GRADUATED',
+  TRANSFERRED: 'TRANSFERRED',
+  WITHDRAWN: 'WITHDRAWN'
+};
+
+export const ENROLLMENT_STATUS = {
+  ENROLLED: 'ENROLLED',
+  PROMOTED: 'PROMOTED',
+  WITHDRAWN: 'WITHDRAWN',
+  COMPLETED: 'COMPLETED'
+};
+
+export const GENDER = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER'
+};
+
+export const GUARDIAN_TYPE = {
+  FATHER: 'FATHER',
+  MOTHER: 'MOTHER',
+  GUARDIAN: 'GUARDIAN',
+  OTHER: 'OTHER'
+};

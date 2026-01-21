@@ -1,0 +1,64 @@
+<div *ngIf="loading" style="text-align: center;">
+  <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="!loading && student">
+  <button mat-icon-button (click)="goBack()" style="margin-bottom: 10px;">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ student.fullName || (student.firstName + ' ' + student.lastName) }}</mat-card-title>
+      <button mat-icon-button color="accent" (click)="editStudent()">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-tab-group>
+        <mat-tab label="Basic Info">
+          <div class="tab-content">
+            <p><strong>Student ID:</strong> {{ student.studentId }}</p>
+            <p><strong>Admission Number:</strong> {{ student.admissionNumber }}</p>
+            <p><strong>Date of Birth:</strong> {{ student.dateOfBirth | date }}</p>
+            <p><strong>Gender:</strong> {{ student.gender }}</p>
+            <p><strong>Blood Group:</strong> {{ student.bloodGroup }}</p>
+            <p><strong>Email:</strong> {{ student.email }}</p>
+            <p><strong>Phone:</strong> {{ student.phoneNumber }}</p>
+            <p><strong>Status:</strong> {{ student.studentStatus }}</p>
+            <p><strong>Address:</strong> {{ student.addressLine1 }}, {{ student.city }}, {{ student.state }} - {{ student.postalCode }}</p>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Guardians">
+          <div class="tab-content">
+            <h3>Guardians</h3>
+            <mat-card *ngFor="let guardian of guardians" class="guardian-card">
+              <p><strong>{{ guardian.guardianType }}:</strong> {{ guardian.fullName || (guardian.firstName + ' ' + guardian.lastName) }}</p>
+              <p><strong>Relationship:</strong> {{ guardian.relationship }}</p>
+              <p><strong>Phone:</strong> {{ guardian.phoneNumber }}</p>
+              <p><strong>Email:</strong> {{ guardian.email }}</p>
+              <p><strong>Primary Contact:</strong> {{ guardian.isPrimaryContact ? 'Yes' : 'No' }}</p>
+            </mat-card>
+            <p *ngIf="guardians.length === 0">No guardians added yet.</p>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Enrollments">
+          <div class="tab-content">
+            <h3>Enrollment History</h3>
+            <mat-card *ngFor="let enrollment of enrollments" class="enrollment-card">
+              <p><strong>Class:</strong> {{ enrollment.className }}</p>
+              <p><strong>Section:</strong> {{ enrollment.sectionName }}</p>
+              <p><strong>Academic Year:</strong> {{ enrollment.academicYear }}</p>
+              <p><strong>Roll Number:</strong> {{ enrollment.rollNumber }}</p>
+              <p><strong>Status:</strong> {{ enrollment.enrollmentStatus }}</p>
+              <p><strong>Enrollment Date:</strong> {{ enrollment.enrollmentDate | date }}</p>
+            </mat-card>
+            <p *ngIf="enrollments.length === 0">No enrollments found.</p>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>

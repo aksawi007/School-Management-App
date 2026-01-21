@@ -25,7 +25,7 @@ eureka:
     fetchRegistry: true
     registerWithEureka: true
   instance:
-    statusPageUrlPath: ${APP_HOSTNAME:http://localhost}:${server.port}/swagger-ui.html#
+    statusPageUrlPath: ${APP_HOSTNAME}:${server.port}/swagger-ui.html#
     healthCheckUrl: http://${EUREKA_HOSTNAME:localhost}:${server.port}/health
     homePageUrl: http://${EUREKA_HOSTNAME:localhost}/
 
