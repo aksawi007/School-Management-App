@@ -1,3 +1,8 @@
-export * from './student.model';
-export * from './guardian.model';
-export * from './enrollment.model';
+// School Management Models
+export * from './school';
+
+// Student Management Models
+export * from './student';
+
+// Staff Management Models
+export * from './staff';

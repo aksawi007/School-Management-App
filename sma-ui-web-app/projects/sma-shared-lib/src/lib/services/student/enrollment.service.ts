@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Enrollment, EnrollmentRequest, PromoteRequest, WithdrawRequest } from '../models/enrollment.model';
+import { Enrollment, EnrollmentRequest, PromoteRequest, WithdrawRequest } from '../../models/student';
 
 @Injectable({
   providedIn: 'root'

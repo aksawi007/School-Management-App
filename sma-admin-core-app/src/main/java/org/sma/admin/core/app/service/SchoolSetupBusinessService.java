@@ -86,26 +86,24 @@ public class SchoolSetupBusinessService {
      * Get school profile by ID
      */
     public SchoolProfileResponse getSchoolProfile(ServiceRequestContext context, Long schoolId) throws SmaException {
-        // TODO: Replace with actual repository call
-        // SchoolProfileModel school = schoolProfileRepository.findById(schoolId)
-        //         .orElseThrow(() -> new SmaException("School not found with id: " + schoolId));
-        // 
-        // return convertToResponse(school);
+        SchoolProfile school = schoolProfileRepository.findById(schoolId)
+                .orElseThrow(() -> new SmaException("School not found with id: " + schoolId));
         
-        throw new SmaException("School not found with id: " + schoolId);
+        return convertToResponse(school);
     }
 
     /**
      * Get all schools
      */
     public List<SchoolProfileResponse> getAllSchools(ServiceRequestContext context) throws SmaException {
-        // TODO: Replace with actual repository call
-        // List<SchoolProfileModel> schools = schoolProfileRepository.findAll();
-        // return schools.stream()
-        //         .map(this::convertToResponse)
-        //         .collect(Collectors.toList());
+        List<SchoolProfile> schools = schoolProfileRepository.findAll();
+        List<SchoolProfileResponse> responses = new ArrayList<>();
         
-        return new ArrayList<>();
+        for (SchoolProfile school : schools) {
+            responses.add(convertToResponse(school));
+        }
+        
+        return responses;
     }
 
     /**
@@ -114,34 +112,54 @@ public class SchoolSetupBusinessService {
     public SchoolProfileResponse updateSchoolProfile(ServiceRequestContext context, 
                                                      Long schoolId, 
                                                      SchoolProfileRequest request) throws SmaException {
-        // TODO: Get existing school from repository
-        // SchoolProfileModel existingSchool = schoolProfileRepository.findById(schoolId)
-        //         .orElseThrow(() -> new SmaException("School not found with id: " + schoolId));
+        SchoolProfile existingSchool = schoolProfileRepository.findById(schoolId)
+                .orElseThrow(() -> new SmaException("School not found with id: " + schoolId));
+
+        // Check if school code is being changed and if new code already exists
+        if (!existingSchool.getSchoolCode().equals(request.getSchoolCode())) {
+            Optional<SchoolProfile> schoolWithCode = schoolProfileRepository.findBySchoolCode(request.getSchoolCode());
+            if (schoolWithCode.isPresent()) {
+                throw new SmaException("School with code already exists: " + request.getSchoolCode());
+            }
+        }
 
         // Update fields
-        // existingSchool.setSchoolName(request.getSchoolName());
-        // existingSchool.setAddress(request.getAddress());
-        // ... update other fields
-        // 
-        // SchoolProfileModel updatedSchool = schoolProfileRepository.save(existingSchool);
-        // return convertToResponse(updatedSchool);
+        existingSchool.setSchoolName(request.getSchoolName());
+        existingSchool.setSchoolCode(request.getSchoolCode());
+        existingSchool.setAddressLine1(request.getAddress());
+        existingSchool.setCity(request.getCity());
+        existingSchool.setState(request.getState());
+        existingSchool.setCountry(request.getCountry());
+        existingSchool.setPostalCode(request.getPincode());
+        existingSchool.setPhoneNumber(request.getPhone());
+        existingSchool.setEmail(request.getEmail());
+        existingSchool.setWebsite(request.getWebsite());
+        existingSchool.setPrincipalName(request.getPrincipalName());
+        existingSchool.setAffiliationNumber(request.getAffiliationNumber());
+        existingSchool.setAffiliationBoard(request.getBoard());
         
-        SchoolProfileResponse response = new SchoolProfileResponse();
-        response.setSchoolId(schoolId);
-        response.setSchoolName(request.getSchoolName());
-        return response;
+        // Update established year if provided
+        if (request.getEstablishedYear() != null && !request.getEstablishedYear().isEmpty()) {
+            try {
+                int year = Integer.parseInt(request.getEstablishedYear());
+                existingSchool.setEstablishedDate(LocalDate.of(year, 1, 1));
+            } catch (NumberFormatException e) {
+                // Ignore invalid year format
+            }
+        }
+        
+        SchoolProfile updatedSchool = schoolProfileRepository.save(existingSchool);
+        return convertToResponse(updatedSchool);
     }
 
     /**
      * Delete school profile
      */
     public void deleteSchoolProfile(ServiceRequestContext context, Long schoolId) throws SmaException {
-        // TODO: Get school from repository
-        // SchoolProfileModel school = schoolProfileRepository.findById(schoolId)
-        //         .orElseThrow(() -> new SmaException("School not found with id: " + schoolId));
+        SchoolProfile school = schoolProfileRepository.findById(schoolId)
+                .orElseThrow(() -> new SmaException("School not found with id: " + schoolId));
 
-        // Delete school
-        // schoolProfileRepository.delete(school);
+        schoolProfileRepository.delete(school);
     }
 
     /**

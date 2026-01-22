@@ -3,24 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-
-interface SchoolProfile {
-  id: number;
-  schoolName: string;
-  schoolCode: string;
-  address: string;
-  city: string;
-  state: string;
-  country: string;
-  pincode: string;
-  phone: string;
-  email: string;
-  website: string;
-  principalName: string;
-  establishedYear: string;
-  affiliationNumber: string;
-  board: string;
-}
+import { SchoolProfile, SchoolProfileService } from 'sma-shared-lib';
 
 @Component({
   selector: 'app-school-profile',
@@ -36,7 +19,7 @@ export class SchoolProfileComponent implements OnInit {
   schoolForm: FormGroup;
 
   constructor(
-    private http: HttpClient,
+    private schoolProfileService: SchoolProfileService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar
   ) {
@@ -63,7 +46,7 @@ export class SchoolProfileComponent implements OnInit {
   }
 
   loadSchools(): void {
-    this.http.get<SchoolProfile[]>('/api/school/profile/getAll').subscribe({
+    this.schoolProfileService.getAllSchools().subscribe({
       next: (data) => {
         this.schools = data;
       },
@@ -96,7 +79,7 @@ export class SchoolProfileComponent implements OnInit {
       const formData = this.schoolForm.value;
       
       if (this.isEditMode && this.selectedSchool) {
-        this.http.put<SchoolProfile>(`/api/school/profile/update?schoolId=${this.selectedSchool.id}`, formData)
+        this.schoolProfileService.updateSchool(this.selectedSchool.schoolId!, formData)
           .subscribe({
             next: () => {
               this.showMessage('School updated successfully');
@@ -109,7 +92,7 @@ export class SchoolProfileComponent implements OnInit {
             }
           });
       } else {
-        this.http.post<SchoolProfile>('/api/school/profile/create', formData).subscribe({
+        this.schoolProfileService.createSchool(formData).subscribe({
           next: () => {
             this.showMessage('School created successfully');
             this.cancelForm();
@@ -126,7 +109,7 @@ export class SchoolProfileComponent implements OnInit {
 
   deleteSchool(school: SchoolProfile): void {
     if (confirm(`Are you sure you want to delete ${school.schoolName}?`)) {
-      this.http.delete(`/api/school/profile/delete?schoolId=${school.id}`).subscribe({
+      this.schoolProfileService.deleteSchool(school.schoolId!).subscribe({
         next: () => {
           this.showMessage('School deleted successfully');
           this.loadSchools();
