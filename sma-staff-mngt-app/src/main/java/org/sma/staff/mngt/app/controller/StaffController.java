@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * REST Controller for Staff Management
@@ -35,7 +34,7 @@ public class StaffController {
     @PutMapping("/{staffId}")
     @ApiOperation("Update staff member details")
     public ResponseEntity<StaffResponseDTO> updateStaff(
-            @PathVariable UUID staffId,
+            @PathVariable Long staffId,
             @Valid @RequestBody StaffRequestDTO requestDTO) {
         StaffResponseDTO response = staffService.updateStaff(staffId, requestDTO);
         return ResponseEntity.ok(response);
@@ -43,14 +42,14 @@ public class StaffController {
 
     @GetMapping("/{staffId}")
     @ApiOperation("Get staff member by ID")
-    public ResponseEntity<StaffResponseDTO> getStaffById(@PathVariable UUID staffId) {
+    public ResponseEntity<StaffResponseDTO> getStaffById(@PathVariable Long staffId) {
         StaffResponseDTO response = staffService.getStaffById(staffId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/school/{schoolId}")
     @ApiOperation("Get all active staff members for a school")
-    public ResponseEntity<List<StaffResponseDTO>> getAllStaffBySchool(@PathVariable UUID schoolId) {
+    public ResponseEntity<List<StaffResponseDTO>> getAllStaffBySchool(@PathVariable Long schoolId) {
         List<StaffResponseDTO> response = staffService.getAllStaffBySchool(schoolId);
         return ResponseEntity.ok(response);
     }
@@ -58,7 +57,7 @@ public class StaffController {
     @GetMapping("/school/{schoolId}/type/{staffType}")
     @ApiOperation("Get staff members by type (TEACHING, NON_TEACHING, ADMINISTRATIVE)")
     public ResponseEntity<List<StaffResponseDTO>> getStaffByType(
-            @PathVariable UUID schoolId,
+            @PathVariable Long schoolId,
             @PathVariable String staffType) {
         List<StaffResponseDTO> response = staffService.getStaffByType(schoolId, staffType);
         return ResponseEntity.ok(response);
@@ -66,7 +65,7 @@ public class StaffController {
 
     @DeleteMapping("/{staffId}")
     @ApiOperation("Deactivate staff member")
-    public ResponseEntity<Void> deleteStaff(@PathVariable UUID staffId) {
+    public ResponseEntity<Void> deleteStaff(@PathVariable Long staffId) {
         staffService.deleteStaff(staffId);
         return ResponseEntity.noContent().build();
     }

@@ -6,15 +6,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface AddressRepository extends JpaRepository<Address, UUID> {
+public interface AddressRepository extends JpaRepository<Address, Long> {
 
-    List<Address> findByStudentIdAndIsDeletedFalse(UUID studentId);
+    List<Address> findByStudentIdAndIsDeletedFalse(Long studentId);
 
-    Optional<Address> findByIdAndStudentIdAndIsDeletedFalse(UUID id, UUID studentId);
+    Optional<Address> findByIdAndStudentIdAndIsDeletedFalse(Long id, Long studentId);
 
-    Optional<Address> findByStudentIdAndAddressTypeAndIsDeletedFalse(UUID studentId, String addressType);
+    Optional<Address> findByStudentIdAndAddressTypeAndIsDeletedFalse(Long studentId, String addressType);
 }
 

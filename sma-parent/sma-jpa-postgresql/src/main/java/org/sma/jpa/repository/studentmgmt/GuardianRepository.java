@@ -6,17 +6,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface GuardianRepository extends JpaRepository<Guardian, UUID> {
+public interface GuardianRepository extends JpaRepository<Guardian, Long> {
 
-    List<Guardian> findByStudentIdAndIsDeletedFalse(UUID studentId);
+    List<Guardian> findByStudentIdAndIsDeletedFalse(Long studentId);
 
-    Optional<Guardian> findByIdAndStudentIdAndIsDeletedFalse(UUID id, UUID studentId);
+    Optional<Guardian> findByIdAndStudentIdAndIsDeletedFalse(Long id, Long studentId);
 
-    Optional<Guardian> findByStudentIdAndIsPrimaryTrueAndIsDeletedFalse(UUID studentId);
+    Optional<Guardian> findByStudentIdAndIsPrimaryTrueAndIsDeletedFalse(Long studentId);
 
-    long countByStudentIdAndIsDeletedFalse(UUID studentId);
+    long countByStudentIdAndIsDeletedFalse(Long studentId);
 }
 

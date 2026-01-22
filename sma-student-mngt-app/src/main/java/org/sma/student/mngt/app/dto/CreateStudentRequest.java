@@ -5,7 +5,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * DTO for creating a new student admission
@@ -13,7 +12,7 @@ import java.util.UUID;
 public class CreateStudentRequest {
 
     @NotNull(message = "School ID is required")
-    private UUID schoolId;
+    private Long schoolId;
 
     private String admissionNo; // Auto-generated if null
 
@@ -55,11 +54,11 @@ public class CreateStudentRequest {
     private List<AddressDto> addresses;
 
     // Getters and Setters
-    public UUID getSchoolId() {
+    public Long getSchoolId() {
         return schoolId;
     }
 
-    public void setSchoolId(UUID schoolId) {
+    public void setSchoolId(Long schoolId) {
         this.schoolId = schoolId;
     }
 

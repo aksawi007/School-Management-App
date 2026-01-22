@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/schools/{schoolId}/students")
@@ -31,7 +30,7 @@ public class StudentController {
     @PostMapping
     @ApiOperation(value = "Create new StudentProfile (admission)", notes = "Creates a new StudentProfile with guardians and addresses")
     public ResponseEntity<Map<String, Object>> createStudent(
-            @PathVariable UUID schoolId,
+            @PathVariable Long schoolId,
             @Valid @RequestBody CreateStudentRequest request) {
         
         request.setSchoolId(schoolId);
@@ -49,8 +48,8 @@ public class StudentController {
     @GetMapping("/{studentId}")
     @ApiOperation(value = "Get StudentProfile details", notes = "Returns complete StudentProfile profile with guardians, addresses, and enrollment history")
     public ResponseEntity<StudentDetailsResponse> getStudentDetails(
-            @PathVariable UUID schoolId,
-            @PathVariable UUID studentId) {
+            @PathVariable Long schoolId,
+            @PathVariable Long studentId) {
         
         StudentDetailsResponse response = studentService.getStudentDetails(schoolId, studentId);
         return ResponseEntity.ok(response);
@@ -59,7 +58,7 @@ public class StudentController {
     @GetMapping
     @ApiOperation(value = "Search/List students", notes = "Search students with filters and pagination")
     public ResponseEntity<Page<StudentProfile>> searchStudents(
-            @PathVariable UUID schoolId,
+            @PathVariable Long schoolId,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
@@ -77,8 +76,8 @@ public class StudentController {
     @PatchMapping("/{studentId}/status")
     @ApiOperation(value = "Update StudentProfile status", notes = "Change StudentProfile status (ACTIVE, INACTIVE, TRANSFERRED, etc.)")
     public ResponseEntity<Map<String, Object>> updateStudentStatus(
-            @PathVariable UUID schoolId,
-            @PathVariable UUID studentId,
+            @PathVariable Long schoolId,
+            @PathVariable Long studentId,
             @RequestParam String status) {
         
         StudentProfile StudentProfile = studentService.updateStudentStatus(schoolId, studentId, status, "SYSTEM");

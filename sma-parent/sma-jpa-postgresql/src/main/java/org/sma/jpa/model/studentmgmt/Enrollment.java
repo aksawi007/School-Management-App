@@ -4,7 +4,6 @@ import org.sma.jpa.model.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
  * Enrollment entity - student class/section assignment with history
@@ -19,19 +18,19 @@ import java.util.UUID;
 public class Enrollment extends BaseEntity {
 
     @Column(name = "student_id", nullable = false)
-    private UUID studentId;
+    private Long studentId;
 
     @Column(name = "school_id", nullable = false)
-    private UUID schoolId;
+    private Long schoolId;
 
     @Column(name = "academic_year_id", nullable = false)
-    private UUID academicYearId;
+    private Long academicYearId;
 
     @Column(name = "class_id", nullable = false)
-    private UUID classId;
+    private Long classId;
 
     @Column(name = "section_id")
-    private UUID sectionId;
+    private Long sectionId;
 
     @Column(name = "roll_no", length = 20)
     private String rollNo;
@@ -52,43 +51,43 @@ public class Enrollment extends BaseEntity {
     private String remarks;
 
     // Getters and Setters
-    public UUID getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(UUID studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 
-    public UUID getSchoolId() {
+    public Long getSchoolId() {
         return schoolId;
     }
 
-    public void setSchoolId(UUID schoolId) {
+    public void setSchoolId(Long schoolId) {
         this.schoolId = schoolId;
     }
 
-    public UUID getAcademicYearId() {
+    public Long getAcademicYearId() {
         return academicYearId;
     }
 
-    public void setAcademicYearId(UUID academicYearId) {
+    public void setAcademicYearId(Long academicYearId) {
         this.academicYearId = academicYearId;
     }
 
-    public UUID getClassId() {
+    public Long getClassId() {
         return classId;
     }
 
-    public void setClassId(UUID classId) {
+    public void setClassId(Long classId) {
         this.classId = classId;
     }
 
-    public UUID getSectionId() {
+    public Long getSectionId() {
         return sectionId;
     }
 
-    public void setSectionId(UUID sectionId) {
+    public void setSectionId(Long sectionId) {
         this.sectionId = sectionId;
     }
 

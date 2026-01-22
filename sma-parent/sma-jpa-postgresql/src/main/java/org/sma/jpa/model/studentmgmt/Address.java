@@ -3,7 +3,6 @@ package org.sma.jpa.model.studentmgmt;
 import org.sma.jpa.model.BaseEntity;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 /**
  * Address entity - student address (current/permanent)
@@ -16,7 +15,7 @@ import java.util.UUID;
 public class Address extends BaseEntity {
 
     @Column(name = "student_id", nullable = false)
-    private UUID studentId;
+    private Long studentId;
 
     @Column(name = "address_type", nullable = false, length = 20)
     private String addressType; // CURRENT, PERMANENT
@@ -43,11 +42,11 @@ public class Address extends BaseEntity {
     private String landmark;
 
     // Getters and Setters
-    public UUID getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(UUID studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 

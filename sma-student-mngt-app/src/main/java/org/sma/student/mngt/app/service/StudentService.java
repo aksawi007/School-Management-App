@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,7 +112,7 @@ public class StudentService {
         return StudentProfile;
     }
 
-    public StudentDetailsResponse getStudentDetails(UUID schoolId, UUID studentId) {
+    public StudentDetailsResponse getStudentDetails(Long schoolId, Long studentId) {
         StudentProfile StudentProfile = StudentProfileRepository.findByIdAndSchoolIdAndIsDeletedFalse(studentId, schoolId)
                 .orElseThrow(() -> new RuntimeException("StudentProfile not found"));
 
@@ -138,7 +137,7 @@ public class StudentService {
         return response;
     }
 
-    public Page<StudentProfile> searchStudents(UUID schoolId, String searchTerm, String status, Pageable pageable) {
+    public Page<StudentProfile> searchStudents(Long schoolId, String searchTerm, String status, Pageable pageable) {
         if (searchTerm != null && !searchTerm.isEmpty()) {
             return StudentProfileRepository.searchStudents(schoolId, searchTerm, pageable);
         } else if (status != null) {
@@ -149,7 +148,7 @@ public class StudentService {
     }
 
     @Transactional
-    public StudentProfile updateStudentStatus(UUID schoolId, UUID studentId, String status, String updatedBy) {
+    public StudentProfile updateStudentStatus(Long schoolId, Long studentId, String status, String updatedBy) {
         StudentProfile StudentProfile = StudentProfileRepository.findByIdAndSchoolIdAndIsDeletedFalse(studentId, schoolId)
                 .orElseThrow(() -> new RuntimeException("StudentProfile not found"));
 
@@ -158,7 +157,7 @@ public class StudentService {
         return StudentProfileRepository.save(StudentProfile);
     }
 
-    private String generateAdmissionNumber(UUID schoolId) {
+    private String generateAdmissionNumber(Long schoolId) {
         // Simple implementation - can be enhanced with custom logic
         long count = StudentProfileRepository.count();
         return "ADM" + LocalDate.now().getYear() + String.format("%06d", count + 1);

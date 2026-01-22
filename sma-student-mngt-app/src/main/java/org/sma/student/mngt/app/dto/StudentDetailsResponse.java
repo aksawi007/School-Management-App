@@ -2,15 +2,14 @@ package org.sma.student.mngt.app.dto;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Complete student details response
  */
 public class StudentDetailsResponse {
 
-    private UUID id;
-    private UUID schoolId;
+    private Long id;
+    private Long schoolId;
     private String admissionNo;
     private String firstName;
     private String middleName;
@@ -39,19 +38,19 @@ public class StudentDetailsResponse {
     private List<EnrollmentDto> enrollmentHistory;
 
     // Getters and Setters
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public UUID getSchoolId() {
+    public Long getSchoolId() {
         return schoolId;
     }
 
-    public void setSchoolId(UUID schoolId) {
+    public void setSchoolId(Long schoolId) {
         this.schoolId = schoolId;
     }
 

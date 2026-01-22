@@ -2,15 +2,14 @@ package org.sma.staff.mngt.app.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
  * DTO for Staff Response
  */
 public class StaffResponseDTO {
 
-    private UUID id;
-    private UUID schoolId;
+    private Long id;
+    private Long schoolId;
     private String employeeCode;
     private String firstName;
     private String middleName;
@@ -28,7 +27,7 @@ public class StaffResponseDTO {
     private String postalCode;
     private String staffType;
     private String designation;
-    private UUID departmentId;
+    private Long departmentId;
     private String departmentName;
     private String qualification;
     private String specialization;
@@ -41,19 +40,19 @@ public class StaffResponseDTO {
     private Boolean isActive;
 
     // Getters and Setters
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public UUID getSchoolId() {
+    public Long getSchoolId() {
         return schoolId;
     }
 
-    public void setSchoolId(UUID schoolId) {
+    public void setSchoolId(Long schoolId) {
         this.schoolId = schoolId;
     }
 
@@ -193,11 +192,11 @@ public class StaffResponseDTO {
         this.designation = designation;
     }
 
-    public UUID getDepartmentId() {
+    public Long getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(UUID departmentId) {
+    public void setDepartmentId(Long departmentId) {
         this.departmentId = departmentId;
     }
 

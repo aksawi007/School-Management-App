@@ -3,7 +3,6 @@ package org.sma.jpa.model.studentmgmt;
 import org.sma.jpa.model.BaseEntity;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 /**
  * Guardian entity - parent/guardian information
@@ -17,7 +16,7 @@ import java.util.UUID;
 public class Guardian extends BaseEntity {
 
     @Column(name = "student_id", nullable = false)
-    private UUID studentId;
+    private Long studentId;
 
     @Column(name = "relation", nullable = false, length = 50)
     private String relation; // FATHER, MOTHER, GUARDIAN, OTHER
@@ -56,11 +55,11 @@ public class Guardian extends BaseEntity {
     private String photoUrl;
 
     // Getters and Setters
-    public UUID getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(UUID studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 

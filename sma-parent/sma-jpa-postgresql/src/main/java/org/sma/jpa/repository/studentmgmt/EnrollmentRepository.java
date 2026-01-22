@@ -8,23 +8,22 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {
+public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
-    List<Enrollment> findByStudentIdOrderByStartDateDesc(UUID studentId);
+    List<Enrollment> findByStudentIdOrderByStartDateDesc(Long studentId);
 
-    Optional<Enrollment> findByStudentIdAndStatusAndIsDeletedFalse(UUID studentId, String status);
+    Optional<Enrollment> findByStudentIdAndStatusAndIsDeletedFalse(Long studentId, String status);
 
     Optional<Enrollment> findByStudentIdAndAcademicYearIdAndStatusAndIsDeletedFalse(
-            UUID studentId, UUID academicYearId, String status);
+            Long studentId, Long academicYearId, String status);
 
     List<Enrollment> findBySchoolIdAndAcademicYearIdAndClassIdAndIsDeletedFalse(
-            UUID schoolId, UUID academicYearId, UUID classId);
+            Long schoolId, Long academicYearId, Long classId);
 
     List<Enrollment> findBySchoolIdAndAcademicYearIdAndClassIdAndSectionIdAndStatusAndIsDeletedFalse(
-            UUID schoolId, UUID academicYearId, UUID classId, UUID sectionId, String status);
+            Long schoolId, Long academicYearId, Long classId, Long sectionId, String status);
 
     @Query("SELECT e FROM Enrollment e WHERE e.schoolId = :schoolId " +
            "AND e.academicYearId = :academicYearId " +
@@ -32,13 +31,13 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {
            "AND (:sectionId IS NULL OR e.sectionId = :sectionId) " +
            "AND e.status = :status " +
            "AND e.isDeleted = false")
-    List<Enrollment> findEnrollmentsByFilters(@Param("schoolId") UUID schoolId,
-                                               @Param("academicYearId") UUID academicYearId,
-                                               @Param("classId") UUID classId,
-                                               @Param("sectionId") UUID sectionId,
+    List<Enrollment> findEnrollmentsByFilters(@Param("schoolId") Long schoolId,
+                                               @Param("academicYearId") Long academicYearId,
+                                               @Param("classId") Long classId,
+                                               @Param("sectionId") Long sectionId,
                                                @Param("status") String status);
 
     long countBySchoolIdAndAcademicYearIdAndStatusAndIsDeletedFalse(
-            UUID schoolId, UUID academicYearId, String status);
+            Long schoolId, Long academicYearId, String status);
 }
 

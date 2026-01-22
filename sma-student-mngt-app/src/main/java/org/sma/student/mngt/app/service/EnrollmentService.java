@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,7 +24,7 @@ public class EnrollmentService {
     private StudentProfileRepository StudentProfileRepository;
 
     @Transactional
-    public Enrollment enrollStudent(UUID schoolId, EnrollStudentRequest request, String createdBy) {
+    public Enrollment enrollStudent(Long schoolId, EnrollStudentRequest request, String createdBy) {
         // Validate StudentProfile exists and belongs to school
         StudentProfile StudentProfile = StudentProfileRepository.findByIdAndSchoolIdAndIsDeletedFalse(request.getStudentId(), schoolId)
                 .orElseThrow(() -> new RuntimeException("StudentProfile not found"));
@@ -52,14 +51,14 @@ public class EnrollmentService {
         return enrollmentRepository.save(enrollment);
     }
 
-    public List<EnrollmentDto> getStudentEnrollmentHistory(UUID studentId) {
+    public List<EnrollmentDto> getStudentEnrollmentHistory(Long studentId) {
         List<Enrollment> enrollments = enrollmentRepository.findByStudentIdOrderByStartDateDesc(studentId);
         return enrollments.stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     @Transactional
-    public Enrollment promoteStudent(UUID schoolId, UUID studentId, UUID newAcademicYearId, 
-                                      UUID newClassId, UUID newSectionId, String promotedBy) {
+    public Enrollment promoteStudent(Long schoolId, Long studentId, Long newAcademicYearId, 
+                                      Long newClassId, Long newSectionId, String promotedBy) {
         // End current enrollment
         Enrollment currentEnrollment = enrollmentRepository
                 .findByStudentIdAndStatusAndIsDeletedFalse(studentId, "ACTIVE")
@@ -87,7 +86,7 @@ public class EnrollmentService {
     }
 
     @Transactional
-    public void withdrawStudent(UUID studentId, String reason, String withdrawnBy) {
+    public void withdrawStudent(Long studentId, String reason, String withdrawnBy) {
         Enrollment enrollment = enrollmentRepository
                 .findByStudentIdAndStatusAndIsDeletedFalse(studentId, "ACTIVE")
                 .orElseThrow(() -> new RuntimeException("No active enrollment found for StudentProfile"));

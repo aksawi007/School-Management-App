@@ -13,43 +13,22 @@
     </mat-card>
   </div>
 
-  <div class="modules-section mt-20">
-    <h2>Module Management</h2>
-    <div class="modules-grid">
-      <mat-card *ngFor="let module of moduleTiles" 
-                class="module-tile" 
-                (click)="navigateToModule(module)"
-                [style.border-left]="'4px solid ' + module.color">
-        <mat-card-header>
-          <div mat-card-avatar [style.background-color]="module.color">
-            <mat-icon>{{ module.icon }}</mat-icon>
-          </div>
-          <mat-card-title>{{ module.title }}</mat-card-title>
-          <mat-card-subtitle>{{ module.description }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <button mat-raised-button [style.background-color]="module.color" color="primary">
-            Open Module
+  <div class="management-sections">
+    <div *ngFor="let category of categories" class="category-section">
+      <h2>{{ getCategoryTitle(category) }}</h2>
+      <div class="action-grid">
+        <mat-card *ngFor="let action of getActionsByCategory(category)" 
+                  class="action-card"
+                  (click)="navigateToAction(action)"
+                  [style.border-left]="'4px solid ' + action.color">
+          <mat-icon [style.color]="action.color">{{ action.icon }}</mat-icon>
+          <h3>{{ action.title }}</h3>
+          <p>{{ action.description }}</p>
+          <button mat-icon-button class="nav-button">
             <mat-icon>arrow_forward</mat-icon>
           </button>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
-
-  <div class="admin-actions mt-20">
-    <h2>Administrative Setup</h2>
-    <div class="action-grid">
-      <mat-card routerLink="/school-profile" class="action-card">
-        <mat-icon>business</mat-icon>
-        <h3>School Profile</h3>
-        <p>Manage school information</p>
-      </mat-card>
-      <mat-card routerLink="/academic-year" class="action-card">
-        <mat-icon>calendar_today</mat-icon>
-        <h3>Academic Year</h3>
-        <p>Configure academic sessions</p>
-      </mat-card>
+        </mat-card>
+      </div>
     </div>
   </div>
 </div>

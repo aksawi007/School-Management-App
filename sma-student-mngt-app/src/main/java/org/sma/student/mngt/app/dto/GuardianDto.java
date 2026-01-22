@@ -1,11 +1,10 @@
 package org.sma.student.mngt.app.dto;
 
 import javax.validation.constraints.NotBlank;
-import java.util.UUID;
 
 public class GuardianDto {
 
-    private UUID id;
+    private Long id;
 
     @NotBlank(message = "Relation is required")
     private String relation;
@@ -27,11 +26,11 @@ public class GuardianDto {
     private String photoUrl;
 
     // Getters and Setters
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

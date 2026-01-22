@@ -4,7 +4,6 @@ import org.sma.jpa.model.BaseEntity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
  * StudentProfile entity - comprehensive student information for Student Management Service
@@ -22,7 +21,7 @@ import java.util.UUID;
 public class StudentProfile extends BaseEntity {
 
     @Column(name = "school_id", nullable = false)
-    private UUID schoolId;
+    private Long schoolId;
 
     @Column(name = "admission_no", nullable = false, length = 50)
     private String admissionNo;
@@ -85,8 +84,8 @@ public class StudentProfile extends BaseEntity {
     private String allergies;
 
     // Getters and Setters
-    public UUID getSchoolId() { return schoolId; }
-    public void setSchoolId(UUID schoolId) { this.schoolId = schoolId; }
+    public Long getSchoolId() { return schoolId; }
+    public void setSchoolId(Long schoolId) { this.schoolId = schoolId; }
 
     public String getAdmissionNo() { return admissionNo; }
     public void setAdmissionNo(String admissionNo) { this.admissionNo = admissionNo; }

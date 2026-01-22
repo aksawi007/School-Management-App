@@ -15,7 +15,6 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/schools/{schoolId}/students/{studentId}")
@@ -28,8 +27,8 @@ public class EnrollmentController {
     @PostMapping("/enrollments")
     @ApiOperation(value = "Enroll student", notes = "Enroll student in a class/section for an academic year")
     public ResponseEntity<Map<String, Object>> enrollStudent(
-            @PathVariable UUID schoolId,
-            @PathVariable UUID studentId,
+            @PathVariable Long schoolId,
+            @PathVariable Long studentId,
             @Valid @RequestBody EnrollStudentRequest request) {
         
         request.setStudentId(studentId);
@@ -46,8 +45,8 @@ public class EnrollmentController {
     @GetMapping("/enrollments")
     @ApiOperation(value = "Get enrollment history", notes = "Returns enrollment history for a student")
     public ResponseEntity<List<EnrollmentDto>> getEnrollmentHistory(
-            @PathVariable UUID schoolId,
-            @PathVariable UUID studentId) {
+            @PathVariable Long schoolId,
+            @PathVariable Long studentId) {
         
         List<EnrollmentDto> enrollments = enrollmentService.getStudentEnrollmentHistory(studentId);
         return ResponseEntity.ok(enrollments);
@@ -56,11 +55,11 @@ public class EnrollmentController {
     @PostMapping("/promote")
     @ApiOperation(value = "Promote student", notes = "Promote student to next academic year/class")
     public ResponseEntity<Map<String, Object>> promoteStudent(
-            @PathVariable UUID schoolId,
-            @PathVariable UUID studentId,
-            @RequestParam UUID newAcademicYearId,
-            @RequestParam UUID newClassId,
-            @RequestParam(required = false) UUID newSectionId) {
+            @PathVariable Long schoolId,
+            @PathVariable Long studentId,
+            @RequestParam Long newAcademicYearId,
+            @RequestParam Long newClassId,
+            @RequestParam(required = false) Long newSectionId) {
         
         Enrollment enrollment = enrollmentService.promoteStudent(
                 schoolId, studentId, newAcademicYearId, newClassId, newSectionId, "SYSTEM");
@@ -76,8 +75,8 @@ public class EnrollmentController {
     @PostMapping("/withdraw")
     @ApiOperation(value = "Withdraw student", notes = "Withdraw student from school")
     public ResponseEntity<Map<String, Object>> withdrawStudent(
-            @PathVariable UUID schoolId,
-            @PathVariable UUID studentId,
+            @PathVariable Long schoolId,
+            @PathVariable Long studentId,
             @RequestParam(required = false) String reason) {
         
         enrollmentService.withdrawStudent(studentId, reason, "SYSTEM");

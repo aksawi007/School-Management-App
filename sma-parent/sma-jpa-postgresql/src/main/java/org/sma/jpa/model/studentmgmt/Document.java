@@ -3,7 +3,6 @@ package org.sma.jpa.model.studentmgmt;
 import org.sma.jpa.model.BaseEntity;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 /**
  * Document entity - student document metadata
@@ -17,7 +16,7 @@ import java.util.UUID;
 public class Document extends BaseEntity {
 
     @Column(name = "student_id", nullable = false)
-    private UUID studentId;
+    private Long studentId;
 
     @Column(name = "doc_type", nullable = false, length = 50)
     private String docType; // PHOTO, AADHAR, BIRTH_CERTIFICATE, TC, MARKSHEET, MEDICAL, OTHER
@@ -41,11 +40,11 @@ public class Document extends BaseEntity {
     private String description;
 
     // Getters and Setters
-    public UUID getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(UUID studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 

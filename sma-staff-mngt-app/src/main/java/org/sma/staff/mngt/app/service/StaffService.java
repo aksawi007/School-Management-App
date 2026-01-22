@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +49,7 @@ public class StaffService {
         return mapEntityToResponse(staff);
     }
 
-    public StaffResponseDTO updateStaff(UUID staffId, StaffRequestDTO requestDTO) {
+    public StaffResponseDTO updateStaff(Long staffId, StaffRequestDTO requestDTO) {
         Staff staff = staffRepository.findById(staffId)
                 .orElseThrow(() -> new RuntimeException("Staff not found"));
 
@@ -63,13 +62,13 @@ public class StaffService {
         return mapEntityToResponse(staff);
     }
 
-    public StaffResponseDTO getStaffById(UUID staffId) {
+    public StaffResponseDTO getStaffById(Long staffId) {
         Staff staff = staffRepository.findById(staffId)
                 .orElseThrow(() -> new RuntimeException("Staff not found"));
         return mapEntityToResponse(staff);
     }
 
-    public List<StaffResponseDTO> getAllStaffBySchool(UUID schoolId) {
+    public List<StaffResponseDTO> getAllStaffBySchool(Long schoolId) {
         SchoolProfile school = schoolProfileRepository.findById(schoolId)
                 .orElseThrow(() -> new RuntimeException("School not found"));
         
@@ -79,7 +78,7 @@ public class StaffService {
                 .collect(Collectors.toList());
     }
 
-    public List<StaffResponseDTO> getStaffByType(UUID schoolId, String staffType) {
+    public List<StaffResponseDTO> getStaffByType(Long schoolId, String staffType) {
         SchoolProfile school = schoolProfileRepository.findById(schoolId)
                 .orElseThrow(() -> new RuntimeException("School not found"));
         
@@ -89,7 +88,7 @@ public class StaffService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteStaff(UUID staffId) {
+    public void deleteStaff(Long staffId) {
         Staff staff = staffRepository.findById(staffId)
                 .orElseThrow(() -> new RuntimeException("Staff not found"));
         staff.setIsActive(false);

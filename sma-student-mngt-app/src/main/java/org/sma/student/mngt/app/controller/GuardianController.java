@@ -28,8 +28,8 @@ public class GuardianController {
     @GetMapping
     @ApiOperation(value = "Get student guardians", notes = "Returns all guardians for a student")
     public ResponseEntity<List<GuardianDto>> getGuardians(
-            @PathVariable UUID schoolId,
-            @PathVariable UUID studentId) {
+            @PathVariable Long schoolId,
+            @PathVariable Long studentId) {
         
         List<Guardian> guardians = guardianRepository.findByStudentIdAndIsDeletedFalse(studentId);
         List<GuardianDto> dtos = guardians.stream().map(this::mapToDto).collect(Collectors.toList());
@@ -39,8 +39,8 @@ public class GuardianController {
     @PostMapping
     @ApiOperation(value = "Add guardian", notes = "Add a new guardian for student")
     public ResponseEntity<Map<String, Object>> addGuardian(
-            @PathVariable UUID schoolId,
-            @PathVariable UUID studentId,
+            @PathVariable Long schoolId,
+            @PathVariable Long studentId,
             @Valid @RequestBody GuardianDto dto) {
         
         Guardian guardian = new Guardian();
@@ -72,9 +72,9 @@ public class GuardianController {
     @DeleteMapping("/{guardianId}")
     @ApiOperation(value = "Delete guardian", notes = "Soft delete a guardian")
     public ResponseEntity<Map<String, Object>> deleteGuardian(
-            @PathVariable UUID schoolId,
-            @PathVariable UUID studentId,
-            @PathVariable UUID guardianId) {
+            @PathVariable Long schoolId,
+            @PathVariable Long studentId,
+            @PathVariable Long guardianId) {
         
         Guardian guardian = guardianRepository.findByIdAndStudentIdAndIsDeletedFalse(guardianId, studentId)
                 .orElseThrow(() -> new RuntimeException("Guardian not found"));

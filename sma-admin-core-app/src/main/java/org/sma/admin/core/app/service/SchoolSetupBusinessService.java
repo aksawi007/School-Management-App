@@ -2,12 +2,17 @@ package org.sma.admin.core.app.service;
 
 import org.sma.admin.core.app.model.request.SchoolProfileRequest;
 import org.sma.admin.core.app.model.response.SchoolProfileResponse;
+import org.sma.jpa.model.school.SchoolProfile;
+import org.sma.jpa.repository.school.SchoolProfileRepository;
 import org.sma.platform.core.exception.SmaException;
 import org.sma.platform.core.service.ServiceRequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * School Setup Business Service
@@ -16,9 +21,8 @@ import java.util.List;
 @Component
 public class SchoolSetupBusinessService {
 
-    // TODO: Autowire repository when available
-    // @Autowired
-    // SchoolProfileRepository schoolProfileRepository;
+    @Autowired
+    private SchoolProfileRepository schoolProfileRepository;
 
     /**
      * Create new school profile
@@ -39,39 +43,43 @@ public class SchoolSetupBusinessService {
         }
 
         // Check if school code already exists
-        // TODO: Replace with actual repository call
-        // SchoolProfileModel existingSchool = schoolProfileRepository.findBySchoolCode(request.getSchoolCode());
-        // if (existingSchool != null) {
-        //     throw new SmaException("School with code already exists: " + request.getSchoolCode());
-        // }
+        Optional<SchoolProfile> existingSchool = schoolProfileRepository.findBySchoolCode(request.getSchoolCode());
+        if (existingSchool.isPresent()) {
+            throw new SmaException("School with code already exists: " + request.getSchoolCode());
+        }
 
         // Create school profile entity
-        // TODO: Replace with actual entity creation and save
-        // SchoolProfileModel schoolModel = new SchoolProfileModel();
-        // schoolModel.setSchoolName(request.getSchoolName());
-        // schoolModel.setSchoolCode(request.getSchoolCode());
-        // ... set other fields
-        // 
-        // SchoolProfileModel savedSchool = schoolProfileRepository.save(schoolModel);
+        SchoolProfile schoolProfile = new SchoolProfile();
+        schoolProfile.setSchoolName(request.getSchoolName());
+        schoolProfile.setSchoolCode(request.getSchoolCode());
+        schoolProfile.setAddressLine1(request.getAddress());
+        schoolProfile.setCity(request.getCity());
+        schoolProfile.setState(request.getState());
+        schoolProfile.setCountry(request.getCountry());
+        schoolProfile.setPostalCode(request.getPincode());
+        schoolProfile.setPhoneNumber(request.getPhone());
+        schoolProfile.setEmail(request.getEmail());
+        schoolProfile.setWebsite(request.getWebsite());
+        schoolProfile.setPrincipalName(request.getPrincipalName());
+        schoolProfile.setAffiliationNumber(request.getAffiliationNumber());
+        schoolProfile.setAffiliationBoard(request.getBoard());
+        schoolProfile.setRegistrationStatus("ACTIVE");
+        
+        // Convert established year to LocalDate if provided
+        if (request.getEstablishedYear() != null && !request.getEstablishedYear().isEmpty()) {
+            try {
+                int year = Integer.parseInt(request.getEstablishedYear());
+                schoolProfile.setEstablishedDate(LocalDate.of(year, 1, 1));
+            } catch (NumberFormatException e) {
+                // Ignore invalid year format
+            }
+        }
+        
+        // Save school profile
+        SchoolProfile savedSchool = schoolProfileRepository.save(schoolProfile);
 
         // Build response
-        SchoolProfileResponse response = new SchoolProfileResponse();
-        response.setSchoolName(request.getSchoolName());
-        response.setSchoolCode(request.getSchoolCode());
-        response.setAddress(request.getAddress());
-        response.setCity(request.getCity());
-        response.setState(request.getState());
-        response.setCountry(request.getCountry());
-        response.setPincode(request.getPincode());
-        response.setPhone(request.getPhone());
-        response.setEmail(request.getEmail());
-        response.setWebsite(request.getWebsite());
-        response.setPrincipalName(request.getPrincipalName());
-        response.setEstablishedYear(request.getEstablishedYear());
-        response.setAffiliationNumber(request.getAffiliationNumber());
-        response.setBoard(request.getBoard());
-        
-        return response;
+        return convertToResponse(savedSchool);
     }
 
     /**
@@ -140,13 +148,35 @@ public class SchoolSetupBusinessService {
      * Get school by code
      */
     public SchoolProfileResponse getSchoolByCode(ServiceRequestContext context, String schoolCode) throws SmaException {
-        // TODO: Replace with actual repository call
-        // SchoolProfileModel school = schoolProfileRepository.findBySchoolCode(schoolCode);
-        // if (school == null) {
-        //     throw new SmaException("School not found with code: " + schoolCode);
-        // }
-        // return convertToResponse(school);
+        SchoolProfile school = schoolProfileRepository.findBySchoolCode(schoolCode)
+                .orElseThrow(() -> new SmaException("School not found with code: " + schoolCode));
+        return convertToResponse(school);
+    }
+
+    /**
+     * Convert SchoolProfile entity to response DTO
+     */
+    private SchoolProfileResponse convertToResponse(SchoolProfile school) {
+        SchoolProfileResponse response = new SchoolProfileResponse();
+        response.setSchoolId(school.getId());
+        response.setSchoolName(school.getSchoolName());
+        response.setSchoolCode(school.getSchoolCode());
+        response.setAddress(school.getAddressLine1());
+        response.setCity(school.getCity());
+        response.setState(school.getState());
+        response.setCountry(school.getCountry());
+        response.setPincode(school.getPostalCode());
+        response.setPhone(school.getPhoneNumber());
+        response.setEmail(school.getEmail());
+        response.setWebsite(school.getWebsite());
+        response.setPrincipalName(school.getPrincipalName());
+        response.setAffiliationNumber(school.getAffiliationNumber());
+        response.setBoard(school.getAffiliationBoard());
         
-        throw new SmaException("School not found with code: " + schoolCode);
+        if (school.getEstablishedDate() != null) {
+            response.setEstablishedYear(String.valueOf(school.getEstablishedDate().getYear()));
+        }
+        
+        return response;
     }
 }

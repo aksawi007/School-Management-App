@@ -2,20 +2,19 @@ package org.sma.student.mngt.app.dto;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.UUID;
 
 public class EnrollStudentRequest {
 
     @NotNull(message = "Student ID is required")
-    private UUID studentId;
+    private Long studentId;
 
     @NotNull(message = "Academic year ID is required")
-    private UUID academicYearId;
+    private Long academicYearId;
 
     @NotNull(message = "Class ID is required")
-    private UUID classId;
+    private Long classId;
 
-    private UUID sectionId;
+    private Long sectionId;
 
     private String rollNo;
 
@@ -25,35 +24,35 @@ public class EnrollStudentRequest {
     private String remarks;
 
     // Getters and Setters
-    public UUID getStudentId() {
+    public Long getStudentId() {
         return studentId;
     }
 
-    public void setStudentId(UUID studentId) {
+    public void setStudentId(Long studentId) {
         this.studentId = studentId;
     }
 
-    public UUID getAcademicYearId() {
+    public Long getAcademicYearId() {
         return academicYearId;
     }
 
-    public void setAcademicYearId(UUID academicYearId) {
+    public void setAcademicYearId(Long academicYearId) {
         this.academicYearId = academicYearId;
     }
 
-    public UUID getClassId() {
+    public Long getClassId() {
         return classId;
     }
 
-    public void setClassId(UUID classId) {
+    public void setClassId(Long classId) {
         this.classId = classId;
     }
 
-    public UUID getSectionId() {
+    public Long getSectionId() {
         return sectionId;
     }
 
-    public void setSectionId(UUID sectionId) {
+    public void setSectionId(Long sectionId) {
         this.sectionId = sectionId;
     }
 

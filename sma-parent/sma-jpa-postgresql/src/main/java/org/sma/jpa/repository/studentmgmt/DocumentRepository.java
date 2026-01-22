@@ -6,17 +6,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface DocumentRepository extends JpaRepository<Document, UUID> {
+public interface DocumentRepository extends JpaRepository<Document, Long> {
 
-    List<Document> findByStudentIdAndIsDeletedFalse(UUID studentId);
+    List<Document> findByStudentIdAndIsDeletedFalse(Long studentId);
 
-    Optional<Document> findByIdAndStudentIdAndIsDeletedFalse(UUID id, UUID studentId);
+    Optional<Document> findByIdAndStudentIdAndIsDeletedFalse(Long id, Long studentId);
 
-    List<Document> findByStudentIdAndDocTypeAndIsDeletedFalse(UUID studentId, String docType);
+    List<Document> findByStudentIdAndDocTypeAndIsDeletedFalse(Long studentId, String docType);
 
-    long countByStudentIdAndIsDeletedFalse(UUID studentId);
+    long countByStudentIdAndIsDeletedFalse(Long studentId);
 }
 
