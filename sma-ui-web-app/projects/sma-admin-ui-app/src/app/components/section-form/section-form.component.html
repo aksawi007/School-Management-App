@@ -1,0 +1,75 @@
+<div class="section-form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ isEditMode ? 'Edit Section' : 'Add New Section' }}</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="sectionForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Academic Year</mat-label>
+            <mat-select [(ngModel)]="selectedAcademicYearId" [ngModelOptions]="{standalone: true}" (selectionChange)="onAcademicYearChange()">
+              <mat-option *ngFor="let year of academicYears" [value]="year.yearId">
+                {{ year.yearName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Class</mat-label>
+            <mat-select formControlName="classId" [disabled]="!selectedAcademicYearId">
+              <mat-option *ngFor="let class of classes" [value]="class.id">
+                {{ class.className }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="sectionForm.get('classId')?.hasError('required')">Class is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Section Code</mat-label>
+            <input matInput formControlName="sectionCode" placeholder="e.g., A, B, C">
+            <mat-error *ngIf="sectionForm.get('sectionCode')?.hasError('required')">Section code is required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Section Name</mat-label>
+            <input matInput formControlName="sectionName" placeholder="e.g., Section A">
+            <mat-error *ngIf="sectionForm.get('sectionName')?.hasError('required')">Section name is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Capacity</mat-label>
+            <input matInput type="number" formControlName="capacity" placeholder="e.g., 40">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Room Number</mat-label>
+            <input matInput formControlName="roomNumber" placeholder="e.g., Room 101">
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="3" placeholder="Optional description"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-raised-button type="button" (click)="cancel()">Cancel</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+            <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }}</span>
+            <span *ngIf="loading">Processing...</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,30 @@
+.staff-list-container {
+  padding: 20px;
+  
+  mat-card {
+    margin-bottom: 20px;
+  }
+
+  .actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+
+  .loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+  }
+}

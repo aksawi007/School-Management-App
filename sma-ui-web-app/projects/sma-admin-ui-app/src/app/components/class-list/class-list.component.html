@@ -1,0 +1,84 @@
+<div class="class-list-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Class/Grade Management</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="filter-bar">
+        <mat-form-field appearance="outline">
+          <mat-label>Select Academic Year</mat-label>
+          <mat-select [(ngModel)]="selectedAcademicYearId" (selectionChange)="onAcademicYearChange()">
+            <mat-option *ngFor="let year of academicYears" [value]="year.yearId">
+              {{ year.yearName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="actions-bar">
+        <button mat-raised-button color="primary" (click)="addClass()" [disabled]="!selectedAcademicYearId">
+          <mat-icon>add</mat-icon>
+          Add Class
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="loading-spinner">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <table mat-table [dataSource]="classes" *ngIf="!loading && classes.length > 0" class="mat-elevation-z2">
+        <ng-container matColumnDef="classCode">
+          <th mat-header-cell *matHeaderCellDef>Code</th>
+          <td mat-cell *matCellDef="let class">{{ class.classCode }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="className">
+          <th mat-header-cell *matHeaderCellDef>Class Name</th>
+          <td mat-cell *matCellDef="let class">{{ class.className }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="academicYearName">
+          <th mat-header-cell *matHeaderCellDef>Academic Year</th>
+          <td mat-cell *matCellDef="let class">{{ class.academicYearName || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="displayOrder">
+          <th mat-header-cell *matHeaderCellDef>Order</th>
+          <td mat-cell *matCellDef="let class">{{ class.displayOrder || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let class">{{ class.description || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let class">
+            <button mat-icon-button color="primary" (click)="manageSections(class.id)" matTooltip="Manage Sections">
+              <mat-icon>list</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" (click)="editClass(class.id)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteClass(class.id, class.className)" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="!loading && !selectedAcademicYearId" class="no-data">
+        <p>Please select an academic year to view classes.</p>
+      </div>
+
+      <div *ngIf="!loading && selectedAcademicYearId && classes.length === 0" class="no-data">
+        <p>No classes found for this academic year. Click "Add Class" to create one.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

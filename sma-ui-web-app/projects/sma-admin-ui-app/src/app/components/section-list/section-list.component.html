@@ -1,0 +1,97 @@
+<div class="section-list-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Section Management</mat-card-title>
+      <div class="header-actions">
+        <button mat-icon-button (click)="goBack()" matTooltip="Back to Classes">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="filter-bar">
+        <mat-form-field appearance="outline">
+          <mat-label>Select Academic Year</mat-label>
+          <mat-select [(ngModel)]="selectedAcademicYearId" (selectionChange)="onAcademicYearChange()">
+            <mat-option *ngFor="let year of academicYears" [value]="year.yearId">
+              {{ year.yearName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Select Class</mat-label>
+          <mat-select [(ngModel)]="selectedClassId" (selectionChange)="onClassChange()" [disabled]="!selectedAcademicYearId">
+            <mat-option *ngFor="let class of classes" [value]="class.id">
+              {{ class.className }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="addSection()" [disabled]="!selectedClassId">
+          <mat-icon>add</mat-icon>
+          Add Section
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="loading-spinner">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <table mat-table [dataSource]="sections" *ngIf="!loading && sections.length > 0" class="mat-elevation-z2">
+        <ng-container matColumnDef="className">
+          <th mat-header-cell *matHeaderCellDef>Class</th>
+          <td mat-cell *matCellDef="let section">{{ section.className }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="sectionCode">
+          <th mat-header-cell *matHeaderCellDef>Code</th>
+          <td mat-cell *matCellDef="let section">{{ section.sectionCode }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="sectionName">
+          <th mat-header-cell *matHeaderCellDef>Section Name</th>
+          <td mat-cell *matCellDef="let section">{{ section.sectionName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="capacity">
+          <th mat-header-cell *matHeaderCellDef>Capacity</th>
+          <td mat-cell *matCellDef="let section">{{ section.capacity || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="roomNumber">
+          <th mat-header-cell *matHeaderCellDef>Room</th>
+          <td mat-cell *matCellDef="let section">{{ section.roomNumber || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let section">
+            <button mat-icon-button color="accent" (click)="editSection(section.id)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteSection(section.id, section.sectionName)" matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="!loading && !selectedAcademicYearId" class="no-data">
+        <p>Please select an academic year to view classes.</p>
+      </div>
+
+      <div *ngIf="!loading && selectedAcademicYearId && !selectedClassId" class="no-data">
+        <p>Please select a class to view sections.</p>
+      </div>
+
+      <div *ngIf="!loading && selectedClassId && sections.length === 0" class="no-data">
+        <p>No sections found for this class. Click "Add Section" to create one.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

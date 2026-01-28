@@ -6,3 +6,6 @@ export * from './student';
 
 // Staff Management Models
 export * from './staff';
+
+// Master Data Models
+export * from './master';

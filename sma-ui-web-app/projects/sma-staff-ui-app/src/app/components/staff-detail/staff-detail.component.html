@@ -1,0 +1,116 @@
+<div class="staff-detail-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Staff Details</mat-card-title>
+      <mat-card-subtitle *ngIf="selectedSchool">{{ selectedSchool.schoolName }}</mat-card-subtitle>
+      <div class="header-actions">
+        <button mat-icon-button (click)="goBack()" matTooltip="Back to list">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" (click)="editStaff()" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="loading" class="loading-spinner">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <div *ngIf="!loading && staff" class="staff-details">
+        <!-- Basic Information -->
+        <mat-tab-group>
+          <mat-tab label="Basic Information">
+            <div style="padding: 20px;">
+              <table class="detail-table">
+                <tr>
+                  <th>Employee Code:</th>
+                  <td>{{ staff.employeeCode || '-' }}</td>
+                  <th>Staff Type:</th>
+                  <td>{{ staff.staffType }}</td>
+                </tr>
+                <tr>
+                  <th>First Name:</th>
+                  <td>{{ staff.firstName }}</td>
+                  <th>Last Name:</th>
+                  <td>{{ staff.lastName }}</td>
+                </tr>
+                <tr>
+                  <th>Date of Birth:</th>
+                  <td>{{ staff.dateOfBirth ? (staff.dateOfBirth | date) : '-' }}</td>
+                  <th>Gender:</th>
+                  <td>{{ staff.gender || '-' }}</td>
+                </tr>
+                <tr>
+                  <th>Email:</th>
+                  <td>{{ staff.email }}</td>
+                  <th>Phone Number:</th>
+                  <td>{{ staff.phoneNumber }}</td>
+                </tr>
+                <tr>
+                  <th>Status:</th>
+                  <td>{{ staff.status || '-' }}</td>
+                  <th></th>
+                  <td></td>
+                </tr>
+              </table>
+            </div>
+          </mat-tab>
+
+          <!-- Contact Information -->
+          <mat-tab label="Contact & Address">
+            <div style="padding: 20px;">
+              <table class="detail-table">
+                <tr>
+                  <th>Address:</th>
+                  <td colspan="3">{{ staff.address || '-' }}</td>
+                </tr>
+                <tr>
+                  <th>City:</th>
+                  <td>{{ staff.city || '-' }}</td>
+                  <th>State:</th>
+                  <td>{{ staff.state || '-' }}</td>
+                </tr>
+                <tr>
+                  <th>Country:</th>
+                  <td>{{ staff.country || '-' }}</td>
+                  <th>Postal Code:</th>
+                  <td>{{ staff.postalCode || '-' }}</td>
+                </tr>
+              </table>
+            </div>
+          </mat-tab>
+
+          <!-- Professional Information -->
+          <mat-tab label="Professional Details">
+            <div style="padding: 20px;">
+              <table class="detail-table">
+                <tr>
+                  <th>Designation:</th>
+                  <td>{{ staff.designation || '-' }}</td>
+                  <th>Department ID:</th>
+                  <td>{{ staff.departmentId || '-' }}</td>
+                </tr>
+                <tr>
+                  <th>Qualifications:</th>
+                  <td colspan="3">{{ staff.qualifications || '-' }}</td>
+                </tr>
+                <tr>
+                  <th>Joining Date:</th>
+                  <td>{{ staff.joiningDate ? (staff.joiningDate | date) : '-' }}</td>
+                  <th>Salary:</th>
+                  <td>{{ staff.salary ? ('₹' + staff.salary) : '-' }}</td>
+                </tr>
+              </table>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+
+      <div *ngIf="!loading && !staff" class="no-data">
+        <p>Staff member not found.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

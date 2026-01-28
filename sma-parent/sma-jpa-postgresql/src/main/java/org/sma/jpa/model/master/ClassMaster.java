@@ -1,6 +1,7 @@
 package org.sma.jpa.model.master;
 
 import org.sma.jpa.model.BaseEntity;
+import org.sma.jpa.model.school.AcademicYear;
 import org.sma.jpa.model.school.SchoolProfile;
 
 import javax.persistence.*;
@@ -10,12 +11,16 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "class_master", schema = "sma_admin",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"school_id", "class_code"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"school_id", "academic_year_id", "class_code"}))
 public class ClassMaster extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id", nullable = false)
     private SchoolProfile school;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "academic_year_id", nullable = false)
+    private AcademicYear academicYear;
 
     @Column(name = "class_code", nullable = false, length = 20)
     private String classCode; // e.g., "1", "2", "10", "11", "12"
@@ -36,6 +41,14 @@ public class ClassMaster extends BaseEntity {
 
     public void setSchool(SchoolProfile school) {
         this.school = school;
+    }
+
+    public AcademicYear getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(AcademicYear academicYear) {
+        this.academicYear = academicYear;
     }
 
     public String getClassCode() {
