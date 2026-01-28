@@ -5,6 +5,7 @@ package org.sma.admin.core.app.model.request;
  */
 public class AcademicYearRequest {
 
+    private Long schoolId;
     private String yearName; // e.g., "2024-2025"
     private String startDate; // yyyy-MM-dd
     private String endDate; // yyyy-MM-dd
@@ -16,6 +17,14 @@ public class AcademicYearRequest {
     }
 
     // Getters & Setters
+    public Long getSchoolId() {
+        return schoolId;
+    }
+
+    public void setSchoolId(Long schoolId) {
+        this.schoolId = schoolId;
+    }
+
     public String getYearName() {
         return yearName;
     }

@@ -1,8 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StudentService, Student, StudentRequest, GENDER, STUDENT_STATUS } from 'sma-shared-lib';
+import { StudentService, Student, StudentRequest, GENDER, STUDENT_STATUS, BLOOD_GROUPS } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
+
+interface SchoolContext {
+  schoolId: number;
+  schoolName: string;
+  schoolCode: string;
+}
 
 @Component({
   selector: 'app-student-form',
@@ -13,10 +19,12 @@ export class StudentFormComponent implements OnInit {
   studentForm: FormGroup;
   isEditMode = false;
   studentId?: string;
-  schoolId = ''; // TODO: Get from auth service or config
+  schoolId = '';
+  selectedSchool: SchoolContext | null = null;
   
   genders = Object.values(GENDER);
   statuses = Object.values(STUDENT_STATUS);
+  bloodGroups = BLOOD_GROUPS;
 
   constructor(
     private fb: FormBuilder,
@@ -29,6 +37,30 @@ export class StudentFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Listen for school context from parent window (shell app)
+    window.addEventListener('message', (event) => {
+      // Verify origin for security
+      if (event.origin !== 'http://localhost:4300') {
+        return;
+      }
+      
+      if (event.data && event.data.type === 'SCHOOL_CONTEXT') {
+        console.log('Received school context from parent:', event.data);
+        this.selectedSchool = event.data.school;
+        
+        if (this.selectedSchool) {
+          this.schoolId = this.selectedSchool.schoolId.toString();
+        }
+      }
+    });
+    
+    console.log('Student form component initialized, requesting school context...');
+    
+    // Request context from parent after Angular is ready
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'REQUEST_CONTEXT' }, 'http://localhost:4300');
+    }
+
     this.studentId = this.route.snapshot.paramMap.get('id') || undefined;
     this.isEditMode = !!this.studentId && this.route.snapshot.url[this.route.snapshot.url.length - 1].path === 'edit';
 
@@ -75,7 +107,12 @@ export class StudentFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.studentForm.invalid || !this.schoolId) {
+    if (!this.schoolId) {
+      this.snackBar.open('School ID is missing. Please select a school first.', 'Close', { duration: 3000 });
+      return;
+    }
+    
+    if (this.studentForm.invalid) {
       this.snackBar.open('Please fill all required fields', 'Close', { duration: 3000 });
       return;
     }

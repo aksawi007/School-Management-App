@@ -3,7 +3,9 @@ package org.sma.admin.core.app.service;
 import org.sma.admin.core.app.model.request.AcademicYearRequest;
 import org.sma.admin.core.app.model.response.AcademicYearResponse;
 import org.sma.jpa.model.school.AcademicYear;
+import org.sma.jpa.model.school.SchoolProfile;
 import org.sma.jpa.repository.school.AcademicYearRepository;
+import org.sma.jpa.repository.school.SchoolProfileRepository;
 import org.sma.platform.core.exception.SmaException;
 import org.sma.platform.core.service.ServiceRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class AcademicYearBusinessService {
     @Autowired
     private AcademicYearRepository academicYearRepository;
 
+    @Autowired
+    private SchoolProfileRepository schoolProfileRepository;
+
     /**
      * Create new academic year
      * 
@@ -38,6 +43,9 @@ public class AcademicYearBusinessService {
     public AcademicYearResponse createAcademicYear(ServiceRequestContext context, 
                                                    AcademicYearRequest request) throws SmaException {
         // Validate required fields
+        if (request.getSchoolId() == null) {
+            throw new SmaException("School ID is mandatory");
+        }
         if (request.getYearName() == null || request.getYearName().isEmpty()) {
             throw new SmaException("Academic year name is mandatory");
         }
@@ -47,6 +55,10 @@ public class AcademicYearBusinessService {
         if (request.getEndDate() == null || request.getEndDate().isEmpty()) {
             throw new SmaException("End date is mandatory");
         }
+
+        // Fetch school
+        SchoolProfile school = schoolProfileRepository.findById(request.getSchoolId())
+                .orElseThrow(() -> new SmaException("School not found with ID: " + request.getSchoolId()));
 
         // Check if year name already exists
         Optional<AcademicYear> existingYear = academicYearRepository.findByYearName(request.getYearName());
@@ -61,6 +73,7 @@ public class AcademicYearBusinessService {
 
         // Create academic year entity
         AcademicYear academicYear = new AcademicYear();
+        academicYear.setSchool(school);
         academicYear.setYearName(request.getYearName());
         academicYear.setYearCode(request.getYearName()); // Use yearName as yearCode for now
         academicYear.setStartDate(LocalDate.parse(request.getStartDate()));

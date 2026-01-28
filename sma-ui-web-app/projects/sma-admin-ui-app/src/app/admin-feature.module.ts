@@ -23,6 +23,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AdminRootComponent } from './admin-root.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
@@ -66,6 +67,7 @@ import { SmaSharedModule } from 'sma-shared-lib';
     MatGridListModule,
     MatMenuModule,
     MatChipsModule,
+    MatCheckboxModule,
     SmaSharedModule
   ],
   exports: [AdminRootComponent]

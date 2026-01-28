@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { AppContextService } from '../../services/app-context.service';
 
 @Component({
   selector: 'app-admin-wrapper',
   template: `
     <div class="iframe-container">
-      <iframe [src]="adminUrl" frameborder="0"></iframe>
+      <iframe #adminIframe [src]="adminUrl" frameborder="0" (load)="onIframeLoad()"></iframe>
     </div>
   `,
   styles: [`
@@ -22,15 +23,53 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
     }
   `]
 })
-export class AdminWrapperComponent implements OnInit {
+export class AdminWrapperComponent implements OnInit, AfterViewInit {
+  @ViewChild('adminIframe', { static: false }) iframe!: ElementRef<HTMLIFrameElement>;
   adminUrl: SafeResourceUrl;
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private appContext: AppContextService
+  ) {
     this.adminUrl = this.sanitizer.bypassSecurityTrustResourceUrl('http://localhost:4202');
   }
 
   ngOnInit(): void {
-    // Store school context in sessionStorage so admin app can access it
-    console.log('Admin wrapper loaded, school context available in sessionStorage');
+    // Listen for context requests from child iframe
+    window.addEventListener('message', (event) => {
+      if (event.origin !== 'http://localhost:4202') {
+        return;
+      }
+      
+      if (event.data && event.data.type === 'REQUEST_CONTEXT') {
+        console.log('Child app requesting context, sending now...');
+        this.sendContextToIframe();
+      }
+    });
+  }
+
+  ngAfterViewInit(): void {
+  }
+
+  onIframeLoad(): void {
+    // Send initial context when iframe loads (may be too early)
+    // Child will request again if it misses this
+    this.sendContextToIframe();
+  }
+  
+  private sendContextToIframe(): void {
+    const school = this.appContext.getSchool();
+    const user = this.appContext.getUser();
+    
+    if (this.iframe?.nativeElement?.contentWindow) {
+      const message = {
+        type: 'SCHOOL_CONTEXT',
+        school: school,
+        user: user
+      };
+      
+      console.log('Sending context to admin iframe:', message);
+      this.iframe.nativeElement.contentWindow.postMessage(message, 'http://localhost:4202');
+    }
   }
 }

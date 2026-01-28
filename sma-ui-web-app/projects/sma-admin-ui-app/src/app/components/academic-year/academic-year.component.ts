@@ -3,6 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+interface SchoolContext {
+  schoolId: number;
+  schoolName: string;
+  schoolCode: string;
+}
+
 interface AcademicYear {
   id: number;
   yearName: string;
@@ -24,6 +30,7 @@ export class AcademicYearComponent implements OnInit {
   isEditMode = false;
   selectedYear: AcademicYear | null = null;
   yearForm: FormGroup;
+  selectedSchool: SchoolContext | null = null;
 
   constructor(
     private http: HttpClient,
@@ -40,7 +47,29 @@ export class AcademicYearComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadAcademicYears();
+    // Listen for school context from parent window (shell app)
+    window.addEventListener('message', (event) => {
+      // Verify origin for security
+      if (event.origin !== 'http://localhost:4300') {
+        return;
+      }
+      
+      if (event.data && event.data.type === 'SCHOOL_CONTEXT') {
+        console.log('Received school context from parent:', event.data);
+        this.selectedSchool = event.data.school;
+        
+        if (this.selectedSchool) {
+          this.loadAcademicYears();
+        }
+      }
+    });
+    
+    console.log('Academic year component initialized, requesting school context...');
+    
+    // Request context from parent after Angular is ready
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'REQUEST_CONTEXT' }, 'http://localhost:4300');
+    }
   }
 
   loadAcademicYears(): void {
@@ -74,8 +103,14 @@ export class AcademicYearComponent implements OnInit {
 
   saveYear(): void {
     if (this.yearForm.valid) {
+      if (!this.selectedSchool) {
+        this.showMessage('No school selected');
+        return;
+      }
+
       const formData = {
         ...this.yearForm.value,
+        schoolId: this.selectedSchool.schoolId,
         startDate: this.formatDate(this.yearForm.value.startDate),
         endDate: this.formatDate(this.yearForm.value.endDate)
       };

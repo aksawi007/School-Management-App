@@ -3,6 +3,12 @@ import { Router } from '@angular/router';
 import { StudentService, Student } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+interface SchoolContext {
+  schoolId: number;
+  schoolName: string;
+  schoolCode: string;
+}
+
 @Component({
   selector: 'app-student-list',
   templateUrl: './student-list.component.html',
@@ -12,7 +18,8 @@ export class StudentListComponent implements OnInit {
   students: Student[] = [];
   displayedColumns: string[] = ['studentId', 'fullName', 'admissionNumber', 'studentStatus', 'actions'];
   loading = false;
-  schoolId = ''; // TODO: Get from auth service or config
+  schoolId = '';
+  selectedSchool: SchoolContext | null = null;
 
   constructor(
     private studentService: StudentService,
@@ -21,7 +28,30 @@ export class StudentListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadStudents();
+    // Listen for school context from parent window (shell app)
+    window.addEventListener('message', (event) => {
+      // Verify origin for security
+      if (event.origin !== 'http://localhost:4300') {
+        return;
+      }
+      
+      if (event.data && event.data.type === 'SCHOOL_CONTEXT') {
+        console.log('Received school context from parent:', event.data);
+        this.selectedSchool = event.data.school;
+        
+        if (this.selectedSchool) {
+          this.schoolId = this.selectedSchool.schoolId.toString();
+          this.loadStudents();
+        }
+      }
+    });
+    
+    console.log('Student list component initialized, requesting school context...');
+    
+    // Request context from parent after Angular is ready
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'REQUEST_CONTEXT' }, 'http://localhost:4300');
+    }
   }
 
   loadStudents(): void {
