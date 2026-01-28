@@ -1,22 +1,29 @@
-<mat-toolbar color="primary" class="header">
+<mat-toolbar *ngIf="showHeader" color="primary" class="header">
   <button mat-icon-button (click)="goHome()">
     <mat-icon>home</mat-icon>
   </button>
   <span class="app-title">School Management System</span>
   <span class="spacer"></span>
+  
+  <div class="user-info" *ngIf="user">
+    <span class="user-name">{{ user.username }}</span>
+    <span class="user-role">{{ user.role }}</span>
+  </div>
+  
   <button mat-icon-button [matMenuTriggerFor]="menu">
     <mat-icon>account_circle</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    <button mat-menu-item>
+    <button mat-menu-item disabled>
       <mat-icon>person</mat-icon>
-      <span>Profile</span>
+      <span>{{ user?.email }}</span>
     </button>
+    <mat-divider></mat-divider>
     <button mat-menu-item>
       <mat-icon>settings</mat-icon>
       <span>Settings</span>
     </button>
-    <button mat-menu-item>
+    <button mat-menu-item (click)="logout()">
       <mat-icon>logout</mat-icon>
       <span>Logout</span>
     </button>
@@ -24,52 +31,5 @@
 </mat-toolbar>
 
 <div class="main-container">
-  <!-- Tiles Section - Shown when no module is selected -->
-  <div *ngIf="!selectedModule" class="tiles-container">
-    <h1 class="welcome-title">Welcome to School Management System</h1>
-    <p class="subtitle">Select a module to get started</p>
-    
-    <div class="tiles-grid">
-      <mat-card *ngFor="let tile of moduleTiles" 
-                class="module-tile" 
-                (click)="selectModule(tile)"
-                [style.border-left]="'4px solid ' + tile.color">
-        <mat-card-header>
-          <div mat-card-avatar [style.background-color]="tile.color">
-            <mat-icon>{{ tile.icon }}</mat-icon>
-          </div>
-          <mat-card-title>{{ tile.title }}</mat-card-title>
-          <mat-card-subtitle>{{ tile.description }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <p class="tile-details">{{ tile.details }}</p>
-        </mat-card-content>
-        <mat-card-actions>
-          <button mat-raised-button [style.background-color]="tile.color" color="primary">
-            Open Module
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
-        </mat-card-actions>
-      </mat-card>
-    </div>
-  </div>
-
-  <!-- Module Loading Section - Shown when a module is selected -->
-  <div *ngIf="selectedModule" class="module-frame-container">
-    <div class="module-header">
-      <h2>{{ selectedModule.title }}</h2>
-      <button mat-raised-button color="accent" (click)="goHome()">
-        <mat-icon>arrow_back</mat-icon>
-        Back to Home
-      </button>
-    </div>
-    
-    <div class="iframe-container">
-      <iframe 
-        [src]="getModuleUrl(selectedModule) | safe" 
-        frameborder="0"
-        class="module-iframe">
-      </iframe>
-    </div>
-  </div>
+  <router-outlet></router-outlet>
 </div>

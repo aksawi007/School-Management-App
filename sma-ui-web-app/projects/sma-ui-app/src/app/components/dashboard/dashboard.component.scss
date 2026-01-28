@@ -1,0 +1,168 @@
+.dashboard-container {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.school-info-bar {
+  background: white;
+  padding: 20px 40px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+
+  .school-details {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #667eea;
+    }
+
+    .school-text {
+      h3 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .school-code {
+        font-size: 14px;
+        color: #666;
+      }
+    }
+  }
+
+  button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.dashboard-content {
+  padding: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 48px;
+
+  .welcome-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 12px 0;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    color: #666;
+    margin: 0;
+  }
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 32px;
+}
+
+.module-tile {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: white;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  }
+
+  .module-avatar {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+
+    mat-icon {
+      color: white;
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  mat-card-header {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eee;
+  }
+
+  mat-card-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  mat-card-subtitle {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  mat-card-content {
+    padding: 16px;
+
+    .tile-details {
+      color: #555;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  mat-card-actions {
+    padding: 16px;
+    display: flex;
+    justify-content: flex-end;
+
+    .open-button {
+      color: white;
+      font-weight: 500;
+
+      mat-icon {
+        margin-left: 8px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .school-info-bar {
+    padding: 16px 20px;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .dashboard-content {
+    padding: 20px;
+  }
+
+  .welcome-section .welcome-title {
+    font-size: 28px;
+  }
+
+  .modules-grid {
+    grid-template-columns: 1fr;
+  }
+}

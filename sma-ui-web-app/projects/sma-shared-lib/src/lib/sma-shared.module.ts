@@ -7,6 +7,7 @@ import { SchoolProfileService, AcademicYearService } from './services/school';
 import { StaffService } from './services/staff';
 import { StudentService, EnrollmentService, GuardianService } from './services/student';
 import { SchoolContextService } from './services/school-context.service';
+import { AppContextService } from './services/app-context.service';
 
 @NgModule({
   declarations: [],
@@ -29,7 +30,8 @@ import { SchoolContextService } from './services/school-context.service';
     GuardianService,
     
     // Common Services
-    SchoolContextService
+    SchoolContextService,
+    AppContextService
   ]
 })
 export class SmaSharedModule { }

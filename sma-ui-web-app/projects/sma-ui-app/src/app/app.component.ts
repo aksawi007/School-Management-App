@@ -1,58 +1,60 @@
-import { Component } from '@angular/core';
-
-interface ModuleTile {
-  title: string;
-  description: string;
-  details: string;
-  icon: string;
-  port: number;
-  color: string;
-}
+import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { AppContextService, SchoolContext, UserContext } from './services/app-context.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  selectedModule: ModuleTile | null = null;
+export class AppComponent implements OnInit {
+  showHeader = false;
+  selectedSchool: SchoolContext | null = null;
+  user: UserContext | null = null;
 
-  moduleTiles: ModuleTile[] = [
-    {
-      title: 'Student Management',
-      description: 'Manage student enrollments, profiles, and academics',
-      details: 'Handle student admissions, track attendance, manage grades, and maintain comprehensive student records.',
-      icon: 'school',
-      port: 4200,
-      color: '#3f51b5'
-    },
-    {
-      title: 'Staff Management',
-      description: 'Manage staff members, roles, and assignments',
-      details: 'Maintain staff profiles, manage assignments, track attendance, and handle payroll information.',
-      icon: 'people',
-      port: 4201,
-      color: '#4caf50'
-    },
-    {
-      title: 'Admin Portal',
-      description: 'Administrative setup and system configuration',
-      details: 'Configure school profile, academic years, system settings, and access administrative tools.',
-      icon: 'admin_panel_settings',
-      port: 4202,
-      color: '#ff9800'
-    }
-  ];
+  constructor(
+    private router: Router,
+    private appContext: AppContextService
+  ) {}
 
-  selectModule(module: ModuleTile): void {
-    this.selectedModule = module;
+  ngOnInit(): void {
+    // Subscribe to route changes to show/hide header
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.showHeader = event.url !== '/';
+    });
+
+    // Subscribe to context changes
+    this.appContext.selectedSchool$.subscribe(school => {
+      this.selectedSchool = school;
+    });
+
+    this.appContext.userContext$.subscribe(user => {
+      this.user = user;
+    });
+
+    // TODO: Load user context from authentication service
+    // For now, set a mock user
+    this.appContext.setUser({
+      userId: 1,
+      username: 'admin',
+      role: 'ADMIN',
+      email: 'admin@school.com'
+    });
   }
 
   goHome(): void {
-    this.selectedModule = null;
+    if (this.selectedSchool) {
+      this.router.navigate(['/dashboard']);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
-  getModuleUrl(module: ModuleTile): string {
-    return `http://localhost:${module.port}`;
+  logout(): void {
+    this.appContext.clearAll();
+    this.router.navigate(['/']);
   }
 }

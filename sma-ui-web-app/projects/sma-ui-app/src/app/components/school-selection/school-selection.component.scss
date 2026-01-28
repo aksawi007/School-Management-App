@@ -1,0 +1,142 @@
+.school-selection-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.selection-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 1200px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+
+  .school-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #667eea;
+  }
+
+  h1 {
+    margin: 20px 0 10px 0;
+    font-size: 32px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .subtitle {
+    color: #666;
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+
+  p {
+    margin-top: 20px;
+    color: #666;
+  }
+}
+
+.error-message {
+  text-align: center;
+  padding: 40px;
+  color: #d32f2f;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+
+  button {
+    margin-top: 16px;
+  }
+}
+
+.schools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.school-card {
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .school-avatar {
+    background-color: #667eea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      color: white;
+    }
+  }
+
+  mat-card-header {
+    margin-bottom: 16px;
+  }
+
+  mat-card-title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  mat-card-subtitle {
+    font-size: 14px;
+    color: #666;
+  }
+
+  mat-card-actions {
+    padding: 16px;
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      mat-icon {
+        margin-left: 8px;
+      }
+    }
+  }
+}
+
+.no-schools {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 20px;
+    color: #999;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
+}

@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve sma-ui-app --port 4300 --host 0.0.0.0",
-    "start:main": "ng serve sma-ui-app --port 4300 --host 0.0.0.0",
+    "start": "ng serve sma-ui-app --port 4300 --host 0.0.0.0 --proxy-config projects/sma-ui-app/proxy.conf.json",
+    "start:main": "ng serve sma-ui-app --port 4300 --host 0.0.0.0 --proxy-config projects/sma-ui-app/proxy.conf.json",
     "start:student": "ng serve sma-student-ui-app --port 4200 --host 0.0.0.0",
     "start:staff": "ng serve sma-staff-ui-app --port 4201 --host 0.0.0.0",
     "start:admin": "ng serve sma-admin-ui-app --port 4202 --host 0.0.0.0",

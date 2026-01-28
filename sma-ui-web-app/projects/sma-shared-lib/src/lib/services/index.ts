@@ -9,3 +9,4 @@ export * from './staff';
 
 // Common Services
 export * from './school-context.service';
+export * from './app-context.service';

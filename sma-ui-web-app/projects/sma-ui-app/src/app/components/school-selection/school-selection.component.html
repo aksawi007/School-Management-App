@@ -1,0 +1,48 @@
+<div class="school-selection-container">
+  <div class="selection-card">
+    <div class="header">
+      <mat-icon class="school-icon">school</mat-icon>
+      <h1>School Management System</h1>
+      <p class="subtitle">Select a school to continue</p>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading schools...</p>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <mat-icon>error</mat-icon>
+      <p>{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="loadSchools()">
+        <mat-icon>refresh</mat-icon>
+        Retry
+      </button>
+    </div>
+
+    <div *ngIf="!loading && !error" class="schools-grid">
+      <mat-card *ngFor="let school of schools" 
+                class="school-card" 
+                (click)="selectSchool(school)">
+        <mat-card-header>
+          <div mat-card-avatar class="school-avatar">
+            <mat-icon>account_balance</mat-icon>
+          </div>
+          <mat-card-title>{{ school.schoolName }}</mat-card-title>
+          <mat-card-subtitle>Code: {{ school.schoolCode }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-actions>
+          <button mat-raised-button color="primary">
+            Select School
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <div *ngIf="!loading && !error && schools.length === 0" class="no-schools">
+      <mat-icon>info</mat-icon>
+      <p>No schools found. Please contact your administrator.</p>
+    </div>
+  </div>
+</div>

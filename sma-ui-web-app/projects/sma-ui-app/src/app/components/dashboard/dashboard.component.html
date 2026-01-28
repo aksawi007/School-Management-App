@@ -1,0 +1,48 @@
+<div class="dashboard-container">
+  <!-- Header with School Info -->
+  <div class="school-info-bar" *ngIf="selectedSchool">
+    <div class="school-details">
+      <mat-icon>account_balance</mat-icon>
+      <div class="school-text">
+        <h3>{{ selectedSchool.schoolName }}</h3>
+        <span class="school-code">{{ selectedSchool.schoolCode }}</span>
+      </div>
+    </div>
+    <button mat-stroked-button color="primary" (click)="changeSchool()">
+      <mat-icon>swap_horiz</mat-icon>
+      Change School
+    </button>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div class="dashboard-content">
+    <div class="welcome-section">
+      <h1 class="welcome-title">School Management Dashboard</h1>
+      <p class="subtitle">Select a module to continue</p>
+    </div>
+    
+    <div class="modules-grid">
+      <mat-card *ngFor="let tile of moduleTiles" 
+                class="module-tile" 
+                (click)="selectModule(tile)"
+                [style.border-left]="'6px solid ' + tile.color">
+        <mat-card-header>
+          <div mat-card-avatar class="module-avatar" [style.background-color]="tile.color">
+            <mat-icon>{{ tile.icon }}</mat-icon>
+          </div>
+          <mat-card-title>{{ tile.title }}</mat-card-title>
+          <mat-card-subtitle>{{ tile.description }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="tile-details">{{ tile.details }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button [style.background-color]="tile.color" class="open-button">
+            Open Module
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

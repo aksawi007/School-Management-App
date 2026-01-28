@@ -4,6 +4,10 @@ module.exports = withModuleFederationPlugin({
 
   name: 'sma-admin-ui-app',
 
+  exposes: {
+    './Module': './projects/sma-admin-ui-app/src/app/app.module.ts',
+  },
+
   remotes: {
     "smaStudentUiApp": "http://localhost:4200/remoteEntry.js",
     "smaStaffUiApp": "http://localhost:4201/remoteEntry.js",
