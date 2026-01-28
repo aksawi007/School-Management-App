@@ -16,9 +16,9 @@ interface SchoolContext {
 })
 export class StudentListComponent implements OnInit {
   students: Student[] = [];
-  displayedColumns: string[] = ['studentId', 'fullName', 'admissionNumber', 'studentStatus', 'actions'];
+  displayedColumns: string[] = ['admissionNo', 'fullName', 'gender', 'phone', 'actions'];
   loading = false;
-  schoolId = '';
+  schoolId = 0;
   selectedSchool: SchoolContext | null = null;
 
   constructor(
@@ -40,7 +40,7 @@ export class StudentListComponent implements OnInit {
         this.selectedSchool = event.data.school;
         
         if (this.selectedSchool) {
-          this.schoolId = this.selectedSchool.schoolId.toString();
+          this.schoolId = this.selectedSchool.schoolId;
           this.loadStudents();
         }
       }

@@ -1,11 +1,56 @@
+.form-container {
+  margin: 20px;
+  max-width: 1200px;
+}
+
 .form-row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 16px;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+
+.full-width {
+  width: 100%;
 }
 
 h3 {
   margin-top: 20px;
   margin-bottom: 10px;
   color: #3f51b5;
+}
+
+mat-expansion-panel {
+  margin-bottom: 16px;
+}
+
+.guardian-section, .address-section {
+  margin-bottom: 16px;
+  
+  mat-card {
+    position: relative;
+    
+    mat-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+      }
+    }
+  }
+}
+
+.action-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  
+  button {
+    min-width: 120px;
+  }
 }

@@ -2,6 +2,38 @@
   padding: 20px;
 }
 
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    width: 20%;
+    color: #424242;
+  }
+  
+  td {
+    color: #616161;
+  }
+  
+  tr:hover {
+    background-color: #fafafa;
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 20px;
+}
+
 .guardian-card, .enrollment-card {
   margin: 10px 0;
   padding: 15px;

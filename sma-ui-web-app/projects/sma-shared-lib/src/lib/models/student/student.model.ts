@@ -1,7 +1,10 @@
+import { GuardianRequest } from './guardian.model';
+import { AddressRequest } from './address.model';
+
 export interface Student {
-  id?: string;
-  schoolId: string;
-  studentId: string;
+  id?: number;
+  schoolId: number;
+  admissionNo: string;
   firstName: string;
   middleName?: string;
   lastName: string;
@@ -10,39 +13,43 @@ export interface Student {
   gender: string;
   bloodGroup?: string;
   email?: string;
-  phoneNumber?: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  state: string;
-  postalCode: string;
+  phone?: string;
+  religion?: string;
+  caste?: string;
+  nationality?: string;
+  motherTongue?: string;
+  aadharNo?: string;
   admissionDate: string;
-  admissionNumber: string;
-  studentStatus: string;
   photoUrl?: string;
-  aadharNumber?: string;
+  remarks?: string;
+  medicalConditions?: string;
+  allergies?: string;
+  status?: string;
   isActive?: boolean;
 }
 
 export interface StudentRequest {
-  schoolId: string;
-  studentId: string;
+  schoolId: number;
+  admissionNo?: string; // Auto-generated if not provided
   firstName: string;
   middleName?: string;
   lastName: string;
   dateOfBirth: string;
   gender: string;
-  bloodGroup?: string;
+  phone?: string;
   email?: string;
-  phoneNumber?: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  state: string;
-  postalCode: string;
+  bloodGroup?: string;
+  religion?: string;
+  caste?: string;
+  nationality?: string;
+  motherTongue?: string;
+  aadharNo?: string;
   admissionDate: string;
-  admissionNumber: string;
-  studentStatus: string;
   photoUrl?: string;
-  aadharNumber?: string;
+  remarks?: string;
+  medicalConditions?: string;
+  allergies?: string;
+  guardians?: GuardianRequest[];
+  addresses?: AddressRequest[];
 }
+

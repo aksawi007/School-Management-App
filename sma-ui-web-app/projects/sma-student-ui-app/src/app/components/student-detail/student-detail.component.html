@@ -18,44 +18,182 @@
       <mat-tab-group>
         <mat-tab label="Basic Info">
           <div class="tab-content">
-            <p><strong>Student ID:</strong> {{ student.studentId }}</p>
-            <p><strong>Admission Number:</strong> {{ student.admissionNumber }}</p>
-            <p><strong>Date of Birth:</strong> {{ student.dateOfBirth | date }}</p>
-            <p><strong>Gender:</strong> {{ student.gender }}</p>
-            <p><strong>Blood Group:</strong> {{ student.bloodGroup }}</p>
-            <p><strong>Email:</strong> {{ student.email }}</p>
-            <p><strong>Phone:</strong> {{ student.phoneNumber }}</p>
-            <p><strong>Status:</strong> {{ student.studentStatus }}</p>
-            <p><strong>Address:</strong> {{ student.addressLine1 }}, {{ student.city }}, {{ student.state }} - {{ student.postalCode }}</p>
+            <table class="detail-table">
+              <tr>
+                <th>Admission Number</th>
+                <td>{{ student.admissionNo }}</td>
+                <th>Date of Birth</th>
+                <td>{{ student.dateOfBirth | date }}</td>
+              </tr>
+              <tr>
+                <th>Gender</th>
+                <td>{{ student.gender }}</td>
+                <th>Blood Group</th>
+                <td>{{ student.bloodGroup }}</td>
+              </tr>
+              <tr>
+                <th>Phone</th>
+                <td>{{ student.phone }}</td>
+                <th>Email</th>
+                <td>{{ student.email }}</td>
+              </tr>
+              <tr>
+                <th>Religion</th>
+                <td>{{ student.religion }}</td>
+                <th>Caste</th>
+                <td>{{ student.caste }}</td>
+              </tr>
+              <tr>
+                <th>Nationality</th>
+                <td>{{ student.nationality }}</td>
+                <th>Mother Tongue</th>
+                <td>{{ student.motherTongue }}</td>
+              </tr>
+              <tr>
+                <th>Aadhar Number</th>
+                <td>{{ student.aadharNo }}</td>
+                <th>Status</th>
+                <td>{{ student.status }}</td>
+              </tr>
+              <tr *ngIf="student.medicalConditions">
+                <th>Medical Conditions</th>
+                <td colspan="3">{{ student.medicalConditions }}</td>
+              </tr>
+              <tr *ngIf="student.allergies">
+                <th>Allergies</th>
+                <td colspan="3">{{ student.allergies }}</td>
+              </tr>
+              <tr *ngIf="student.remarks">
+                <th>Remarks</th>
+                <td colspan="3">{{ student.remarks }}</td>
+              </tr>
+            </table>
           </div>
         </mat-tab>
 
         <mat-tab label="Guardians">
           <div class="tab-content">
-            <h3>Guardians</h3>
-            <mat-card *ngFor="let guardian of guardians" class="guardian-card">
-              <p><strong>{{ guardian.guardianType }}:</strong> {{ guardian.fullName || (guardian.firstName + ' ' + guardian.lastName) }}</p>
-              <p><strong>Relationship:</strong> {{ guardian.relationship }}</p>
-              <p><strong>Phone:</strong> {{ guardian.phoneNumber }}</p>
-              <p><strong>Email:</strong> {{ guardian.email }}</p>
-              <p><strong>Primary Contact:</strong> {{ guardian.isPrimaryContact ? 'Yes' : 'No' }}</p>
-            </mat-card>
-            <p *ngIf="guardians.length === 0">No guardians added yet.</p>
+            <table mat-table [dataSource]="guardians" class="full-width" *ngIf="guardians.length > 0">
+              <ng-container matColumnDef="relation">
+                <th mat-header-cell *matHeaderCellDef>Relation</th>
+                <td mat-cell *matCellDef="let guardian">{{ guardian.relation }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let guardian">{{ guardian.name }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="phone">
+                <th mat-header-cell *matHeaderCellDef>Phone</th>
+                <td mat-cell *matCellDef="let guardian">{{ guardian.phone }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef>Email</th>
+                <td mat-cell *matCellDef="let guardian">{{ guardian.email }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="occupation">
+                <th mat-header-cell *matHeaderCellDef>Occupation</th>
+                <td mat-cell *matCellDef="let guardian">{{ guardian.occupation }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="isPrimary">
+                <th mat-header-cell *matHeaderCellDef>Primary Contact</th>
+                <td mat-cell *matCellDef="let guardian">{{ guardian.isPrimary ? 'Yes' : 'No' }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="['relation', 'name', 'phone', 'email', 'occupation', 'isPrimary']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['relation', 'name', 'phone', 'email', 'occupation', 'isPrimary'];"></tr>
+            </table>
+            <p *ngIf="guardians.length === 0" style="margin: 20px;">No guardians added yet.</p>
           </div>
         </mat-tab>
 
         <mat-tab label="Enrollments">
           <div class="tab-content">
-            <h3>Enrollment History</h3>
-            <mat-card *ngFor="let enrollment of enrollments" class="enrollment-card">
-              <p><strong>Class:</strong> {{ enrollment.className }}</p>
-              <p><strong>Section:</strong> {{ enrollment.sectionName }}</p>
-              <p><strong>Academic Year:</strong> {{ enrollment.academicYear }}</p>
-              <p><strong>Roll Number:</strong> {{ enrollment.rollNumber }}</p>
-              <p><strong>Status:</strong> {{ enrollment.enrollmentStatus }}</p>
-              <p><strong>Enrollment Date:</strong> {{ enrollment.enrollmentDate | date }}</p>
-            </mat-card>
-            <p *ngIf="enrollments.length === 0">No enrollments found.</p>
+            <table mat-table [dataSource]="enrollments" class="full-width" *ngIf="enrollments.length > 0">
+              <ng-container matColumnDef="academicYear">
+                <th mat-header-cell *matHeaderCellDef>Academic Year</th>
+                <td mat-cell *matCellDef="let enrollment">{{ enrollment.academicYear }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="className">
+                <th mat-header-cell *matHeaderCellDef>Class</th>
+                <td mat-cell *matCellDef="let enrollment">{{ enrollment.className }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="sectionName">
+                <th mat-header-cell *matHeaderCellDef>Section</th>
+                <td mat-cell *matCellDef="let enrollment">{{ enrollment.sectionName }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="rollNumber">
+                <th mat-header-cell *matHeaderCellDef>Roll Number</th>
+                <td mat-cell *matCellDef="let enrollment">{{ enrollment.rollNumber }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="enrollmentStatus">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let enrollment">{{ enrollment.enrollmentStatus }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="enrollmentDate">
+                <th mat-header-cell *matHeaderCellDef>Enrollment Date</th>
+                <td mat-cell *matCellDef="let enrollment">{{ enrollment.enrollmentDate | date }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="['academicYear', 'className', 'sectionName', 'rollNumber', 'enrollmentStatus', 'enrollmentDate']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['academicYear', 'className', 'sectionName', 'rollNumber', 'enrollmentStatus', 'enrollmentDate'];"></tr>
+            </table>
+            <p *ngIf="enrollments.length === 0" style="margin: 20px;">No enrollments found.</p>
+          </div>
+        </mat-tab>
+
+        <!-- Addresses Tab -->
+        <mat-tab label="Addresses">
+          <div style="padding: 20px;">
+            <table mat-table [dataSource]="addresses" *ngIf="addresses.length > 0" class="mat-elevation-z2" style="width: 100%;">
+              <ng-container matColumnDef="addressType">
+                <th mat-header-cell *matHeaderCellDef>Type</th>
+                <td mat-cell *matCellDef="let address">{{ address.addressType }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="line1">
+                <th mat-header-cell *matHeaderCellDef>Address Line 1</th>
+                <td mat-cell *matCellDef="let address">{{ address.line1 }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="line2">
+                <th mat-header-cell *matHeaderCellDef>Address Line 2</th>
+                <td mat-cell *matCellDef="let address">{{ address.line2 || '-' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="city">
+                <th mat-header-cell *matHeaderCellDef>City</th>
+                <td mat-cell *matCellDef="let address">{{ address.city }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="state">
+                <th mat-header-cell *matHeaderCellDef>State</th>
+                <td mat-cell *matCellDef="let address">{{ address.state }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="pincode">
+                <th mat-header-cell *matHeaderCellDef>Pincode</th>
+                <td mat-cell *matCellDef="let address">{{ address.pincode }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="country">
+                <th mat-header-cell *matHeaderCellDef>Country</th>
+                <td mat-cell *matCellDef="let address">{{ address.country }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="['addressType', 'line1', 'line2', 'city', 'state', 'pincode', 'country']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['addressType', 'line1', 'line2', 'city', 'state', 'pincode', 'country'];"></tr>
+            </table>
+            <p *ngIf="addresses.length === 0" style="margin: 20px;">No addresses found.</p>
           </div>
         </mat-tab>
       </mat-tab-group>

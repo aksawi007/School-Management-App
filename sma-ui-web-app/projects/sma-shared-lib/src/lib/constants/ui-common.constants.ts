@@ -21,6 +21,66 @@ export const BLOOD_GROUPS = [
 export type BloodGroup = typeof BLOOD_GROUPS[number];
 
 /**
+ * Religion Options
+ */
+export const RELIGIONS = [
+  'Hindu',
+  'Muslim',
+  'Christian',
+  'Sikh',
+  'Buddhist',
+  'Jain',
+  'Other'
+] as const;
+
+export type Religion = typeof RELIGIONS[number];
+
+/**
+ * Caste Categories
+ */
+export const CASTE_CATEGORIES = [
+  'General',
+  'OBC',
+  'SC',
+  'ST',
+  'Other'
+] as const;
+
+export type CasteCategory = typeof CASTE_CATEGORIES[number];
+
+/**
+ * Guardian Relation Types
+ */
+export const GUARDIAN_RELATIONS = [
+  'FATHER',
+  'MOTHER',
+  'GUARDIAN',
+  'OTHER'
+] as const;
+
+export type GuardianRelation = typeof GUARDIAN_RELATIONS[number];
+
+/**
+ * Address Types
+ */
+export const ADDRESS_TYPES = [
+  'CURRENT',
+  'PERMANENT'
+] as const;
+
+export type AddressType = typeof ADDRESS_TYPES[number];
+
+/**
+ * Nationality Options
+ */
+export const NATIONALITIES = [
+  'Indian',
+  'Other'
+] as const;
+
+export type Nationality = typeof NATIONALITIES[number];
+
+/**
  * Indian States
  * List of Indian states and union territories
  */

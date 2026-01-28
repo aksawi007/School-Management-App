@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StudentService, GuardianService, EnrollmentService, Student, Guardian, Enrollment } from 'sma-shared-lib';
+import { StudentService, GuardianService, EnrollmentService, Student, Guardian, Enrollment, Address } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
+
+interface SchoolContext {
+  schoolId: number;
+  schoolName: string;
+  schoolCode: string;
+}
 
 @Component({
   selector: 'app-student-detail',
@@ -11,9 +17,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class StudentDetailComponent implements OnInit {
   student?: Student;
   guardians: Guardian[] = [];
+  addresses: Address[] = [];
   enrollments: Enrollment[] = [];
   studentId!: string;
-  schoolId = ''; // TODO: Get from auth service or config
+  schoolId = 0;
+  selectedSchool: SchoolContext | null = null;
   loading = true;
 
   constructor(
@@ -26,8 +34,32 @@ export class StudentDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Listen for school context from parent window
+    window.addEventListener('message', (event) => {
+      if (event.origin !== 'http://localhost:4300') {
+        return;
+      }
+      
+      if (event.data && event.data.type === 'SCHOOL_CONTEXT') {
+        console.log('Received school context in student detail:', event.data);
+        this.selectedSchool = event.data.school;
+        
+        if (this.selectedSchool) {
+          this.schoolId = this.selectedSchool.schoolId;
+          // Load details once we have schoolId
+          if (this.studentId) {
+            this.loadStudentDetails();
+          }
+        }
+      }
+    });
+    
+    // Request context from parent
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'REQUEST_CONTEXT' }, 'http://localhost:4300');
+    }
+    
     this.studentId = this.route.snapshot.paramMap.get('id')!;
-    this.loadStudentDetails();
   }
 
   loadStudentDetails(): void {
@@ -36,7 +68,9 @@ export class StudentDetailComponent implements OnInit {
     this.studentService.getStudent(this.schoolId, this.studentId).subscribe({
       next: (student) => {
         this.student = student;
-        this.loadGuardians();
+        // Extract guardians and addresses from student response
+        this.guardians = (student as any).guardians || [];
+        this.addresses = (student as any).addresses || [];
         this.loadEnrollments();
       },
       error: (error) => {
@@ -44,15 +78,6 @@ export class StudentDetailComponent implements OnInit {
         this.snackBar.open('Error loading student details', 'Close', { duration: 3000 });
         this.loading = false;
       }
-    });
-  }
-
-  loadGuardians(): void {
-    this.guardianService.getGuardians(this.schoolId, this.studentId).subscribe({
-      next: (guardians) => {
-        this.guardians = guardians;
-      },
-      error: (error) => console.error('Error loading guardians:', error)
     });
   }
 

@@ -11,20 +11,20 @@ export class GuardianService {
 
   constructor(private http: HttpClient) { }
 
-  addGuardian(schoolId: string, studentId: string, guardian: GuardianRequest): Observable<Guardian> {
+  addGuardian(schoolId: number, studentId: string, guardian: GuardianRequest): Observable<Guardian> {
     return this.http.post<Guardian>(
       `${this.baseUrl}/${schoolId}/students/${studentId}/guardians`,
       guardian
     );
   }
 
-  getGuardians(schoolId: string, studentId: string): Observable<Guardian[]> {
+  getGuardians(schoolId: number, studentId: string): Observable<Guardian[]> {
     return this.http.get<Guardian[]>(
       `${this.baseUrl}/${schoolId}/students/${studentId}/guardians`
     );
   }
 
-  deleteGuardian(schoolId: string, studentId: string, guardianId: string): Observable<void> {
+  deleteGuardian(schoolId: number, studentId: string, guardianId: string): Observable<void> {
     return this.http.delete<void>(
       `${this.baseUrl}/${schoolId}/students/${studentId}/guardians/${guardianId}`
     );

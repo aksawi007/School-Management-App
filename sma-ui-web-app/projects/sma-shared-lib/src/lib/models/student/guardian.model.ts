@@ -1,39 +1,30 @@
 export interface Guardian {
-  id?: string;
-  guardianType: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  fullName?: string;
-  relationship: string;
-  phoneNumber: string;
+  id?: number;
+  relation: string; // FATHER, MOTHER, GUARDIAN, OTHER
+  name: string;
+  phone: string;
+  alternatePhone?: string;
   email?: string;
   occupation?: string;
-  annualIncome?: number;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  isPrimaryContact: boolean;
-  aadharNumber?: string;
+  annualIncome?: string;
+  education?: string;
+  isPrimary: boolean;
+  aadharNo?: string;
+  panNo?: string;
+  photoUrl?: string;
 }
 
 export interface GuardianRequest {
-  guardianType: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  relationship: string;
-  phoneNumber: string;
+  relation: string; // FATHER, MOTHER, GUARDIAN, OTHER
+  name: string;
+  phone: string;
+  alternatePhone?: string;
   email?: string;
   occupation?: string;
-  annualIncome?: number;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  state: string;
-  postalCode: string;
-  isPrimaryContact: boolean;
-  aadharNumber?: string;
+  annualIncome?: string;
+  education?: string;
+  isPrimary?: boolean;
+  aadharNo?: string;
+  panNo?: string;
+  photoUrl?: string;
 }
