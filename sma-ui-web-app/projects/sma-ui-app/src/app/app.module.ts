@@ -15,6 +15,9 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SchoolSelectionComponent } from './components/school-selection/school-selection.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { AdminWrapperComponent } from './components/admin-wrapper/admin-wrapper.component';
+import { StudentWrapperComponent } from './components/student-wrapper/student-wrapper.component';
+import { StaffWrapperComponent } from './components/staff-wrapper/staff-wrapper.component';
 import { AppContextService } from './services/app-context.service';
 import { SafePipe } from './safe.pipe';
 
@@ -23,6 +26,9 @@ import { SafePipe } from './safe.pipe';
     AppComponent,
     SchoolSelectionComponent,
     DashboardComponent,
+    AdminWrapperComponent,
+    StudentWrapperComponent,
+    StaffWrapperComponent,
     SafePipe
   ],
   imports: [

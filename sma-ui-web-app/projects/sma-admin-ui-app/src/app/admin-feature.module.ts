@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
@@ -25,29 +24,29 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AdminRootComponent } from './admin-root.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { StaffManagementComponent } from './components/staff-management/staff-management.component';
-import { StudentManagementComponent } from './components/student-management/student-management.component';
 import { SchoolProfileComponent } from './components/school-profile/school-profile.component';
 import { AcademicYearComponent } from './components/academic-year/academic-year.component';
+import { StaffManagementComponent } from './components/staff-management/staff-management.component';
+import { StudentManagementComponent } from './components/student-management/student-management.component';
 
 import { SmaSharedModule } from 'sma-shared-lib';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AdminRootComponent,
+    DashboardComponent,
+    SchoolProfileComponent,
+    AcademicYearComponent,
+    StaffManagementComponent,
+    StudentManagementComponent
   ],
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
+    CommonModule,
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    AppRoutingModule,
-    SmaSharedModule,
-    // Material modules
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
@@ -66,9 +65,9 @@ import { SmaSharedModule } from 'sma-shared-lib';
     MatListModule,
     MatGridListModule,
     MatMenuModule,
-    MatChipsModule
+    MatChipsModule,
+    SmaSharedModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  exports: [AdminRootComponent]
 })
-export class AppModule { }
+export class AdminFeatureModule { }

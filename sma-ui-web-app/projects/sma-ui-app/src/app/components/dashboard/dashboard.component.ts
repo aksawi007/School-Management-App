@@ -67,20 +67,7 @@ export class DashboardComponent implements OnInit {
   }
 
   selectModule(module: ModuleTile): void {
-    // Navigate to the micro frontend URL directly
-    const moduleUrls: { [key: string]: string } = {
-      'admin': 'http://localhost:4202',
-      'student': 'http://localhost:4200',
-      'staff': 'http://localhost:4201'
-    };
-    
-    const url = moduleUrls[module.id];
-    if (url) {
-      // Store school context before navigation
-      sessionStorage.setItem('selectedSchool', JSON.stringify(this.selectedSchool));
-      // Open in same window
-      window.location.href = url;
-    }
+    this.router.navigate([module.route]);
   }
 
   changeSchool(): void {

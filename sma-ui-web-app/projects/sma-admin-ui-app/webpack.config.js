@@ -5,7 +5,7 @@ module.exports = withModuleFederationPlugin({
   name: 'sma-admin-ui-app',
 
   exposes: {
-    './Module': './projects/sma-admin-ui-app/src/app/app.module.ts',
+    './AdminFeatureModule': './projects/sma-admin-ui-app/src/app/admin-feature.module.ts',
   },
 
   remotes: {
