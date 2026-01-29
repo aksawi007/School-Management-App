@@ -47,7 +47,7 @@ public class SubjectMasterController extends ApiRestServiceBinding {
             subjectId, subjectId);
 
         try {
-            SubjectMasterResponse response = subjectMasterBusinessService.getSubject(context, UUID.fromString(subjectId));
+            SubjectMasterResponse response = subjectMasterBusinessService.getSubject(context, Long.parseLong(subjectId));
             return processResponse(context, response);
         } catch (SmaException e) {
             throw new RuntimeException("Unable to get subject: " + e.getMessage(), e);
@@ -61,6 +61,20 @@ public class SubjectMasterController extends ApiRestServiceBinding {
 
         try {
             List<SubjectMasterResponse> response = subjectMasterBusinessService.getAllSubjectsBySchool(context, schoolId);
+            return processResponse(context, response);
+        } catch (SmaException e) {
+            throw new RuntimeException("Unable to get subjects: " + e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/school/{schoolId}/class/{classId}")
+    ResponseEntity<List<SubjectMasterResponse>> getSubjectsByClass(@PathVariable("schoolId") Long schoolId,
+                                                                    @PathVariable("classId") String classId) throws IOException {
+        ServiceRequestContext context = createServiceRequestContext("GetSubjectsByClass", 
+            classId, classId);
+
+        try {
+            List<SubjectMasterResponse> response = subjectMasterBusinessService.getSubjectsByClass(context, schoolId, Long.parseLong(classId));
             return processResponse(context, response);
         } catch (SmaException e) {
             throw new RuntimeException("Unable to get subjects: " + e.getMessage(), e);
@@ -88,7 +102,7 @@ public class SubjectMasterController extends ApiRestServiceBinding {
             subjectId, subjectId);
 
         try {
-            SubjectMasterResponse response = subjectMasterBusinessService.updateSubject(context, UUID.fromString(subjectId), request);
+            SubjectMasterResponse response = subjectMasterBusinessService.updateSubject(context, Long.parseLong(subjectId), request);
             return processResponse(context, response);
         } catch (SmaException e) {
             throw new RuntimeException("Unable to update subject: " + e.getMessage(), e);
@@ -101,7 +115,7 @@ public class SubjectMasterController extends ApiRestServiceBinding {
             subjectId, subjectId);
 
         try {
-            subjectMasterBusinessService.deleteSubject(context, UUID.fromString(subjectId));
+            subjectMasterBusinessService.deleteSubject(context, Long.parseLong(subjectId));
             return ResponseEntity.ok().build();
         } catch (SmaException e) {
             throw new RuntimeException("Unable to delete subject: " + e.getMessage(), e);

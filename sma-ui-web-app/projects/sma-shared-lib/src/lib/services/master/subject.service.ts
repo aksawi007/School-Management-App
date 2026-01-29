@@ -39,6 +39,15 @@ export class SubjectMasterService {
   }
 
   /**
+   * Get subjects for a specific class
+   */
+  getSubjectsByClass(schoolId: number, classId: string): Observable<SubjectMasterResponse[]> {
+    return this.http.get<SubjectMasterResponse[]>(
+      `${this.API_BASE}/school/${schoolId}/class/${classId}`
+    );
+  }
+
+  /**
    * Get subjects by type
    */
   getSubjectsByType(schoolId: number, subjectType: string): Observable<SubjectMasterResponse[]> {

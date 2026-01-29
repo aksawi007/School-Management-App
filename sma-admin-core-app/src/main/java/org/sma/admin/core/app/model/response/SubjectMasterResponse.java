@@ -5,8 +5,10 @@ package org.sma.admin.core.app.model.response;
  */
 public class SubjectMasterResponse {
     
-    private Long id;
+    private String id;
     private Long schoolId;
+    private String classId;
+    private String className;
     private String subjectCode;
     private String subjectName;
     private String subjectType;
@@ -17,11 +19,11 @@ public class SubjectMasterResponse {
     private String description;
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -31,6 +33,22 @@ public class SubjectMasterResponse {
 
     public void setSchoolId(Long schoolId) {
         this.schoolId = schoolId;
+    }
+
+    public String getClassId() {
+        return classId;
+    }
+
+    public void setClassId(String classId) {
+        this.classId = classId;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 
     public String getSubjectCode() {

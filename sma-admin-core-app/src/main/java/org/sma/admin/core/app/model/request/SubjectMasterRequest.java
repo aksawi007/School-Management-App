@@ -6,6 +6,7 @@ package org.sma.admin.core.app.model.request;
 public class SubjectMasterRequest {
     
     private Long schoolId;
+    private String classId;
     private String subjectCode;
     private String subjectName;
     private String subjectType; // CORE, ELECTIVE, OPTIONAL, EXTRA_CURRICULAR
@@ -22,6 +23,14 @@ public class SubjectMasterRequest {
 
     public void setSchoolId(Long schoolId) {
         this.schoolId = schoolId;
+    }
+
+    public String getClassId() {
+        return classId;
+    }
+
+    public void setClassId(String classId) {
+        this.classId = classId;
     }
 
     public String getSubjectCode() {

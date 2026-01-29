@@ -13,8 +13,10 @@ export enum SubjectType {
  * Represents a subject
  */
 export interface SubjectMaster {
-  id?: number;
+  id?: string;
   schoolId: number;
+  classId: string;
+  className?: string;
   subjectCode: string;
   subjectName: string;
   subjectType?: string;
@@ -30,6 +32,7 @@ export interface SubjectMaster {
  */
 export interface SubjectMasterRequest {
   schoolId: number;
+  classId: string;
   subjectCode: string;
   subjectName: string;
   subjectType?: string;
@@ -44,5 +47,6 @@ export interface SubjectMasterRequest {
  * SubjectMaster Response DTO
  */
 export interface SubjectMasterResponse extends SubjectMaster {
-  id: number;
+  id: string;
+  className?: string;
 }

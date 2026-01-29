@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SubjectMasterService, SubjectMasterRequest } from 'sma-shared-lib';
+import { SubjectMasterService, SubjectMasterRequest, ClassMasterService, ClassMasterResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -15,11 +15,13 @@ export class SubjectFormComponent implements OnInit {
   subjectId?: string;
   loading = false;
   schoolId: number = 0;
+  classes: ClassMasterResponse[] = [];
   subjectTypes = ['CORE', 'ELECTIVE', 'OPTIONAL', 'EXTRA_CURRICULAR'];
 
   constructor(
     private fb: FormBuilder,
     private subjectMasterService: SubjectMasterService,
+    private classMasterService: ClassMasterService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
@@ -46,6 +48,9 @@ export class SubjectFormComponent implements OnInit {
           this.schoolId = school.schoolId;
           this.subjectForm.patchValue({ schoolId: this.schoolId });
           
+          // Load classes for the school
+          this.loadClasses();
+          
           if (this.isEditMode && this.subjectId) {
             this.loadSubject();
           }
@@ -62,6 +67,7 @@ export class SubjectFormComponent implements OnInit {
   createForm(): void {
     this.subjectForm = this.fb.group({
       schoolId: [this.schoolId, Validators.required],
+      classId: ['', Validators.required],
       subjectCode: ['', Validators.required],
       subjectName: ['', Validators.required],
       subjectType: ['CORE', Validators.required],
@@ -69,6 +75,18 @@ export class SubjectFormComponent implements OnInit {
       credits: [''],
       maxMarks: [''],
       description: ['']
+    });
+  }
+
+  loadClasses(): void {
+    this.classMasterService.getAllClassesBySchool(this.schoolId).subscribe({
+      next: (classes) => {
+        this.classes = classes;
+      },
+      error: (error) => {
+        console.error('Error loading classes:', error);
+        this.snackBar.open('Error loading classes', 'Close', { duration: 3000 });
+      }
     });
   }
 
@@ -80,6 +98,7 @@ export class SubjectFormComponent implements OnInit {
       next: (subject) => {
         this.subjectForm.patchValue({
           schoolId: subject.schoolId,
+          classId: subject.classId,
           subjectCode: subject.subjectCode,
           subjectName: subject.subjectName,
           subjectType: subject.subjectType,

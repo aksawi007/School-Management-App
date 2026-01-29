@@ -8,6 +8,18 @@
       <form [formGroup]="subjectForm" (ngSubmit)="onSubmit()">
         <div class="form-row">
           <mat-form-field appearance="outline">
+            <mat-label>Class</mat-label>
+            <mat-select formControlName="classId">
+              <mat-option *ngFor="let class of classes" [value]="class.id">
+                {{ class.className }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="subjectForm.get('classId')?.hasError('required')">Class is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
             <mat-label>Subject Code</mat-label>
             <input matInput formControlName="subjectCode" placeholder="e.g., MATH101">
             <mat-error *ngIf="subjectForm.get('subjectCode')?.hasError('required')">Subject code is required</mat-error>

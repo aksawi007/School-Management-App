@@ -13,7 +13,7 @@ export class SubjectListComponent implements OnInit {
   filteredSubjects: SubjectMasterResponse[] = [];
   selectedType = 'ALL';
   subjectTypes = ['ALL', 'CORE', 'ELECTIVE', 'OPTIONAL', 'EXTRA_CURRICULAR'];
-  displayedColumns: string[] = ['subjectCode', 'subjectName', 'subjectType', 'credits', 'maxMarks', 'isMandatory', 'actions'];
+  displayedColumns: string[] = ['subjectCode', 'subjectName', 'className', 'subjectType', 'credits', 'maxMarks', 'isMandatory', 'actions'];
   loading = true;
   schoolId: number = 0;
 

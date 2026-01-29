@@ -10,12 +10,16 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "subject_master", schema = "sma_admin",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"school_id", "subject_code"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"school_id", "class_id", "subject_code"}))
 public class SubjectMaster extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id", nullable = false)
     private SchoolProfile school;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "class_id", nullable = false)
+    private ClassMaster classMaster;
 
     @Column(name = "subject_code", nullable = false, length = 20)
     private String subjectCode;
@@ -48,6 +52,14 @@ public class SubjectMaster extends BaseEntity {
 
     public void setSchool(SchoolProfile school) {
         this.school = school;
+    }
+
+    public ClassMaster getClassMaster() {
+        return classMaster;
+    }
+
+    public void setClassMaster(ClassMaster classMaster) {
+        this.classMaster = classMaster;
     }
 
     public String getSubjectCode() {
