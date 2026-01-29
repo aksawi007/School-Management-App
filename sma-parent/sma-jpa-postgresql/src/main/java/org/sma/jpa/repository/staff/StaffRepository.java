@@ -19,6 +19,8 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
     List<Staff> findBySchoolAndStaffType(SchoolProfile school, String staffType);
     
     List<Staff> findBySchoolAndStaffStatusAndIsActiveTrue(SchoolProfile school, String staffStatus);
+    
+    List<Staff> findBySchoolAndStaffTypeAndStaffStatusAndIsActiveTrue(SchoolProfile school, String staffType, String staffStatus);
 }
 
 

@@ -82,7 +82,7 @@ public class StaffService {
         SchoolProfile school = schoolProfileRepository.findById(schoolId)
                 .orElseThrow(() -> new RuntimeException("School not found"));
         
-        return staffRepository.findBySchoolAndStaffType(school, staffType)
+        return staffRepository.findBySchoolAndStaffTypeAndStaffStatusAndIsActiveTrue(school, staffType, "ACTIVE")
                 .stream()
                 .map(this::mapEntityToResponse)
                 .collect(Collectors.toList());
