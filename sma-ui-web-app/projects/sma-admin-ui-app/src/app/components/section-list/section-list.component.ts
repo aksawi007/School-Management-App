@@ -188,8 +188,4 @@ export class SectionListComponent implements OnInit {
       });
     }
   }
-
-  goBack(): void {
-    this.router.navigate(['/classes']);
-  }
 }

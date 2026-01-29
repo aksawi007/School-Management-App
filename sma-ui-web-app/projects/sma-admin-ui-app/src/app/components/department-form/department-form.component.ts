@@ -173,7 +173,7 @@ export class DepartmentFormComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['../'], { relativeTo: this.route });
+    this.router.navigate(['/departments']);
   }
 
   hasError(field: string, error: string): boolean {
