@@ -106,6 +106,19 @@ public class ClassMasterBusinessService {
     }
 
     /**
+     * Get all classes for an academic year
+     */
+    public List<ClassMasterResponse> getAllClassesByAcademicYear(ServiceRequestContext context, Long academicYearId) throws SmaException {
+        AcademicYear academicYear = academicYearRepository.findById(academicYearId)
+                .orElseThrow(() -> new SmaException("Academic Year not found with ID: " + academicYearId));
+        
+        List<ClassMaster> classes = classMasterRepository.findByAcademicYearAndIsActiveTrue(academicYear);
+        return classes.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Update class
      */
     @Transactional

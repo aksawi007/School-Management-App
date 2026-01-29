@@ -68,6 +68,19 @@ public class ClassMasterController extends ApiRestServiceBinding {
         }
     }
 
+    @GetMapping("/academicYear/{academicYearId}")
+    ResponseEntity<List<ClassMasterResponse>> getAllClassesByAcademicYear(@PathVariable("academicYearId") Long academicYearId) throws IOException {
+        ServiceRequestContext context = createServiceRequestContext("GetAllClassesByAcademicYear", 
+            academicYearId.toString(), academicYearId.toString());
+
+        try {
+            List<ClassMasterResponse> response = classMasterBusinessService.getAllClassesByAcademicYear(context, academicYearId);
+            return processResponse(context, response);
+        } catch (SmaException e) {
+            throw new RuntimeException("Unable to get classes for academic year: " + e.getMessage(), e);
+        }
+    }
+
     @PutMapping("/update")
     ResponseEntity<ClassMasterResponse> updateClass(@RequestParam("classId") String classId,
                                                      @RequestBody ClassMasterRequest request) throws IOException {

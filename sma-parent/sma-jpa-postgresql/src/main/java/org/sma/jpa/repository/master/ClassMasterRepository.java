@@ -1,6 +1,7 @@
 package org.sma.jpa.repository.master;
 
 import org.sma.jpa.model.master.ClassMaster;
+import org.sma.jpa.model.school.AcademicYear;
 import org.sma.jpa.model.school.SchoolProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,8 @@ import java.util.Optional;
 public interface ClassMasterRepository extends JpaRepository<ClassMaster, Long> {
     
     List<ClassMaster> findBySchoolAndIsActiveTrue(SchoolProfile school);
+    
+    List<ClassMaster> findByAcademicYearAndIsActiveTrue(AcademicYear academicYear);
     
     Optional<ClassMaster> findBySchoolAndClassCode(SchoolProfile school, String classCode);
 }

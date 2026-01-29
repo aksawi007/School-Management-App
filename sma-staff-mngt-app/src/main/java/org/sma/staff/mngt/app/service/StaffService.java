@@ -84,28 +84,64 @@ public class StaffService {
         
         staff = staffRepository.save(staff);
         
-        // Deactivate existing department-staff mappings
+        // Handle department-staff mappings intelligently
         List<DepartmentStaffMapping> existingMappings = departmentStaffMappingRepository.findByStaffId(staffId);
-        for (DepartmentStaffMapping mapping : existingMappings) {
-            mapping.setIsActive(false);
-            departmentStaffMappingRepository.save(mapping);
-        }
         
-        // Create new department-staff mappings
         if (requestDTO.getDepartmentIds() != null && requestDTO.getDepartmentIds().length > 0) {
+            // Create sets for comparison
+            java.util.Set<Long> newDepartmentIds = new java.util.HashSet<>();
+            for (Long deptId : requestDTO.getDepartmentIds()) {
+                newDepartmentIds.add(deptId);
+            }
+            
+            java.util.Set<Long> existingDepartmentIds = new java.util.HashSet<>();
+            for (DepartmentStaffMapping mapping : existingMappings) {
+                existingDepartmentIds.add(mapping.getDepartment().getId());
+            }
+            
+            // Delete mappings that are no longer in the new list
+            for (DepartmentStaffMapping mapping : existingMappings) {
+                if (!newDepartmentIds.contains(mapping.getDepartment().getId())) {
+                    departmentStaffMappingRepository.delete(mapping);
+                }
+            }
+            
+            // Update isPrimaryDepartment for all mappings and add new ones
             for (int i = 0; i < requestDTO.getDepartmentIds().length; i++) {
                 final Long departmentId = requestDTO.getDepartmentIds()[i];
                 final int index = i;
-                DepartmentMaster department = departmentMasterRepository.findById(departmentId)
-                        .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
+                final boolean isPrimary = (index == 0);
                 
-                DepartmentStaffMapping mapping = new DepartmentStaffMapping();
-                mapping.setDepartment(department);
-                mapping.setStaff(staff);
-                mapping.setIsPrimaryDepartment(index == 0); // First department is primary
-                mapping.setIsActive(true);
-                
-                departmentStaffMappingRepository.save(mapping);
+                // Check if mapping already exists
+                if (existingDepartmentIds.contains(departmentId)) {
+                    // Update existing mapping's isPrimaryDepartment flag
+                    for (DepartmentStaffMapping mapping : existingMappings) {
+                        if (mapping.getDepartment().getId().equals(departmentId)) {
+                            if (mapping.getIsPrimaryDepartment() != isPrimary) {
+                                mapping.setIsPrimaryDepartment(isPrimary);
+                                departmentStaffMappingRepository.save(mapping);
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                    // Create new mapping
+                    DepartmentMaster department = departmentMasterRepository.findById(departmentId)
+                            .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
+                    
+                    DepartmentStaffMapping mapping = new DepartmentStaffMapping();
+                    mapping.setDepartment(department);
+                    mapping.setStaff(staff);
+                    mapping.setIsPrimaryDepartment(isPrimary);
+                    mapping.setIsActive(true);
+                    
+                    departmentStaffMappingRepository.save(mapping);
+                }
+            }
+        } else {
+            // No departments selected, delete all existing mappings
+            if (!existingMappings.isEmpty()) {
+                departmentStaffMappingRepository.deleteAll(existingMappings);
             }
         }
         

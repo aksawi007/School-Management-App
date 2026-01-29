@@ -10,7 +10,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class ClassListComponent implements OnInit {
   classes: ClassMasterResponse[] = [];
-  allClasses: ClassMasterResponse[] = [];
   academicYears: AcademicYearResponse[] = [];
   selectedAcademicYearId?: number;
   displayedColumns: string[] = ['classCode', 'className', 'academicYearName', 'displayOrder', 'description', 'actions'];
@@ -39,7 +38,6 @@ export class ClassListComponent implements OnInit {
         if (school) {
           this.schoolId = school.schoolId;
           this.loadAcademicYears();
-          this.loadClasses();
         }
       }
     });
@@ -58,7 +56,7 @@ export class ClassListComponent implements OnInit {
         const currentYear = years.find(y => y.currentYear === true);
         if (currentYear && !this.selectedAcademicYearId) {
           this.selectedAcademicYearId = currentYear.yearId;
-          this.filterClassesByAcademicYear();
+          this.loadClassesByAcademicYear();
         }
       },
       error: (error) => {
@@ -68,12 +66,17 @@ export class ClassListComponent implements OnInit {
     });
   }
 
-  loadClasses(): void {
+  loadClassesByAcademicYear(): void {
+    if (!this.selectedAcademicYearId) {
+      this.classes = [];
+      this.loading = false;
+      return;
+    }
+
     this.loading = true;
-    this.classMasterService.getAllClassesBySchool(this.schoolId).subscribe({
+    this.classMasterService.getAllClassesByAcademicYear(this.selectedAcademicYearId).subscribe({
       next: (classes) => {
-        this.allClasses = classes.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
-        this.filterClassesByAcademicYear();
+        this.classes = classes.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
         this.loading = false;
       },
       error: (error) => {
@@ -85,15 +88,7 @@ export class ClassListComponent implements OnInit {
   }
 
   onAcademicYearChange(): void {
-    this.filterClassesByAcademicYear();
-  }
-
-  filterClassesByAcademicYear(): void {
-    if (this.selectedAcademicYearId) {
-      this.classes = this.allClasses.filter(c => c.academicYearId === this.selectedAcademicYearId);
-    } else {
-      this.classes = [];
-    }
+    this.loadClassesByAcademicYear();
   }
 
   addClass(): void {
@@ -113,7 +108,7 @@ export class ClassListComponent implements OnInit {
       this.classMasterService.deleteClass(classId.toString()).subscribe({
         next: () => {
           this.snackBar.open('Class deleted successfully', 'Close', { duration: 3000 });
-          this.loadClasses();
+          this.loadClassesByAcademicYear();
         },
         error: (error) => {
           console.error('Error deleting class:', error);

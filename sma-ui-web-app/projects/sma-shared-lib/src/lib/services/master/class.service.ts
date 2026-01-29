@@ -39,6 +39,13 @@ export class ClassMasterService {
   }
 
   /**
+   * Get all classes for an academic year
+   */
+  getAllClassesByAcademicYear(academicYearId: number): Observable<ClassMasterResponse[]> {
+    return this.http.get<ClassMasterResponse[]>(`${this.API_BASE}/academicYear/${academicYearId}`);
+  }
+
+  /**
    * Update class
    */
   updateClass(classId: string, request: ClassMasterRequest): Observable<ClassMasterResponse> {
