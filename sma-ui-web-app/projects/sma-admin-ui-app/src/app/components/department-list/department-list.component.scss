@@ -1,0 +1,94 @@
+.department-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
+}
+
+mat-card {
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  font-weight: 600;
+  background-color: #f5f5f5;
+}
+
+mat-chip {
+  font-size: 11px;
+  height: 22px;
+  padding: 0 8px;
+
+  &.chip-academic {
+    background-color: #e3f2fd;
+    color: #1976d2;
+  }
+
+  &.chip-administration {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+  }
+
+  &.chip-support {
+    background-color: #fff3e0;
+    color: #f57c00;
+  }
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #757575;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 16px;
+
+  p {
+    color: #757575;
+  }
+}
+
+@media (max-width: 768px) {
+  .department-container {
+    padding: 10px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    button {
+      width: 100%;
+    }
+  }
+}

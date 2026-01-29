@@ -8,31 +8,63 @@ export enum StaffType {
 }
 
 /**
+ * Employment Type Enum
+ */
+export enum EmploymentType {
+  PERMANENT = 'PERMANENT',
+  CONTRACT = 'CONTRACT',
+  TEMPORARY = 'TEMPORARY',
+  PROBATION = 'PROBATION'
+}
+
+/**
+ * Staff Status Enum
+ */
+export enum StaffStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  ON_LEAVE = 'ON_LEAVE',
+  TERMINATED = 'TERMINATED',
+  RETIRED = 'RETIRED'
+}
+
+/**
  * Staff Model
- * Represents a staff member
+ * Represents a staff member - matches backend StaffRequestDTO
  */
 export interface Staff {
   id?: number;
   schoolId: number;
+  employeeCode?: string;
   firstName: string;
+  middleName?: string;
   lastName: string;
-  email: string;
-  phoneNumber: string;
   dateOfBirth?: string;
   gender?: string;
-  address?: string;
+  bloodGroup?: string;
+  email: string;
+  phoneNumber: string;
+  addressLine1?: string;
+  addressLine2?: string;
   city?: string;
   state?: string;
-  country?: string;
   postalCode?: string;
-  staffType: StaffType;
-  departmentId?: number;
+  staffType: string;
   designation?: string;
-  qualifications?: string;
+  departmentId?: number;
+  qualification?: string;
+  specialization?: string;
+  experienceYears?: number;
   joiningDate?: string;
+  employmentType?: string;
   salary?: number;
-  employeeCode?: string;
-  status?: string;
+  staffStatus?: string;
+  photoUrl?: string;
+  aadharNumber?: string;
+  panNumber?: string;
+  bankAccountNumber?: string;
+  bankName?: string;
+  bankIfscCode?: string;
 }
 
 /**
@@ -40,24 +72,36 @@ export interface Staff {
  */
 export interface StaffRequest {
   schoolId: number;
+  employeeCode?: string;
   firstName: string;
+  middleName?: string;
   lastName: string;
-  email: string;
-  phoneNumber: string;
   dateOfBirth?: string;
   gender?: string;
-  address?: string;
+  bloodGroup?: string;
+  email: string;
+  phoneNumber: string;
+  addressLine1?: string;
+  addressLine2?: string;
   city?: string;
   state?: string;
-  country?: string;
   postalCode?: string;
-  staffType: StaffType;
-  departmentId?: number;
+  staffType: string;
   designation?: string;
-  qualifications?: string;
+  departmentId?: number;
+  qualification?: string;
+  specialization?: string;
+  experienceYears?: number;
   joiningDate?: string;
+  employmentType?: string;
   salary?: number;
-  employeeCode?: string;
+  staffStatus?: string;
+  photoUrl?: string;
+  aadharNumber?: string;
+  panNumber?: string;
+  bankAccountNumber?: string;
+  bankName?: string;
+  bankIfscCode?: string;
 }
 
 /**

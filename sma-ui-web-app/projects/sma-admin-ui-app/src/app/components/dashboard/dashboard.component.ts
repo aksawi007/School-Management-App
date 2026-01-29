@@ -86,6 +86,14 @@ export class DashboardComponent implements OnInit {
       category: 'academic'
     },
     {
+      title: 'Department Management',
+      description: 'Manage school departments and HODs',
+      icon: 'apartment',
+      route: '/departments',
+      color: '#7b1fa2',
+      category: 'academic'
+    },
+    {
       title: 'Course Management',
       description: 'Setup courses and syllabus',
       icon: 'book',

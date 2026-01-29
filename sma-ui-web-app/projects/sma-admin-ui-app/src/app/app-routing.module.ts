@@ -11,6 +11,8 @@ import { SectionListComponent } from './components/section-list/section-list.com
 import { SectionFormComponent } from './components/section-form/section-form.component';
 import { SubjectListComponent } from './components/subject-list/subject-list.component';
 import { SubjectFormComponent } from './components/subject-form/subject-form.component';
+import { DepartmentListComponent } from './components/department-list/department-list.component';
+import { DepartmentFormComponent } from './components/department-form/department-form.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -32,6 +34,10 @@ const routes: Routes = [
   { path: 'subjects', component: SubjectListComponent },
   { path: 'subjects/new', component: SubjectFormComponent },
   { path: 'subjects/:id/edit', component: SubjectFormComponent },
+  
+  { path: 'departments', component: DepartmentListComponent },
+  { path: 'departments/new', component: DepartmentFormComponent },
+  { path: 'departments/:id/edit', component: DepartmentFormComponent },
 ];
 
 @NgModule({

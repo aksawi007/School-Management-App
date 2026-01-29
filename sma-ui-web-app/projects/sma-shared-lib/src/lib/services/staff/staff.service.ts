@@ -19,7 +19,7 @@ export class StaffService {
    * Create a new staff member
    */
   createStaff(request: StaffRequest): Observable<StaffResponse> {
-    return this.http.post<StaffResponse>(`${this.API_BASE}/create`, request);
+    return this.http.post<StaffResponse>(`${this.API_BASE}`, request);
   }
 
   /**

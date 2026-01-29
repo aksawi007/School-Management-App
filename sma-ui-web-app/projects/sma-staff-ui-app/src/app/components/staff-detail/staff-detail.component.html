@@ -1,116 +1,244 @@
-<div class="staff-detail-container">
+<div class="staff-detail-container" *ngIf="!loading && staff">
   <mat-card>
     <mat-card-header>
       <mat-card-title>Staff Details</mat-card-title>
       <mat-card-subtitle *ngIf="selectedSchool">{{ selectedSchool.schoolName }}</mat-card-subtitle>
-      <div class="header-actions">
-        <button mat-icon-button (click)="goBack()" matTooltip="Back to list">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <button mat-icon-button color="primary" (click)="editStaff()" matTooltip="Edit">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </div>
+      <button mat-icon-button class="edit-button" (click)="editStaff()">
+        <mat-icon>edit</mat-icon>
+      </button>
     </mat-card-header>
 
     <mat-card-content>
-      <div *ngIf="loading" class="loading-spinner">
-        <mat-spinner></mat-spinner>
-      </div>
+      <mat-tab-group>
+        <!-- Basic Information Tab -->
+        <mat-tab label="Basic Information">
+          <div class="tab-content">
+            <div class="detail-section">
+              <h3><mat-icon>person</mat-icon> Personal Details</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Employee Code:</span>
+                  <span class="value">{{ staff.employeeCode || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Staff Type:</span>
+                  <span class="value">
+                    <mat-chip [class]="'chip-' + (staff.staffType || '').toLowerCase()">
+                      {{ staff.staffType }}
+                    </mat-chip>
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Status:</span>
+                  <span class="value">
+                    <mat-chip [class]="'chip-' + (staff.staffStatus || '').toLowerCase()">
+                      {{ staff.staffStatus }}
+                    </mat-chip>
+                  </span>
+                </div>
+              </div>
 
-      <div *ngIf="!loading && staff" class="staff-details">
-        <!-- Basic Information -->
-        <mat-tab-group>
-          <mat-tab label="Basic Information">
-            <div style="padding: 20px;">
-              <table class="detail-table">
-                <tr>
-                  <th>Employee Code:</th>
-                  <td>{{ staff.employeeCode || '-' }}</td>
-                  <th>Staff Type:</th>
-                  <td>{{ staff.staffType }}</td>
-                </tr>
-                <tr>
-                  <th>First Name:</th>
-                  <td>{{ staff.firstName }}</td>
-                  <th>Last Name:</th>
-                  <td>{{ staff.lastName }}</td>
-                </tr>
-                <tr>
-                  <th>Date of Birth:</th>
-                  <td>{{ staff.dateOfBirth ? (staff.dateOfBirth | date) : '-' }}</td>
-                  <th>Gender:</th>
-                  <td>{{ staff.gender || '-' }}</td>
-                </tr>
-                <tr>
-                  <th>Email:</th>
-                  <td>{{ staff.email }}</td>
-                  <th>Phone Number:</th>
-                  <td>{{ staff.phoneNumber }}</td>
-                </tr>
-                <tr>
-                  <th>Status:</th>
-                  <td>{{ staff.status || '-' }}</td>
-                  <th></th>
-                  <td></td>
-                </tr>
-              </table>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">First Name:</span>
+                  <span class="value">{{ staff.firstName }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Middle Name:</span>
+                  <span class="value">{{ staff.middleName || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Last Name:</span>
+                  <span class="value">{{ staff.lastName }}</span>
+                </div>
+              </div>
+
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Date of Birth:</span>
+                  <span class="value">{{ staff.dateOfBirth | date:'mediumDate' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Gender:</span>
+                  <span class="value">{{ staff.gender || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Blood Group:</span>
+                  <span class="value">{{ staff.bloodGroup || '-' }}</span>
+                </div>
+              </div>
             </div>
-          </mat-tab>
 
-          <!-- Contact Information -->
-          <mat-tab label="Contact & Address">
-            <div style="padding: 20px;">
-              <table class="detail-table">
-                <tr>
-                  <th>Address:</th>
-                  <td colspan="3">{{ staff.address || '-' }}</td>
-                </tr>
-                <tr>
-                  <th>City:</th>
-                  <td>{{ staff.city || '-' }}</td>
-                  <th>State:</th>
-                  <td>{{ staff.state || '-' }}</td>
-                </tr>
-                <tr>
-                  <th>Country:</th>
-                  <td>{{ staff.country || '-' }}</td>
-                  <th>Postal Code:</th>
-                  <td>{{ staff.postalCode || '-' }}</td>
-                </tr>
-              </table>
+            <mat-divider></mat-divider>
+
+            <div class="detail-section">
+              <h3><mat-icon>contact_phone</mat-icon> Contact Information</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Email:</span>
+                  <span class="value">
+                    <a [href]="'mailto:' + staff.email">{{ staff.email }}</a>
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Phone:</span>
+                  <span class="value">
+                    <a [href]="'tel:' + staff.phoneNumber">{{ staff.phoneNumber }}</a>
+                  </span>
+                </div>
+              </div>
+
+              <div class="detail-grid">
+                <div class="detail-item full-width">
+                  <span class="label">Address Line 1:</span>
+                  <span class="value">{{ staff.addressLine1 || '-' }}</span>
+                </div>
+                <div class="detail-item full-width">
+                  <span class="label">Address Line 2:</span>
+                  <span class="value">{{ staff.addressLine2 || '-' }}</span>
+                </div>
+              </div>
+
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">City:</span>
+                  <span class="value">{{ staff.city || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">State:</span>
+                  <span class="value">{{ staff.state || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Postal Code:</span>
+                  <span class="value">{{ staff.postalCode || '-' }}</span>
+                </div>
+              </div>
             </div>
-          </mat-tab>
+          </div>
+        </mat-tab>
 
-          <!-- Professional Information -->
-          <mat-tab label="Professional Details">
-            <div style="padding: 20px;">
-              <table class="detail-table">
-                <tr>
-                  <th>Designation:</th>
-                  <td>{{ staff.designation || '-' }}</td>
-                  <th>Department ID:</th>
-                  <td>{{ staff.departmentId || '-' }}</td>
-                </tr>
-                <tr>
-                  <th>Qualifications:</th>
-                  <td colspan="3">{{ staff.qualifications || '-' }}</td>
-                </tr>
-                <tr>
-                  <th>Joining Date:</th>
-                  <td>{{ staff.joiningDate ? (staff.joiningDate | date) : '-' }}</td>
-                  <th>Salary:</th>
-                  <td>{{ staff.salary ? ('₹' + staff.salary) : '-' }}</td>
-                </tr>
-              </table>
+        <!-- Professional Information Tab -->
+        <mat-tab label="Professional">
+          <div class="tab-content">
+            <div class="detail-section">
+              <h3><mat-icon>work</mat-icon> Employment Details</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Designation:</span>
+                  <span class="value">{{ staff.designation || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Department ID:</span>
+                  <span class="value">{{ staff.departmentId || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Employment Type:</span>
+                  <span class="value">{{ staff.employmentType || '-' }}</span>
+                </div>
+              </div>
+
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Joining Date:</span>
+                  <span class="value">{{ staff.joiningDate | date:'mediumDate' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Experience:</span>
+                  <span class="value">{{ staff.experienceYears }} years</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Salary:</span>
+                  <span class="value">₹{{ staff.salary | number }}</span>
+                </div>
+              </div>
             </div>
-          </mat-tab>
-        </mat-tab-group>
-      </div>
 
-      <div *ngIf="!loading && !staff" class="no-data">
-        <p>Staff member not found.</p>
-      </div>
+            <mat-divider></mat-divider>
+
+            <div class="detail-section">
+              <h3><mat-icon>school</mat-icon> Qualifications</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Qualification:</span>
+                  <span class="value">{{ staff.qualification || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Specialization:</span>
+                  <span class="value">{{ staff.specialization || '-' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Identity & Bank Details Tab -->
+        <mat-tab label="Identity & Bank">
+          <div class="tab-content">
+            <div class="detail-section">
+              <h3><mat-icon>badge</mat-icon> Identity Documents</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Aadhar Number:</span>
+                  <span class="value">{{ staff.aadharNumber || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">PAN Number:</span>
+                  <span class="value">{{ staff.panNumber || '-' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="detail-section">
+              <h3><mat-icon>account_balance</mat-icon> Bank Details</h3>
+              <div class="detail-grid">
+                <div class="detail-item">
+                  <span class="label">Bank Name:</span>
+                  <span class="value">{{ staff.bankName || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">Account Number:</span>
+                  <span class="value">{{ staff.bankAccountNumber || '-' }}</span>
+                </div>
+                <div class="detail-item">
+                  <span class="label">IFSC Code:</span>
+                  <span class="value">{{ staff.bankIfscCode || '-' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Additional Information Tab -->
+        <mat-tab label="Additional">
+          <div class="tab-content">
+            <div class="detail-section">
+              <h3><mat-icon>image</mat-icon> Photo</h3>
+              <div class="photo-section">
+                <img *ngIf="staff.photoUrl" [src]="staff.photoUrl" alt="Staff Photo" class="staff-photo">
+                <p *ngIf="!staff.photoUrl" class="no-photo">No photo available</p>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
     </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to List
+      </button>
+      <button mat-raised-button color="primary" (click)="editStaff()">
+        <mat-icon>edit</mat-icon>
+        Edit Staff
+      </button>
+    </mat-card-actions>
   </mat-card>
+</div>
+
+<div class="loading-container" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+  <p>Loading staff details...</p>
 </div>

@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StaffService, StaffRequest, StaffResponse, StaffType } from 'sma-shared-lib';
+import { StaffService, StaffRequest, StaffResponse, EmploymentType, StaffStatus, DEPARTMENT_TYPE, INDIAN_STATES } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { INDIAN_STATES } from 'sma-shared-lib';
 
 interface SchoolContext {
   schoolId: number;
@@ -24,10 +23,12 @@ export class StaffFormComponent implements OnInit {
   selectedSchool: SchoolContext | null = null;
   schoolId = 0;
 
-  staffTypes = Object.values(StaffType);
+  staffTypes = Object.values(DEPARTMENT_TYPE);
+  employmentTypes = Object.values(EmploymentType);
+  staffStatuses = Object.values(StaffStatus);
   genders = ['MALE', 'FEMALE', 'OTHER'];
+  bloodGroups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
   states = INDIAN_STATES;
-  statusOptions = ['ACTIVE', 'INACTIVE', 'ON_LEAVE'];
 
   constructor(
     private fb: FormBuilder,
@@ -80,23 +81,34 @@ export class StaffFormComponent implements OnInit {
       schoolId: [0, Validators.required],
       employeeCode: [''],
       firstName: ['', Validators.required],
+      middleName: [''],
       lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
       dateOfBirth: [''],
       gender: [''],
-      address: [''],
+      bloodGroup: [''],
+      email: ['', [Validators.required, Validators.email]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      addressLine1: [''],
+      addressLine2: [''],
       city: [''],
       state: [''],
-      country: ['India'],
-      postalCode: [''],
-      staffType: [StaffType.TEACHING, Validators.required],
-      departmentId: [''],
+      postalCode: ['', [Validators.pattern(/^\d{6}$/)]],
+      staffType: [DEPARTMENT_TYPE.ACADEMIC, Validators.required],
       designation: [''],
-      qualifications: [''],
+      departmentId: [''],
+      qualification: [''],
+      specialization: [''],
+      experienceYears: [0],
       joiningDate: [''],
-      salary: [''],
-      status: ['ACTIVE']
+      employmentType: [EmploymentType.PERMANENT],
+      salary: [0],
+      staffStatus: [StaffStatus.ACTIVE],
+      photoUrl: [''],
+      aadharNumber: ['', [Validators.pattern(/^\d{12}$/)]],
+      panNumber: ['', [Validators.pattern(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/)]],
+      bankAccountNumber: [''],
+      bankName: [''],
+      bankIfscCode: ['', [Validators.pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/)]]
     });
   }
 
@@ -107,26 +119,9 @@ export class StaffFormComponent implements OnInit {
     this.staffService.getStaff(this.staffId).subscribe({
       next: (staff) => {
         this.staffForm.patchValue({
-          schoolId: staff.schoolId,
-          employeeCode: staff.employeeCode,
-          firstName: staff.firstName,
-          lastName: staff.lastName,
-          email: staff.email,
-          phoneNumber: staff.phoneNumber,
-          dateOfBirth: staff.dateOfBirth,
-          gender: staff.gender,
-          address: staff.address,
-          city: staff.city,
-          state: staff.state,
-          country: staff.country,
-          postalCode: staff.postalCode,
-          staffType: staff.staffType,
-          departmentId: staff.departmentId,
-          designation: staff.designation,
-          qualifications: staff.qualifications,
-          joiningDate: staff.joiningDate,
-          salary: staff.salary,
-          status: staff.status
+          ...staff,
+          dateOfBirth: staff.dateOfBirth ? new Date(staff.dateOfBirth) : null,
+          joiningDate: staff.joiningDate ? new Date(staff.joiningDate) : null
         });
         this.loading = false;
       },
@@ -147,8 +142,12 @@ export class StaffFormComponent implements OnInit {
     this.loading = true;
     const formValue = this.staffForm.value;
     
-    // Remove status field from request as it might not be in StaffRequest
-    const { status, ...staffRequest } = formValue;
+    // Format dates to ISO string
+    const staffRequest: StaffRequest = {
+      ...formValue,
+      dateOfBirth: formValue.dateOfBirth ? new Date(formValue.dateOfBirth).toISOString().split('T')[0] : undefined,
+      joiningDate: formValue.joiningDate ? new Date(formValue.joiningDate).toISOString().split('T')[0] : undefined
+    };
 
     if (this.isEditMode && this.staffId) {
       this.staffService.updateStaff(this.staffId, staffRequest).subscribe({

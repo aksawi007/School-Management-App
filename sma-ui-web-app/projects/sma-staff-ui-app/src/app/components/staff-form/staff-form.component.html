@@ -7,177 +7,281 @@
 
     <mat-card-content>
       <form [formGroup]="staffForm" (ngSubmit)="onSubmit()">
-        <!-- Basic Information -->
-        <mat-expansion-panel expanded>
-          <mat-expansion-panel-header>
-            <mat-panel-title>Basic Information</mat-panel-title>
-          </mat-expansion-panel-header>
+        <mat-accordion multi>
+          <!-- Basic Information -->
+          <mat-expansion-panel expanded>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>person</mat-icon>
+                Basic Information
+              </mat-panel-title>
+            </mat-expansion-panel-header>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Employee Code</mat-label>
-              <input matInput formControlName="employeeCode" placeholder="e.g., EMP001">
-            </mat-form-field>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Employee Code</mat-label>
+                <input matInput formControlName="employeeCode" placeholder="e.g., EMP001">
+              </mat-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Staff Type</mat-label>
-              <mat-select formControlName="staffType">
-                <mat-option *ngFor="let type of staffTypes" [value]="type">
-                  {{ type }}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="staffForm.get('staffType')?.hasError('required')">Staff type is required</mat-error>
-            </mat-form-field>
-          </div>
+              <mat-form-field appearance="outline">
+                <mat-label>Staff Type</mat-label>
+                <mat-select formControlName="staffType">
+                  <mat-option *ngFor="let type of staffTypes" [value]="type">
+                    {{ type }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="staffForm.get('staffType')?.hasError('required')">Staff type is required</mat-error>
+              </mat-form-field>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>First Name</mat-label>
-              <input matInput formControlName="firstName" placeholder="Enter first name">
-              <mat-error *ngIf="staffForm.get('firstName')?.hasError('required')">First name is required</mat-error>
-            </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Staff Status</mat-label>
+                <mat-select formControlName="staffStatus">
+                  <mat-option *ngFor="let status of staffStatuses" [value]="status">
+                    {{ status }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Last Name</mat-label>
-              <input matInput formControlName="lastName" placeholder="Enter last name">
-              <mat-error *ngIf="staffForm.get('lastName')?.hasError('required')">Last name is required</mat-error>
-            </mat-form-field>
-          </div>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="firstName" placeholder="Enter first name">
+                <mat-error *ngIf="staffForm.get('firstName')?.hasError('required')">First name is required</mat-error>
+              </mat-form-field>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Date of Birth</mat-label>
-              <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth">
-              <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
-              <mat-datepicker #dobPicker></mat-datepicker>
-            </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Middle Name</mat-label>
+                <input matInput formControlName="middleName" placeholder="Enter middle name">
+              </mat-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Gender</mat-label>
-              <mat-select formControlName="gender">
-                <mat-option *ngFor="let gender of genders" [value]="gender">
-                  {{ gender }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </mat-expansion-panel>
+              <mat-form-field appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="lastName" placeholder="Enter last name">
+                <mat-error *ngIf="staffForm.get('lastName')?.hasError('required')">Last name is required</mat-error>
+              </mat-form-field>
+            </div>
 
-        <!-- Contact Information -->
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>Contact Information</mat-panel-title>
-          </mat-expansion-panel-header>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Date of Birth</mat-label>
+                <input matInput [matDatepicker]="dobPicker" formControlName="dateOfBirth">
+                <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+                <mat-datepicker #dobPicker></mat-datepicker>
+              </mat-form-field>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" placeholder="email@example.com">
-              <mat-error *ngIf="staffForm.get('email')?.hasError('required')">Email is required</mat-error>
-              <mat-error *ngIf="staffForm.get('email')?.hasError('email')">Invalid email format</mat-error>
-            </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Gender</mat-label>
+                <mat-select formControlName="gender">
+                  <mat-option *ngFor="let gender of genders" [value]="gender">
+                    {{ gender }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Phone Number</mat-label>
-              <input matInput formControlName="phoneNumber" placeholder="10-digit number">
-              <mat-error *ngIf="staffForm.get('phoneNumber')?.hasError('required')">Phone is required</mat-error>
-              <mat-error *ngIf="staffForm.get('phoneNumber')?.hasError('pattern')">Invalid phone number</mat-error>
-            </mat-form-field>
-          </div>
+              <mat-form-field appearance="outline">
+                <mat-label>Blood Group</mat-label>
+                <mat-select formControlName="bloodGroup">
+                  <mat-option *ngFor="let group of bloodGroups" [value]="group">
+                    {{ group }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Address</mat-label>
-              <textarea matInput formControlName="address" rows="2" placeholder="Street address"></textarea>
-            </mat-form-field>
-          </div>
+          <!-- Contact Information -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>contact_phone</mat-icon>
+                Contact Information
+              </mat-panel-title>
+            </mat-expansion-panel-header>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>City</mat-label>
-              <input matInput formControlName="city" placeholder="City">
-            </mat-form-field>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" placeholder="email@example.com">
+                <mat-error *ngIf="staffForm.get('email')?.hasError('required')">Email is required</mat-error>
+                <mat-error *ngIf="staffForm.get('email')?.hasError('email')">Invalid email format</mat-error>
+              </mat-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>State</mat-label>
-              <mat-select formControlName="state">
-                <mat-option *ngFor="let state of states" [value]="state">
-                  {{ state }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+              <mat-form-field appearance="outline">
+                <mat-label>Phone Number</mat-label>
+                <input matInput formControlName="phoneNumber" placeholder="10-digit number">
+                <mat-error *ngIf="staffForm.get('phoneNumber')?.hasError('required')">Phone is required</mat-error>
+                <mat-error *ngIf="staffForm.get('phoneNumber')?.hasError('pattern')">Invalid phone number</mat-error>
+              </mat-form-field>
+            </div>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Postal Code</mat-label>
-              <input matInput formControlName="postalCode" placeholder="6-digit code">
-            </mat-form-field>
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Address Line 1</mat-label>
+                <input matInput formControlName="addressLine1" placeholder="Street address">
+              </mat-form-field>
+            </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Country</mat-label>
-              <input matInput formControlName="country" placeholder="Country">
-            </mat-form-field>
-          </div>
-        </mat-expansion-panel>
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Address Line 2</mat-label>
+                <input matInput formControlName="addressLine2" placeholder="Apartment, building, floor, etc.">
+              </mat-form-field>
+            </div>
 
-        <!-- Professional Information -->
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>Professional Information</mat-panel-title>
-          </mat-expansion-panel-header>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>City</mat-label>
+                <input matInput formControlName="city" placeholder="City">
+              </mat-form-field>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Designation</mat-label>
-              <input matInput formControlName="designation" placeholder="e.g., Senior Teacher">
-            </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>State</mat-label>
+                <mat-select formControlName="state">
+                  <mat-option *ngFor="let state of states" [value]="state">
+                    {{ state }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Department ID</mat-label>
-              <input matInput type="number" formControlName="departmentId" placeholder="Department ID">
-            </mat-form-field>
-          </div>
+              <mat-form-field appearance="outline">
+                <mat-label>Postal Code</mat-label>
+                <input matInput formControlName="postalCode" placeholder="6-digit code">
+                <mat-error *ngIf="staffForm.get('postalCode')?.hasError('pattern')">Invalid postal code</mat-error>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Qualifications</mat-label>
-              <textarea matInput formControlName="qualifications" rows="2" 
-                placeholder="e.g., M.Ed., B.Ed., M.A. in Mathematics"></textarea>
-            </mat-form-field>
-          </div>
+          <!-- Professional Information -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>work</mat-icon>
+                Professional Information
+              </mat-panel-title>
+            </mat-expansion-panel-header>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Joining Date</mat-label>
-              <input matInput [matDatepicker]="joiningPicker" formControlName="joiningDate">
-              <mat-datepicker-toggle matSuffix [for]="joiningPicker"></mat-datepicker-toggle>
-              <mat-datepicker #joiningPicker></mat-datepicker>
-            </mat-form-field>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Designation</mat-label>
+                <input matInput formControlName="designation" placeholder="e.g., Senior Teacher">
+              </mat-form-field>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Salary</mat-label>
-              <input matInput type="number" formControlName="salary" placeholder="Monthly salary">
-            </mat-form-field>
-          </div>
+              <mat-form-field appearance="outline">
+                <mat-label>Department ID</mat-label>
+                <input matInput type="number" formControlName="departmentId" placeholder="Department ID">
+              </mat-form-field>
+            </div>
 
-          <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Status</mat-label>
-              <mat-select formControlName="status">
-                <mat-option *ngFor="let status of statusOptions" [value]="status">
-                  {{ status }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </mat-expansion-panel>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Qualification</mat-label>
+                <input matInput formControlName="qualification" placeholder="e.g., M.Ed., B.Ed.">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Specialization</mat-label>
+                <input matInput formControlName="specialization" placeholder="e.g., Mathematics">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Experience (Years)</mat-label>
+                <input matInput type="number" formControlName="experienceYears" placeholder="0">
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Joining Date</mat-label>
+                <input matInput [matDatepicker]="joiningPicker" formControlName="joiningDate">
+                <mat-datepicker-toggle matSuffix [for]="joiningPicker"></mat-datepicker-toggle>
+                <mat-datepicker #joiningPicker></mat-datepicker>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Employment Type</mat-label>
+                <mat-select formControlName="employmentType">
+                  <mat-option *ngFor="let type of employmentTypes" [value]="type">
+                    {{ type }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Salary</mat-label>
+                <input matInput type="number" formControlName="salary" placeholder="0">
+                <span matPrefix>₹&nbsp;</span>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+
+          <!-- Identity & Bank Details -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>account_balance</mat-icon>
+                Identity & Bank Details
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Aadhar Number</mat-label>
+                <input matInput formControlName="aadharNumber" placeholder="12-digit number">
+                <mat-error *ngIf="staffForm.get('aadharNumber')?.hasError('pattern')">Invalid Aadhar number</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>PAN Number</mat-label>
+                <input matInput formControlName="panNumber" placeholder="e.g., ABCDE1234F" style="text-transform: uppercase">
+                <mat-error *ngIf="staffForm.get('panNumber')?.hasError('pattern')">Invalid PAN format</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Bank Name</mat-label>
+                <input matInput formControlName="bankName" placeholder="e.g., State Bank of India">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Bank Account Number</mat-label>
+                <input matInput formControlName="bankAccountNumber" placeholder="Account number">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>IFSC Code</mat-label>
+                <input matInput formControlName="bankIfscCode" placeholder="e.g., SBIN0001234" style="text-transform: uppercase">
+                <mat-error *ngIf="staffForm.get('bankIfscCode')?.hasError('pattern')">Invalid IFSC code</mat-error>
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+
+          <!-- Additional Information -->
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-icon>more_horiz</mat-icon>
+                Additional Information
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Photo URL</mat-label>
+                <input matInput formControlName="photoUrl" placeholder="https://example.com/photo.jpg">
+              </mat-form-field>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
 
         <!-- Action Buttons -->
         <div class="form-actions">
-          <button mat-raised-button type="button" (click)="cancel()">Cancel</button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="loading">
-            <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }}</span>
+          <button mat-button type="button" (click)="cancel()" [disabled]="loading">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="staffForm.invalid || loading">
+            <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }} Staff</span>
             <span *ngIf="loading">Processing...</span>
           </button>
         </div>

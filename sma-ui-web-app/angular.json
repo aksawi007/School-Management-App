@@ -328,6 +328,7 @@
 					"options": {
 						"port": 4201,
 						"publicHost": "http://localhost:4201",
+						"proxyConfig": "projects/sma-staff-ui-app/proxy.conf.json",
 						"extraWebpackConfig": "projects/sma-staff-ui-app/webpack.config.js"
 					}
 				},
