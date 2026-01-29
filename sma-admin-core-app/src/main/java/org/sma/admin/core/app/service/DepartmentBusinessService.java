@@ -4,8 +4,10 @@ import org.sma.admin.core.app.model.request.DepartmentRequest;
 import org.sma.admin.core.app.model.response.DepartmentResponse;
 import org.sma.jpa.model.master.DepartmentMaster;
 import org.sma.jpa.model.school.SchoolProfile;
+import org.sma.jpa.model.staff.Staff;
 import org.sma.jpa.repository.master.DepartmentMasterRepository;
 import org.sma.jpa.repository.school.SchoolProfileRepository;
+import org.sma.jpa.repository.staff.StaffRepository;
 import org.sma.platform.core.exception.SmaException;
 import org.sma.platform.core.service.ServiceRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class DepartmentBusinessService {
 
     @Autowired
     private SchoolProfileRepository schoolProfileRepository;
+
+    @Autowired
+    private StaffRepository staffRepository;
 
     /**
      * Create new department
@@ -60,9 +65,14 @@ public class DepartmentBusinessService {
         department.setDepartmentCode(request.getDepartmentCode());
         department.setDepartmentName(request.getDepartmentName());
         department.setDepartmentType(request.getDepartmentType());
-        department.setHodName(request.getHodName());
-        department.setHodEmail(request.getHodEmail());
-        department.setHodPhone(request.getHodPhone());
+        
+        // Set HOD if provided
+        if (request.getHodStaffId() != null) {
+            Staff hodStaff = staffRepository.findById(request.getHodStaffId())
+                    .orElseThrow(() -> new SmaException("HOD Staff not found with id: " + request.getHodStaffId()));
+            department.setHeadOfDepartment(hodStaff);
+        }
+        
         department.setDescription(request.getDescription());
         department.setIsActive(true);
 
@@ -95,6 +105,21 @@ public class DepartmentBusinessService {
     }
 
     /**
+     * Get departments by school and type
+     */
+    public List<DepartmentResponse> getDepartmentsByType(ServiceRequestContext context,
+                                                         Long schoolId,
+                                                         String departmentType) throws SmaException {
+        SchoolProfile school = schoolProfileRepository.findById(schoolId)
+                .orElseThrow(() -> new SmaException("School not found with id: " + schoolId));
+
+        List<DepartmentMaster> departments = departmentRepository.findBySchoolAndDepartmentTypeAndIsActiveTrue(school, departmentType);
+        return departments.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Update department
      */
     @Transactional
@@ -111,9 +136,16 @@ public class DepartmentBusinessService {
         if (request.getDepartmentType() != null) {
             existingDepartment.setDepartmentType(request.getDepartmentType());
         }
-        existingDepartment.setHodName(request.getHodName());
-        existingDepartment.setHodEmail(request.getHodEmail());
-        existingDepartment.setHodPhone(request.getHodPhone());
+        
+        // Update HOD
+        if (request.getHodStaffId() != null) {
+            Staff hodStaff = staffRepository.findById(request.getHodStaffId())
+                    .orElseThrow(() -> new SmaException("HOD Staff not found with id: " + request.getHodStaffId()));
+            existingDepartment.setHeadOfDepartment(hodStaff);
+        } else {
+            existingDepartment.setHeadOfDepartment(null);
+        }
+        
         existingDepartment.setDescription(request.getDescription());
 
         DepartmentMaster updatedDepartment = departmentRepository.save(existingDepartment);
@@ -143,9 +175,32 @@ public class DepartmentBusinessService {
         response.setDepartmentCode(department.getDepartmentCode());
         response.setDepartmentName(department.getDepartmentName());
         response.setDepartmentType(department.getDepartmentType());
-        response.setHodName(department.getHodName());
-        response.setHodEmail(department.getHodEmail());
-        response.setHodPhone(department.getHodPhone());
+        
+        // Extract HOD details from Staff relationship
+        Staff hod = department.getHeadOfDepartment();
+        if (hod != null) {
+            response.setHodStaffId(hod.getId());
+            response.setHodEmployeeCode(hod.getEmployeeCode());
+            
+            // Build full name from individual name fields
+            StringBuilder fullName = new StringBuilder();
+            if (hod.getFirstName() != null) {
+                fullName.append(hod.getFirstName());
+            }
+            if (hod.getMiddleName() != null && !hod.getMiddleName().isEmpty()) {
+                if (fullName.length() > 0) fullName.append(" ");
+                fullName.append(hod.getMiddleName());
+            }
+            if (hod.getLastName() != null) {
+                if (fullName.length() > 0) fullName.append(" ");
+                fullName.append(hod.getLastName());
+            }
+            response.setHodFullName(fullName.toString());
+            
+            response.setHodEmail(hod.getEmail());
+            response.setHodPhone(hod.getPhoneNumber());
+        }
+        
         response.setDescription(department.getDescription());
         return response;
     }

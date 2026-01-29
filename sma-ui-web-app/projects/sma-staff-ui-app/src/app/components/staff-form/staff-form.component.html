@@ -167,9 +167,39 @@
                 <input matInput formControlName="designation" placeholder="e.g., Senior Teacher">
               </mat-form-field>
 
-              <mat-form-field appearance="outline">
-                <mat-label>Department ID</mat-label>
-                <input matInput type="number" formControlName="departmentId" placeholder="Department ID">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Departments</mat-label>
+                <mat-select formControlName="departmentIds" multiple [disabled]="!staffForm.get('staffType')?.value || loadingDepartments">
+                  <mat-select-trigger>
+                    <span *ngIf="staffForm.get('departmentIds')?.value?.length === 0">-- Select Departments --</span>
+                    <span *ngIf="staffForm.get('departmentIds')?.value?.length === 1">
+                      {{ getDepartmentName(staffForm.get('departmentIds')?.value[0]) }}
+                    </span>
+                    <span *ngIf="staffForm.get('departmentIds')?.value?.length > 1">
+                      {{ staffForm.get('departmentIds')?.value?.length }} departments selected
+                    </span>
+                  </mat-select-trigger>
+                  
+                  <!-- Search Input -->
+                  <mat-form-field class="search-field" appearance="outline">
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input matInput [formControl]="departmentSearchCtrl" placeholder="Search departments..." (click)="$event.stopPropagation()">
+                  </mat-form-field>
+                  
+                  <mat-option *ngFor="let dept of filteredDepartments | async" [value]="dept.departmentId">
+                    <span class="dept-code">{{ dept.departmentCode }}</span>
+                    <span class="dept-name">{{ dept.departmentName }}</span>
+                  </mat-option>
+                  
+                  <mat-option *ngIf="(filteredDepartments | async)?.length === 0" disabled>
+                    No departments found
+                  </mat-option>
+                </mat-select>
+                <mat-hint *ngIf="!staffForm.get('staffType')?.value">Select Staff Type first to load departments</mat-hint>
+                <mat-hint *ngIf="loadingDepartments">Loading departments...</mat-hint>
+                <mat-hint *ngIf="staffForm.get('staffType')?.value && departments.length === 0 && !loadingDepartments">
+                  No departments found for this staff type
+                </mat-hint>
               </mat-form-field>
             </div>
 

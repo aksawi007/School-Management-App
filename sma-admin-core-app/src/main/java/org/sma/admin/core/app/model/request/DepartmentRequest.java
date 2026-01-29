@@ -9,9 +9,7 @@ public class DepartmentRequest {
     private String departmentCode;
     private String departmentName;
     private String departmentType;
-    private String hodName;
-    private String hodEmail;
-    private String hodPhone;
+    private Long hodStaffId;
     private String description;
 
     // Constructors
@@ -51,28 +49,12 @@ public class DepartmentRequest {
         this.departmentType = departmentType;
     }
 
-    public String getHodName() {
-        return hodName;
+    public Long getHodStaffId() {
+        return hodStaffId;
     }
 
-    public void setHodName(String hodName) {
-        this.hodName = hodName;
-    }
-
-    public String getHodEmail() {
-        return hodEmail;
-    }
-
-    public void setHodEmail(String hodEmail) {
-        this.hodEmail = hodEmail;
-    }
-
-    public String getHodPhone() {
-        return hodPhone;
-    }
-
-    public void setHodPhone(String hodPhone) {
-        this.hodPhone = hodPhone;
+    public void setHodStaffId(Long hodStaffId) {
+        this.hodStaffId = hodStaffId;
     }
 
     public String getDescription() {

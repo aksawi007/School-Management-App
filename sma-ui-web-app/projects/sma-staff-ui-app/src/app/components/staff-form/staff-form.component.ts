@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StaffService, StaffRequest, StaffResponse, EmploymentType, StaffStatus, DEPARTMENT_TYPE, INDIAN_STATES } from 'sma-shared-lib';
+import { StaffService, StaffRequest, StaffResponse, EmploymentType, StaffStatus, DEPARTMENT_TYPE, INDIAN_STATES, DepartmentService, DepartmentResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ReplaySubject, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 interface SchoolContext {
   schoolId: number;
@@ -15,7 +17,7 @@ interface SchoolContext {
   templateUrl: './staff-form.component.html',
   styleUrls: ['./staff-form.component.scss']
 })
-export class StaffFormComponent implements OnInit {
+export class StaffFormComponent implements OnInit, OnDestroy {
   staffForm!: FormGroup;
   isEditMode = false;
   staffId?: number;
@@ -29,10 +31,18 @@ export class StaffFormComponent implements OnInit {
   genders = ['MALE', 'FEMALE', 'OTHER'];
   bloodGroups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
   states = INDIAN_STATES;
+  departments: DepartmentResponse[] = [];
+  loadingDepartments = false;
+  
+  // Department search
+  departmentSearchCtrl = new FormControl();
+  filteredDepartments: ReplaySubject<DepartmentResponse[]> = new ReplaySubject<DepartmentResponse[]>(1);
+  protected _onDestroy = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
     private staffService: StaffService,
+    private departmentService: DepartmentService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
@@ -74,6 +84,18 @@ export class StaffFormComponent implements OnInit {
       this.isEditMode = true;
       this.staffId = parseInt(id);
     }
+
+    // Listen to department search input
+    this.departmentSearchCtrl.valueChanges
+      .pipe(takeUntil(this._onDestroy))
+      .subscribe(() => {
+        this.filterDepartments();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this._onDestroy.next();
+    this._onDestroy.complete();
   }
 
   createForm(): void {
@@ -95,7 +117,7 @@ export class StaffFormComponent implements OnInit {
       postalCode: ['', [Validators.pattern(/^\d{6}$/)]],
       staffType: [DEPARTMENT_TYPE.ACADEMIC, Validators.required],
       designation: [''],
-      departmentId: [''],
+      departmentIds: [[]],
       qualification: [''],
       specialization: [''],
       experienceYears: [0],
@@ -110,6 +132,58 @@ export class StaffFormComponent implements OnInit {
       bankName: [''],
       bankIfscCode: ['', [Validators.pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/)]]
     });
+
+    // Listen for staff type changes to load departments
+    this.staffForm.get('staffType')?.valueChanges.subscribe(staffType => {
+      if (staffType && this.schoolId) {
+        this.loadDepartmentsByType(staffType);
+      }
+    });
+  }
+
+  loadDepartmentsByType(staffType: string): void {
+    if (!this.schoolId) return;
+
+    this.loadingDepartments = true;
+    this.departments = [];
+    this.staffForm.patchValue({ departmentIds: [] });
+
+    this.departmentService.getDepartmentsByType(this.schoolId, staffType).subscribe({
+      next: (departments) => {
+        this.departments = departments;
+        this.filteredDepartments.next(departments.slice());
+        this.loadingDepartments = false;
+      },
+      error: (error) => {
+        console.error('Error loading departments:', error);
+        this.loadingDepartments = false;
+      }
+    });
+  }
+
+  filterDepartments(): void {
+    if (!this.departments) {
+      return;
+    }
+    
+    let search = this.departmentSearchCtrl.value;
+    if (!search) {
+      this.filteredDepartments.next(this.departments.slice());
+      return;
+    }
+    
+    search = search.toLowerCase();
+    this.filteredDepartments.next(
+      this.departments.filter(dept => 
+        dept.departmentName.toLowerCase().includes(search) ||
+        dept.departmentCode.toLowerCase().includes(search)
+      )
+    );
+  }
+
+  getDepartmentName(departmentId: number): string {
+    const dept = this.departments.find(d => d.departmentId === departmentId);
+    return dept ? `${dept.departmentCode} - ${dept.departmentName}` : '';
   }
 
   loadStaff(): void {
@@ -118,8 +192,17 @@ export class StaffFormComponent implements OnInit {
     this.loading = true;
     this.staffService.getStaff(this.staffId).subscribe({
       next: (staff) => {
+        // Load departments first if staff type is set
+        if (staff.staffType && this.schoolId) {
+          this.loadDepartmentsByType(staff.staffType);
+        }
+
+        // Convert single departmentId to array for multi-select
+        const departmentIds = staff.departmentId ? [staff.departmentId] : [];
+
         this.staffForm.patchValue({
           ...staff,
+          departmentIds: departmentIds,
           dateOfBirth: staff.dateOfBirth ? new Date(staff.dateOfBirth) : null,
           joiningDate: staff.joiningDate ? new Date(staff.joiningDate) : null
         });
@@ -142,9 +225,11 @@ export class StaffFormComponent implements OnInit {
     this.loading = true;
     const formValue = this.staffForm.value;
     
-    // Format dates to ISO string
+    // Format dates to ISO string and use first department from multi-select
+    const departmentIds = formValue.departmentIds || [];
     const staffRequest: StaffRequest = {
       ...formValue,
+      departmentId: departmentIds.length > 0 ? departmentIds[0] : undefined,
       dateOfBirth: formValue.dateOfBirth ? new Date(formValue.dateOfBirth).toISOString().split('T')[0] : undefined,
       joiningDate: formValue.joiningDate ? new Date(formValue.joiningDate).toISOString().split('T')[0] : undefined
     };

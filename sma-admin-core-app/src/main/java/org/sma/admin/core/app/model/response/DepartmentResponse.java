@@ -10,7 +10,9 @@ public class DepartmentResponse {
     private String departmentCode;
     private String departmentName;
     private String departmentType;
-    private String hodName;
+    private Long hodStaffId;
+    private String hodEmployeeCode;
+    private String hodFullName;
     private String hodEmail;
     private String hodPhone;
     private String description;
@@ -60,12 +62,28 @@ public class DepartmentResponse {
         this.departmentType = departmentType;
     }
 
-    public String getHodName() {
-        return hodName;
+    public Long getHodStaffId() {
+        return hodStaffId;
     }
 
-    public void setHodName(String hodName) {
-        this.hodName = hodName;
+    public void setHodStaffId(Long hodStaffId) {
+        this.hodStaffId = hodStaffId;
+    }
+
+    public String getHodEmployeeCode() {
+        return hodEmployeeCode;
+    }
+
+    public void setHodEmployeeCode(String hodEmployeeCode) {
+        this.hodEmployeeCode = hodEmployeeCode;
+    }
+
+    public String getHodFullName() {
+        return hodFullName;
+    }
+
+    public void setHodFullName(String hodFullName) {
+        this.hodFullName = hodFullName;
     }
 
     public String getHodEmail() {

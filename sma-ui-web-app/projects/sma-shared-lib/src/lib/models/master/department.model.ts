@@ -8,7 +8,9 @@ export interface Department {
   departmentCode: string;
   departmentName: string;
   departmentType: string;
-  hodName?: string;
+  hodStaffId?: number;
+  hodEmployeeCode?: string;
+  hodFullName?: string;
   hodEmail?: string;
   hodPhone?: string;
   description?: string;
@@ -22,9 +24,7 @@ export interface DepartmentRequest {
   departmentCode: string;
   departmentName: string;
   departmentType: string;
-  hodName?: string;
-  hodEmail?: string;
-  hodPhone?: string;
+  hodStaffId?: number;
   description?: string;
 }
 
@@ -37,7 +37,9 @@ export interface DepartmentResponse {
   departmentCode: string;
   departmentName: string;
   departmentType: string;
-  hodName?: string;
+  hodStaffId?: number;
+  hodEmployeeCode?: string;
+  hodFullName?: string;
   hodEmail?: string;
   hodPhone?: string;
   description?: string;

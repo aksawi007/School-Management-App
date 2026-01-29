@@ -1,4 +1,13 @@
 {
+  "/api/department/*": {
+    "target": "http://localhost:9090",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/api": ""
+    }
+  },
   "/api/*": {
     "target": "http://localhost:9092",
     "secure": false,

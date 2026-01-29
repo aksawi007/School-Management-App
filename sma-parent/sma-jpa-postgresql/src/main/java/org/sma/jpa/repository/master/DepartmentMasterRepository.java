@@ -17,6 +17,8 @@ public interface DepartmentMasterRepository extends JpaRepository<DepartmentMast
     List<DepartmentMaster> findBySchoolAndIsActiveTrue(SchoolProfile school);
     
     Optional<DepartmentMaster> findBySchoolAndDepartmentCode(SchoolProfile school, String departmentCode);
+    
+    List<DepartmentMaster> findBySchoolAndDepartmentTypeAndIsActiveTrue(SchoolProfile school, String departmentType);
 }
 
 

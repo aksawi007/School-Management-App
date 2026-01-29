@@ -66,6 +66,21 @@ public class DepartmentController extends ApiRestServiceBinding {
         }
     }
 
+    @GetMapping("/getByType")
+    ResponseEntity<List<DepartmentResponse>> getDepartmentsByType(
+            @RequestParam("schoolId") Long schoolId,
+            @RequestParam("departmentType") String departmentType) throws IOException {
+        ServiceRequestContext context = createServiceRequestContext("GetDepartmentsByType",
+            schoolId.toString(), departmentType);
+
+        try {
+            List<DepartmentResponse> response = departmentBusinessService.getDepartmentsByType(context, schoolId, departmentType);
+            return processResponse(context, response);
+        } catch (SmaException e) {
+            throw new RuntimeException("Unable to fetch departments by type: " + e.getMessage(), e);
+        }
+    }
+
     @PutMapping("/update")
     ResponseEntity<DepartmentResponse> updateDepartment(
             @RequestParam("departmentId") Long departmentId,

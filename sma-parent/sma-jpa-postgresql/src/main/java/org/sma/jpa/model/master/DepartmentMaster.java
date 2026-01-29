@@ -2,6 +2,7 @@ package org.sma.jpa.model.master;
 
 import org.sma.jpa.model.BaseEntity;
 import org.sma.jpa.model.school.SchoolProfile;
+import org.sma.jpa.model.staff.Staff;
 
 import javax.persistence.*;
 
@@ -26,14 +27,9 @@ public class DepartmentMaster extends BaseEntity {
     @Column(name = "department_type", length = 50)
     private String departmentType; // ACADEMIC, ADMINISTRATION, SUPPORT
 
-    @Column(name = "hod_name", length = 150)
-    private String hodName; // Head of Department
-
-    @Column(name = "hod_email", length = 100)
-    private String hodEmail;
-
-    @Column(name = "hod_phone", length = 20)
-    private String hodPhone;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "hod_staff_id")
+    private Staff headOfDepartment; // Head of Department
 
     @Column(name = "description", length = 500)
     private String description;
@@ -71,28 +67,12 @@ public class DepartmentMaster extends BaseEntity {
         this.departmentType = departmentType;
     }
 
-    public String getHodName() {
-        return hodName;
+    public Staff getHeadOfDepartment() {
+        return headOfDepartment;
     }
 
-    public void setHodName(String hodName) {
-        this.hodName = hodName;
-    }
-
-    public String getHodEmail() {
-        return hodEmail;
-    }
-
-    public void setHodEmail(String hodEmail) {
-        this.hodEmail = hodEmail;
-    }
-
-    public String getHodPhone() {
-        return hodPhone;
-    }
-
-    public void setHodPhone(String hodPhone) {
-        this.hodPhone = hodPhone;
+    public void setHeadOfDepartment(Staff headOfDepartment) {
+        this.headOfDepartment = headOfDepartment;
     }
 
     public String getDescription() {

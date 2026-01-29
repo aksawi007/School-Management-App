@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DepartmentService, DepartmentResponse, DepartmentRequest, DEPARTMENT_TYPE } from 'sma-shared-lib';
+import { DepartmentService, DepartmentResponse, DepartmentRequest, DEPARTMENT_TYPE, StaffService, StaffResponse } from 'sma-shared-lib';
 
 @Component({
   selector: 'app-department-form',
@@ -15,10 +15,13 @@ export class DepartmentFormComponent implements OnInit {
   departmentId: number | null = null;
   schoolId: number | null = null;
   departmentTypes = Object.values(DEPARTMENT_TYPE);
+  staffList: StaffResponse[] = [];
+  loadingStaff = false;
 
   constructor(
     private fb: FormBuilder,
     private departmentService: DepartmentService,
+    private staffService: StaffService,
     private route: ActivatedRoute,
     private router: Router
   ) {
@@ -26,9 +29,7 @@ export class DepartmentFormComponent implements OnInit {
       departmentCode: ['', [Validators.required, Validators.maxLength(20)]],
       departmentName: ['', [Validators.required, Validators.maxLength(100)]],
       departmentType: ['', Validators.required],
-      hodName: ['', Validators.maxLength(100)],
-      hodEmail: ['', [Validators.email, Validators.maxLength(100)]],
-      hodPhone: ['', [Validators.pattern(/^\d{10}$/), Validators.maxLength(20)]],
+      hodStaffId: [null],
       description: ['', Validators.maxLength(500)]
     });
   }
@@ -65,6 +66,32 @@ export class DepartmentFormComponent implements OnInit {
     if (window.parent && window.parent !== window) {
       window.parent.postMessage({ type: 'REQUEST_CONTEXT' }, 'http://localhost:4300');
     }
+
+    // Listen for department type changes
+    this.departmentForm.get('departmentType')?.valueChanges.subscribe(type => {
+      if (type && this.schoolId) {
+        this.loadStaffByType(type);
+      }
+    });
+  }
+
+  loadStaffByType(departmentType: string): void {
+    if (!this.schoolId) return;
+    
+    this.loadingStaff = true;
+    this.staffList = [];
+    this.departmentForm.patchValue({ hodStaffId: null });
+    
+    this.staffService.getStaffByType(this.schoolId, departmentType as any).subscribe({
+      next: (staff: StaffResponse[]) => {
+        this.staffList = staff;
+        this.loadingStaff = false;
+      },
+      error: (error: any) => {
+        console.error('Error loading staff:', error);
+        this.loadingStaff = false;
+      }
+    });
   }
 
   loadDepartmentIfEditMode(): void {
@@ -76,11 +103,15 @@ export class DepartmentFormComponent implements OnInit {
             departmentCode: department.departmentCode,
             departmentName: department.departmentName,
             departmentType: department.departmentType,
-            hodName: department.hodName,
-            hodEmail: department.hodEmail,
-            hodPhone: department.hodPhone,
+            hodStaffId: department.hodStaffId,
             description: department.description
           });
+          
+          // Load staff list if department type is set
+          if (department.departmentType) {
+            this.loadStaffByType(department.departmentType);
+          }
+          
           this.loading = false;
         },
         error: (error: any) => {
@@ -110,9 +141,7 @@ export class DepartmentFormComponent implements OnInit {
       departmentCode: formValue.departmentCode,
       departmentName: formValue.departmentName,
       departmentType: formValue.departmentType,
-      hodName: formValue.hodName || undefined,
-      hodEmail: formValue.hodEmail || undefined,
-      hodPhone: formValue.hodPhone || undefined,
+      hodStaffId: formValue.hodStaffId || undefined,
       description: formValue.description || undefined
     };
 

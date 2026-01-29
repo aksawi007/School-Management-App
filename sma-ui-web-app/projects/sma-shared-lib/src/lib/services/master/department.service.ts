@@ -27,6 +27,15 @@ export class DepartmentService {
     });
   }
 
+  getDepartmentsByType(schoolId: number, departmentType: string): Observable<DepartmentResponse[]> {
+    return this.http.get<DepartmentResponse[]>(`${this.apiUrl}/getByType`, {
+      params: {
+        schoolId: schoolId.toString(),
+        departmentType: departmentType
+      }
+    });
+  }
+
   updateDepartment(departmentId: number, request: DepartmentRequest): Observable<DepartmentResponse> {
     return this.http.put<DepartmentResponse>(`${this.apiUrl}/update`, request, {
       params: { departmentId: departmentId.toString() }
