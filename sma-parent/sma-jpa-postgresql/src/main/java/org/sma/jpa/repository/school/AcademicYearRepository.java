@@ -25,6 +25,9 @@ public interface AcademicYearRepository extends JpaRepository<AcademicYear, Long
     
     Optional<AcademicYear> findByYearName(String yearName);
     
+    @Query("SELECT a FROM AcademicYear a ORDER BY a.endDate DESC, a.startDate DESC")
+    List<AcademicYear> findAllOrderByEndDateDesc();
+    
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("UPDATE AcademicYear a SET a.isCurrent = false WHERE a.isCurrent = true AND a.school.id = :schoolId")
     void updateAllToNonCurrentForSchool(@Param("schoolId") Long schoolId);

@@ -76,6 +76,12 @@ export class SectionListComponent implements OnInit {
     this.academicYearService.getAllAcademicYears().subscribe({
       next: (years) => {
         this.academicYears = years;
+        // Auto-select current academic year if not already set from query params
+        const currentYear = years.find(y => y.currentYear === true);
+        if (currentYear && !this.selectedAcademicYearId) {
+          this.selectedAcademicYearId = currentYear.yearId;
+          this.filterClassesByAcademicYear();
+        }
       },
       error: (error) => {
         console.error('Error loading academic years:', error);

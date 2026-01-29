@@ -7,7 +7,7 @@ export interface AcademicYear {
   yearName: string;
   startDate: string;
   endDate: string;
-  isCurrent: boolean;
+  currentYear: boolean;
   description?: string;
 }
 

@@ -101,7 +101,7 @@ public class AcademicYearBusinessService {
      * Get all academic years
      */
     public List<AcademicYearResponse> getAllAcademicYears(ServiceRequestContext context) throws SmaException {
-        List<AcademicYear> years = academicYearRepository.findAll();
+        List<AcademicYear> years = academicYearRepository.findAllOrderByEndDateDesc();
         return years.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
