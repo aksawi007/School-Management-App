@@ -10,12 +10,12 @@ interface SchoolContext {
 }
 
 interface AcademicYear {
-  id: number;
+  yearId?: number;
   yearName: string;
   startDate: string;
   endDate: string;
   currentYear: boolean;
-  description: string;
+  description?: string;
 }
 
 @Component({
@@ -75,6 +75,7 @@ export class AcademicYearComponent implements OnInit {
   loadAcademicYears(): void {
     this.http.get<AcademicYear[]>('/api/academic-year/getAll').subscribe({
       next: (data) => {
+        console.log('Loaded academic years:', data);
         this.academicYears = data;
       },
       error: (err) => {
@@ -94,11 +95,14 @@ export class AcademicYearComponent implements OnInit {
     this.showForm = true;
     this.isEditMode = true;
     this.selectedYear = year;
+    console.log('Editing year:', year);
+    console.log('Setting currentYear checkbox to:', year.currentYear);
     this.yearForm.patchValue({
       ...year,
       startDate: new Date(year.startDate),
       endDate: new Date(year.endDate)
     });
+    console.log('Form value after patch:', this.yearForm.value);
   }
 
   saveYear(): void {
@@ -108,6 +112,10 @@ export class AcademicYearComponent implements OnInit {
         return;
       }
 
+      console.log('Raw form value:', this.yearForm.value);
+      console.log('currentYear control value:', this.yearForm.get('currentYear')?.value);
+      
+      // Backend request expects currentYear property (not isCurrent)
       const formData = {
         ...this.yearForm.value,
         schoolId: this.selectedSchool.schoolId,
@@ -115,8 +123,10 @@ export class AcademicYearComponent implements OnInit {
         endDate: this.formatDate(this.yearForm.value.endDate)
       };
       
+      console.log('Sending data to backend:', formData);
+      
       if (this.isEditMode && this.selectedYear) {
-        this.http.put<AcademicYear>(`/api/academic-year/update?yearId=${this.selectedYear.id}`, formData)
+        this.http.put<AcademicYear>(`/api/academic-year/update?yearId=${this.selectedYear.yearId}`, formData)
           .subscribe({
             next: () => {
               this.showMessage('Academic year updated successfully');
@@ -146,11 +156,13 @@ export class AcademicYearComponent implements OnInit {
 
   setCurrentYear(year: AcademicYear): void {
     if (confirm(`Set ${year.yearName} as the current academic year?`)) {
+      // Send currentYear: true to backend (not isCurrent)
       const updateData = {
         ...year,
         currentYear: true
       };
-      this.http.put(`/api/academic-year/update?yearId=${year.id}`, updateData).subscribe({
+      console.log('Setting current year with data:', updateData);
+      this.http.put(`/api/academic-year/update?yearId=${year.yearId}`, updateData).subscribe({
         next: () => {
           this.showMessage('Current academic year updated');
           this.loadAcademicYears();
@@ -165,7 +177,7 @@ export class AcademicYearComponent implements OnInit {
 
   deleteYear(year: AcademicYear): void {
     if (confirm(`Are you sure you want to delete academic year ${year.yearName}?`)) {
-      this.http.delete(`/api/academic-year/delete?yearId=${year.id}`).subscribe({
+      this.http.delete(`/api/academic-year/delete?yearId=${year.yearId}`).subscribe({
         next: () => {
           this.showMessage('Academic year deleted successfully');
           this.loadAcademicYears();

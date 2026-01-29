@@ -66,9 +66,9 @@ public class AcademicYearBusinessService {
             throw new SmaException("Academic year already exists: " + request.getYearName());
         }
 
-        // If setting as current year, unset all other current years
+        // If setting as current year, unset all other current years for this school
         if (request.isCurrentYear()) {
-            academicYearRepository.updateAllToNonCurrent();
+            academicYearRepository.updateAllToNonCurrentForSchool(request.getSchoolId());
         }
 
         // Create academic year entity
@@ -130,9 +130,10 @@ public class AcademicYearBusinessService {
         AcademicYear existingYear = academicYearRepository.findById(yearId)
                 .orElseThrow(() -> new SmaException("Academic year not found with id: " + yearId));
 
-        // If setting as current year, unset all other current years
+        // If setting as current year, unset all other current years for this school
         if (request.isCurrentYear()) {
-            academicYearRepository.updateAllToNonCurrentExcept(yearId);
+            Long schoolId = existingYear.getSchool().getId();
+            academicYearRepository.updateAllToNonCurrentExceptForSchool(yearId, schoolId);
         }
 
         // Update fields
@@ -170,8 +171,9 @@ public class AcademicYearBusinessService {
         AcademicYear year = academicYearRepository.findById(yearId)
                 .orElseThrow(() -> new SmaException("Academic year not found with id: " + yearId));
 
-        // Unset all other current years
-        academicYearRepository.updateAllToNonCurrentExcept(yearId);
+        // Unset all other current years for this school
+        Long schoolId = year.getSchool().getId();
+        academicYearRepository.updateAllToNonCurrentExceptForSchool(yearId, schoolId);
 
         // Set this year as current
         year.setIsCurrent(true);

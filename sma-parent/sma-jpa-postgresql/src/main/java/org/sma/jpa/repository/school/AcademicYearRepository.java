@@ -25,13 +25,13 @@ public interface AcademicYearRepository extends JpaRepository<AcademicYear, Long
     
     Optional<AcademicYear> findByYearName(String yearName);
     
-    @Modifying
-    @Query("UPDATE AcademicYear a SET a.isCurrent = false WHERE a.isCurrent = true")
-    void updateAllToNonCurrent();
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE AcademicYear a SET a.isCurrent = false WHERE a.isCurrent = true AND a.school.id = :schoolId")
+    void updateAllToNonCurrentForSchool(@Param("schoolId") Long schoolId);
     
-    @Modifying
-    @Query("UPDATE AcademicYear a SET a.isCurrent = false WHERE a.isCurrent = true AND a.id != :yearId")
-    void updateAllToNonCurrentExcept(@Param("yearId") Long yearId);
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE AcademicYear a SET a.isCurrent = false WHERE a.isCurrent = true AND a.id != :yearId AND a.school.id = :schoolId")
+    void updateAllToNonCurrentExceptForSchool(@Param("yearId") Long yearId, @Param("schoolId") Long schoolId);
 }
 
 
