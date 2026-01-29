@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SubjectMasterService, SubjectMasterResponse } from 'sma-shared-lib';
+import { SubjectMasterService, SubjectMasterResponse, ClassMasterService, ClassMasterResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -11,7 +11,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class SubjectListComponent implements OnInit {
   subjects: SubjectMasterResponse[] = [];
   filteredSubjects: SubjectMasterResponse[] = [];
+  classes: ClassMasterResponse[] = [];
   selectedType = 'ALL';
+  selectedClassId?: number;
   subjectTypes = ['ALL', 'CORE', 'ELECTIVE', 'OPTIONAL', 'EXTRA_CURRICULAR'];
   displayedColumns: string[] = ['subjectCode', 'subjectName', 'className', 'subjectType', 'credits', 'maxMarks', 'isMandatory', 'actions'];
   loading = true;
@@ -19,6 +21,7 @@ export class SubjectListComponent implements OnInit {
 
   constructor(
     private subjectMasterService: SubjectMasterService,
+    private classMasterService: ClassMasterService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {}
@@ -37,6 +40,7 @@ export class SubjectListComponent implements OnInit {
         
         if (school) {
           this.schoolId = school.schoolId;
+          this.loadClasses();
           this.loadSubjects();
         }
       }
@@ -46,6 +50,17 @@ export class SubjectListComponent implements OnInit {
     if (window.parent && window.parent !== window) {
       window.parent.postMessage({ type: 'REQUEST_CONTEXT' }, 'http://localhost:4300');
     }
+  }
+
+  loadClasses(): void {
+    this.classMasterService.getAllClassesBySchool(this.schoolId).subscribe({
+      next: (classes) => {
+        this.classes = classes.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+      },
+      error: (error) => {
+        console.error('Error loading classes:', error);
+      }
+    });
   }
 
   loadSubjects(): void {
@@ -68,12 +83,24 @@ export class SubjectListComponent implements OnInit {
     this.applyFilter();
   }
 
+  onClassChange(): void {
+    this.applyFilter();
+  }
+
   applyFilter(): void {
-    if (this.selectedType === 'ALL') {
-      this.filteredSubjects = this.subjects;
-    } else {
-      this.filteredSubjects = this.subjects.filter(s => s.subjectType === this.selectedType);
+    let filtered = this.subjects;
+    
+    // Filter by type
+    if (this.selectedType !== 'ALL') {
+      filtered = filtered.filter(s => s.subjectType === this.selectedType);
     }
+    
+    // Filter by class
+    if (this.selectedClassId) {
+      filtered = filtered.filter(s => s.classId === this.selectedClassId?.toString());
+    }
+    
+    this.filteredSubjects = filtered;
   }
 
   addSubject(): void {

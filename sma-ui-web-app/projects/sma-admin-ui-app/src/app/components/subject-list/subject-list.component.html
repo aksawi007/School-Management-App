@@ -6,14 +6,26 @@
 
     <mat-card-content>
       <div class="actions-bar">
-        <mat-form-field appearance="outline" class="type-filter">
-          <mat-label>Filter by Type</mat-label>
-          <mat-select [(ngModel)]="selectedType" (selectionChange)="onTypeChange()">
-            <mat-option *ngFor="let type of subjectTypes" [value]="type">
-              {{ type.replace('_', ' ') }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <div class="filters">
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Filter by Class</mat-label>
+            <mat-select [(ngModel)]="selectedClassId" (selectionChange)="onClassChange()">
+              <mat-option [value]="undefined">All Classes</mat-option>
+              <mat-option *ngFor="let class of classes" [value]="class.id">
+                {{ class.className }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Filter by Type</mat-label>
+            <mat-select [(ngModel)]="selectedType" (selectionChange)="onTypeChange()">
+              <mat-option *ngFor="let type of subjectTypes" [value]="type">
+                {{ type.replace('_', ' ') }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
         <button mat-raised-button color="primary" (click)="addSubject()">
           <mat-icon>add</mat-icon>
