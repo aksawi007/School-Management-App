@@ -44,3 +44,25 @@ export interface DepartmentResponse {
   hodPhone?: string;
   description?: string;
 }
+
+/**
+ * Department Staff Response DTO
+ * Represents staff associated with a department
+ */
+export interface DepartmentStaffResponse {
+  staffId: number;
+  employeeCode: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  staffType: string;
+  designation?: string;
+  roleInDepartment?: string;
+  isPrimaryDepartment: boolean;
+  assignmentDate?: string;
+  memberSince?: string;
+  remarks?: string;
+}

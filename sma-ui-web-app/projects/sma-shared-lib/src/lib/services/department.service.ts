@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { DepartmentRequest, DepartmentResponse } from '../models/master/department.model';
+import { DepartmentRequest, DepartmentResponse, DepartmentStaffResponse } from '../models/master/department.model';
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +35,12 @@ export class DepartmentService {
 
   deleteDepartment(departmentId: number): Observable<string> {
     return this.http.delete<string>(`${this.apiUrl}/delete`, {
+      params: { departmentId: departmentId.toString() }
+    });
+  }
+
+  getDepartmentStaff(departmentId: number): Observable<DepartmentStaffResponse[]> {
+    return this.http.get<DepartmentStaffResponse[]>(`${this.apiUrl}/getStaff`, {
       params: { departmentId: departmentId.toString() }
     });
   }

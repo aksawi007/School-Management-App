@@ -2,11 +2,14 @@ package org.sma.admin.core.app.service;
 
 import org.sma.admin.core.app.model.request.DepartmentRequest;
 import org.sma.admin.core.app.model.response.DepartmentResponse;
+import org.sma.admin.core.app.model.response.DepartmentStaffResponse;
 import org.sma.jpa.model.master.DepartmentMaster;
 import org.sma.jpa.model.school.SchoolProfile;
+import org.sma.jpa.model.staff.DepartmentStaffMapping;
 import org.sma.jpa.model.staff.Staff;
 import org.sma.jpa.repository.master.DepartmentMasterRepository;
 import org.sma.jpa.repository.school.SchoolProfileRepository;
+import org.sma.jpa.repository.staff.DepartmentStaffMappingRepository;
 import org.sma.jpa.repository.staff.StaffRepository;
 import org.sma.platform.core.exception.SmaException;
 import org.sma.platform.core.service.ServiceRequestContext;
@@ -32,6 +35,9 @@ public class DepartmentBusinessService {
 
     @Autowired
     private StaffRepository staffRepository;
+
+    @Autowired
+    private DepartmentStaffMappingRepository departmentStaffMappingRepository;
 
     /**
      * Create new department
@@ -163,6 +169,66 @@ public class DepartmentBusinessService {
         // Soft delete
         department.setIsActive(false);
         departmentRepository.save(department);
+    }
+
+    /**
+     * Get staff members associated with a department
+     */
+    public List<DepartmentStaffResponse> getDepartmentStaff(ServiceRequestContext context, 
+                                                           Long departmentId) throws SmaException {
+        // Verify department exists
+        DepartmentMaster department = departmentRepository.findById(departmentId)
+                .orElseThrow(() -> new SmaException("Department not found with id: " + departmentId));
+
+        // Get all staff mappings for this department
+        List<DepartmentStaffMapping> mappings = departmentStaffMappingRepository.findByDepartmentId(departmentId);
+        
+        return mappings.stream()
+                .map(this::convertMappingToStaffResponse)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Convert DepartmentStaffMapping to DepartmentStaffResponse
+     */
+    private DepartmentStaffResponse convertMappingToStaffResponse(DepartmentStaffMapping mapping) {
+        Staff staff = mapping.getStaff();
+        DepartmentStaffResponse response = new DepartmentStaffResponse();
+        
+        response.setStaffId(staff.getId());
+        response.setEmployeeCode(staff.getEmployeeCode());
+        response.setFirstName(staff.getFirstName());
+        response.setMiddleName(staff.getMiddleName());
+        response.setLastName(staff.getLastName());
+        
+        // Build full name
+        StringBuilder fullName = new StringBuilder();
+        if (staff.getFirstName() != null) {
+            fullName.append(staff.getFirstName());
+        }
+        if (staff.getMiddleName() != null && !staff.getMiddleName().isEmpty()) {
+            if (fullName.length() > 0) fullName.append(" ");
+            fullName.append(staff.getMiddleName());
+        }
+        if (staff.getLastName() != null) {
+            if (fullName.length() > 0) fullName.append(" ");
+            fullName.append(staff.getLastName());
+        }
+        response.setFullName(fullName.toString());
+        
+        response.setEmail(staff.getEmail());
+        response.setPhone(staff.getPhoneNumber());
+        response.setStaffType(staff.getStaffType());
+        response.setDesignation(staff.getDesignation());
+        
+        // Set mapping-specific fields
+        response.setRoleInDepartment(mapping.getRoleInDepartment());
+        response.setIsPrimaryDepartment(mapping.getIsPrimaryDepartment());
+        response.setAssignmentDate(mapping.getAssignmentDate());
+        response.setMemberSince(mapping.getCreatedAt()); // createdAt as "Member Since"
+        response.setRemarks(mapping.getRemarks());
+        
+        return response;
     }
 
     /**

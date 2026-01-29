@@ -3,6 +3,7 @@ package org.sma.admin.core.app.controller;
 import io.swagger.annotations.Api;
 import org.sma.admin.core.app.model.request.DepartmentRequest;
 import org.sma.admin.core.app.model.response.DepartmentResponse;
+import org.sma.admin.core.app.model.response.DepartmentStaffResponse;
 import org.sma.admin.core.app.service.DepartmentBusinessService;
 import org.sma.platform.core.annotation.APIController;
 import org.sma.platform.core.exception.SmaException;
@@ -106,6 +107,19 @@ public class DepartmentController extends ApiRestServiceBinding {
             return ResponseEntity.ok("Department deleted successfully");
         } catch (SmaException e) {
             throw new RuntimeException("Unable to delete department: " + e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/getStaff")
+    ResponseEntity<List<DepartmentStaffResponse>> getDepartmentStaff(@RequestParam("departmentId") Long departmentId) throws IOException {
+        ServiceRequestContext context = createServiceRequestContext("GetDepartmentStaff", 
+            departmentId.toString(), departmentId.toString());
+
+        try {
+            List<DepartmentStaffResponse> response = departmentBusinessService.getDepartmentStaff(context, departmentId);
+            return processResponse(context, response);
+        } catch (SmaException e) {
+            throw new RuntimeException("Unable to fetch department staff: " + e.getMessage(), e);
         }
     }
 }

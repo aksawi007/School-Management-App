@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DepartmentService, DepartmentResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { DepartmentStaffDialogComponent } from '../department-staff-dialog/department-staff-dialog.component';
 
 interface SchoolContext {
   schoolId: number;
@@ -24,7 +26,8 @@ export class DepartmentListComponent implements OnInit {
   constructor(
     private departmentService: DepartmentService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -88,5 +91,16 @@ export class DepartmentListComponent implements OnInit {
         }
       });
     }
+  }
+
+  viewDepartmentStaff(department: DepartmentResponse): void {
+    this.dialog.open(DepartmentStaffDialogComponent, {
+      width: '90vw',
+      maxWidth: '1200px',
+      data: {
+        departmentId: department.departmentId,
+        departmentName: department.departmentName
+      }
+    });
   }
 }

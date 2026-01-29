@@ -1,0 +1,170 @@
+.dialog-container {
+  width: 100%;
+  min-width: 800px;
+  max-width: 1200px;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1976d2;
+    margin: 0;
+    padding: 16px 0;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+}
+
+mat-dialog-content {
+  padding: 16px 0;
+  min-height: 300px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  gap: 16px;
+
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #999;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+
+    th {
+      font-weight: 600;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    td {
+      padding: 12px 8px;
+    }
+
+    .mat-column-employeeCode {
+      min-width: 120px;
+    }
+
+    .mat-column-fullName {
+      min-width: 180px;
+    }
+
+    .mat-column-staffType {
+      min-width: 120px;
+    }
+
+    .mat-column-designation {
+      min-width: 150px;
+    }
+
+    .mat-column-email {
+      min-width: 200px;
+
+      a {
+        color: #1976d2;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .mat-column-phone {
+      min-width: 120px;
+    }
+
+    .mat-column-memberSince {
+      min-width: 150px;
+    }
+
+    .mat-column-isPrimary {
+      text-align: center;
+      min-width: 80px;
+    }
+  }
+}
+
+.member-since {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .date-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #666;
+  }
+}
+
+.primary-icon {
+  color: #ffa726;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+mat-chip {
+  font-size: 12px;
+  font-weight: 500;
+  min-height: 24px;
+  padding: 4px 12px;
+
+  &.chip-teaching {
+    background-color: #e3f2fd;
+    color: #1976d2;
+  }
+
+  &.chip-non-teaching {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+  }
+
+  &.chip-administrative {
+    background-color: #fff3e0;
+    color: #e65100;
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 0 0;
+  margin: 0;
+}

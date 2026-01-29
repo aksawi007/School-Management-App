@@ -42,6 +42,7 @@ import { SubjectListComponent } from './components/subject-list/subject-list.com
 import { SubjectFormComponent } from './components/subject-form/subject-form.component';
 import { DepartmentListComponent } from './components/department-list/department-list.component';
 import { DepartmentFormComponent } from './components/department-form/department-form.component';
+import { DepartmentStaffDialogComponent } from './components/department-staff-dialog/department-staff-dialog.component';
 
 import { SmaSharedModule } from 'sma-shared-lib';
 
@@ -55,7 +56,8 @@ import { SmaSharedModule } from 'sma-shared-lib';
     SubjectListComponent,
     SubjectFormComponent,
     DepartmentListComponent,
-    DepartmentFormComponent
+    DepartmentFormComponent,
+    DepartmentStaffDialogComponent
   ],
   imports: [
     BrowserModule,

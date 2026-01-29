@@ -1,0 +1,89 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>
+    <mat-icon>group</mat-icon>
+    Staff Members - {{ data.departmentName }}
+  </h2>
+
+  <mat-dialog-content>
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading staff members...</p>
+    </div>
+
+    <div *ngIf="!loading && staffList.length === 0" class="no-data">
+      <mat-icon>info</mat-icon>
+      <p>No staff members assigned to this department.</p>
+    </div>
+
+    <div *ngIf="!loading && staffList.length > 0" class="table-container">
+      <table mat-table [dataSource]="staffList" class="mat-elevation-z2">
+        
+        <ng-container matColumnDef="employeeCode">
+          <th mat-header-cell *matHeaderCellDef>Employee Code</th>
+          <td mat-cell *matCellDef="let staff">
+            <strong>{{ staff.employeeCode }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fullName">
+          <th mat-header-cell *matHeaderCellDef>Full Name</th>
+          <td mat-cell *matCellDef="let staff">{{ staff.fullName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="staffType">
+          <th mat-header-cell *matHeaderCellDef>Staff Type</th>
+          <td mat-cell *matCellDef="let staff">
+            <mat-chip [class]="'chip-' + (staff.staffType || '').toLowerCase()">
+              {{ staff.staffType || '-' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="designation">
+          <th mat-header-cell *matHeaderCellDef>Designation</th>
+          <td mat-cell *matCellDef="let staff">{{ staff.designation || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let staff">
+            <a *ngIf="staff.email" [href]="'mailto:' + staff.email">{{ staff.email }}</a>
+            <span *ngIf="!staff.email">-</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef>Phone</th>
+          <td mat-cell *matCellDef="let staff">{{ staff.phone || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="memberSince">
+          <th mat-header-cell *matHeaderCellDef>Member Since</th>
+          <td mat-cell *matCellDef="let staff">
+            <div class="member-since">
+              <mat-icon class="date-icon">event</mat-icon>
+              <span>{{ formatDate(staff.memberSince) }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="isPrimary">
+          <th mat-header-cell *matHeaderCellDef>Primary</th>
+          <td mat-cell *matCellDef="let staff">
+            <mat-icon *ngIf="staff.isPrimaryDepartment" class="primary-icon" matTooltip="Primary Department">
+              star
+            </mat-icon>
+            <span *ngIf="!staff.isPrimaryDepartment">-</span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-raised-button (click)="close()">Close</button>
+  </mat-dialog-actions>
+</div>

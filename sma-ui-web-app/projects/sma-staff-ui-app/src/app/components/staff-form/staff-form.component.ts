@@ -148,7 +148,7 @@ export class StaffFormComponent implements OnInit, OnDestroy {
     this.departments = [];
     this.staffForm.patchValue({ departmentIds: [] });
 
-    this.departmentService.getDepartmentsByType(this.schoolId, staffType).subscribe({
+    this.departmentService.getAllDepartments(this.schoolId).subscribe({
       next: (departments) => {
         this.departments = departments;
         this.filteredDepartments.next(departments.slice());
