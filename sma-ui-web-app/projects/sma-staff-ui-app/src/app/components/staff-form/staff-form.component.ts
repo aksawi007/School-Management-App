@@ -197,8 +197,8 @@ export class StaffFormComponent implements OnInit, OnDestroy {
           this.loadDepartmentsByType(staff.staffType);
         }
 
-        // Convert single departmentId to array for multi-select
-        const departmentIds = staff.departmentId ? [staff.departmentId] : [];
+        // Use departmentIds array directly from response
+        const departmentIds = staff.departmentIds || [];
 
         this.staffForm.patchValue({
           ...staff,
@@ -225,11 +225,11 @@ export class StaffFormComponent implements OnInit, OnDestroy {
     this.loading = true;
     const formValue = this.staffForm.value;
     
-    // Format dates to ISO string and use first department from multi-select
+    // Format dates to ISO string and send departmentIds array
     const departmentIds = formValue.departmentIds || [];
     const staffRequest: StaffRequest = {
       ...formValue,
-      departmentId: departmentIds.length > 0 ? departmentIds[0] : undefined,
+      departmentIds: departmentIds, // Send as array
       dateOfBirth: formValue.dateOfBirth ? new Date(formValue.dateOfBirth).toISOString().split('T')[0] : undefined,
       joiningDate: formValue.joiningDate ? new Date(formValue.joiningDate).toISOString().split('T')[0] : undefined
     };

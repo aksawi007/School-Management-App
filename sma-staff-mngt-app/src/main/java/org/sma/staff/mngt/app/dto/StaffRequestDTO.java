@@ -25,7 +25,7 @@ public class StaffRequestDTO {
     private String postalCode;
     private String staffType; // TEACHING, NON_TEACHING, ADMINISTRATIVE
     private String designation;
-    private Long departmentId;
+    private Long[] departmentIds;
     private String qualification;
     private String specialization;
     private Integer experienceYears;
@@ -177,12 +177,12 @@ public class StaffRequestDTO {
         this.designation = designation;
     }
 
-    public Long getDepartmentId() {
-        return departmentId;
+    public Long[] getDepartmentIds() {
+        return departmentIds;
     }
 
-    public void setDepartmentId(Long departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartmentIds(Long[] departmentIds) {
+        this.departmentIds = departmentIds;
     }
 
     public String getQualification() {

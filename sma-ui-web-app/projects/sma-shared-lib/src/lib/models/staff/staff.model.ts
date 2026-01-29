@@ -51,7 +51,7 @@ export interface Staff {
   postalCode?: string;
   staffType: string;
   designation?: string;
-  departmentId?: number;
+  departmentIds?: number[];
   qualification?: string;
   specialization?: string;
   experienceYears?: number;
@@ -88,7 +88,7 @@ export interface StaffRequest {
   postalCode?: string;
   staffType: string;
   designation?: string;
-  departmentId?: number;
+  departmentIds?: number[];
   qualification?: string;
   specialization?: string;
   experienceYears?: number;

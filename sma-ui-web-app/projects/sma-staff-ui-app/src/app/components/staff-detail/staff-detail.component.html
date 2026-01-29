@@ -128,8 +128,13 @@
                   <span class="value">{{ staff.designation || '-' }}</span>
                 </div>
                 <div class="detail-item">
-                  <span class="label">Department ID:</span>
-                  <span class="value">{{ staff.departmentId || '-' }}</span>
+                  <span class="label">Departments:</span>
+                  <span class="value">
+                    <span *ngIf="staff.departmentIds && staff.departmentIds.length > 0">
+                      {{ staff.departmentIds.join(', ') }}
+                    </span>
+                    <span *ngIf="!staff.departmentIds || staff.departmentIds.length === 0">-</span>
+                  </span>
                 </div>
                 <div class="detail-item">
                   <span class="label">Employment Type:</span>

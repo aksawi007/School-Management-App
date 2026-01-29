@@ -68,10 +68,6 @@ public class Staff extends BaseEntity {
     @Column(name = "designation", length = 100)
     private String designation; // Teacher, Principal, Vice Principal, Clerk, etc.
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id")
-    private DepartmentMaster department;
-
     @Column(name = "qualification", length = 200)
     private String qualification;
 
@@ -246,14 +242,6 @@ public class Staff extends BaseEntity {
 
     public void setDesignation(String designation) {
         this.designation = designation;
-    }
-
-    public DepartmentMaster getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(DepartmentMaster department) {
-        this.department = department;
     }
 
     public String getQualification() {

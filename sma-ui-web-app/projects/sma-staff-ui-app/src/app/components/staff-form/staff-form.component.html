@@ -167,8 +167,8 @@
                 <input matInput formControlName="designation" placeholder="e.g., Senior Teacher">
               </mat-form-field>
 
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Departments</mat-label>
+              <mat-form-field appearance="outline">
+                <mat-label>&nbsp;&nbsp;Departments</mat-label>
                 <mat-select formControlName="departmentIds" multiple [disabled]="!staffForm.get('staffType')?.value || loadingDepartments">
                   <mat-select-trigger>
                     <span *ngIf="staffForm.get('departmentIds')?.value?.length === 0">-- Select Departments --</span>

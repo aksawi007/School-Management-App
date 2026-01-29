@@ -2,9 +2,11 @@ package org.sma.staff.mngt.app.service;
 
 import org.sma.jpa.model.master.DepartmentMaster;
 import org.sma.jpa.model.school.SchoolProfile;
+import org.sma.jpa.model.staff.DepartmentStaffMapping;
 import org.sma.jpa.model.staff.Staff;
 import org.sma.jpa.repository.master.DepartmentMasterRepository;
 import org.sma.jpa.repository.school.SchoolProfileRepository;
+import org.sma.jpa.repository.staff.DepartmentStaffMappingRepository;
 import org.sma.jpa.repository.staff.StaffRepository;
 import org.sma.staff.mngt.app.dto.StaffRequestDTO;
 import org.sma.staff.mngt.app.dto.StaffResponseDTO;
@@ -32,6 +34,9 @@ public class StaffService {
     @Autowired
     private DepartmentMasterRepository departmentMasterRepository;
 
+    @Autowired
+    private DepartmentStaffMappingRepository departmentStaffMappingRepository;
+
     public StaffResponseDTO createStaff(StaffRequestDTO requestDTO) {
         SchoolProfile school = schoolProfileRepository.findById(requestDTO.getSchoolId())
                 .orElseThrow(() -> new RuntimeException("School not found"));
@@ -46,6 +51,25 @@ public class StaffService {
         mapRequestToEntity(requestDTO, staff, school);
         
         staff = staffRepository.save(staff);
+        
+        // Create department-staff mappings
+        if (requestDTO.getDepartmentIds() != null && requestDTO.getDepartmentIds().length > 0) {
+            for (int i = 0; i < requestDTO.getDepartmentIds().length; i++) {
+                final Long departmentId = requestDTO.getDepartmentIds()[i];
+                final int index = i;
+                DepartmentMaster department = departmentMasterRepository.findById(departmentId)
+                        .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
+                
+                DepartmentStaffMapping mapping = new DepartmentStaffMapping();
+                mapping.setDepartment(department);
+                mapping.setStaff(staff);
+                mapping.setIsPrimaryDepartment(index == 0); // First department is primary
+                mapping.setIsActive(true);
+                
+                departmentStaffMappingRepository.save(mapping);
+            }
+        }
+        
         return mapEntityToResponse(staff);
     }
 
@@ -59,6 +83,32 @@ public class StaffService {
         mapRequestToEntity(requestDTO, staff, school);
         
         staff = staffRepository.save(staff);
+        
+        // Deactivate existing department-staff mappings
+        List<DepartmentStaffMapping> existingMappings = departmentStaffMappingRepository.findByStaffId(staffId);
+        for (DepartmentStaffMapping mapping : existingMappings) {
+            mapping.setIsActive(false);
+            departmentStaffMappingRepository.save(mapping);
+        }
+        
+        // Create new department-staff mappings
+        if (requestDTO.getDepartmentIds() != null && requestDTO.getDepartmentIds().length > 0) {
+            for (int i = 0; i < requestDTO.getDepartmentIds().length; i++) {
+                final Long departmentId = requestDTO.getDepartmentIds()[i];
+                final int index = i;
+                DepartmentMaster department = departmentMasterRepository.findById(departmentId)
+                        .orElseThrow(() -> new RuntimeException("Department not found with id: " + departmentId));
+                
+                DepartmentStaffMapping mapping = new DepartmentStaffMapping();
+                mapping.setDepartment(department);
+                mapping.setStaff(staff);
+                mapping.setIsPrimaryDepartment(index == 0); // First department is primary
+                mapping.setIsActive(true);
+                
+                departmentStaffMappingRepository.save(mapping);
+            }
+        }
+        
         return mapEntityToResponse(staff);
     }
 
@@ -115,12 +165,6 @@ public class StaffService {
         entity.setStaffType(dto.getStaffType());
         entity.setDesignation(dto.getDesignation());
         
-        if (dto.getDepartmentId() != null) {
-            DepartmentMaster department = departmentMasterRepository.findById(dto.getDepartmentId())
-                    .orElse(null);
-            entity.setDepartment(department);
-        }
-        
         entity.setQualification(dto.getQualification());
         entity.setSpecialization(dto.getSpecialization());
         entity.setExperienceYears(dto.getExperienceYears());
@@ -160,9 +204,13 @@ public class StaffService {
         dto.setStaffType(entity.getStaffType());
         dto.setDesignation(entity.getDesignation());
         
-        if (entity.getDepartment() != null) {
-            dto.setDepartmentId(entity.getDepartment().getId());
-            dto.setDepartmentName(entity.getDepartment().getDepartmentName());
+        // Query department_staff_mapping to get departmentIds
+        List<DepartmentStaffMapping> mappings = departmentStaffMappingRepository.findByStaffId(entity.getId());
+        if (mappings != null && !mappings.isEmpty()) {
+            Long[] departmentIds = mappings.stream()
+                    .map(mapping -> mapping.getDepartment().getId())
+                    .toArray(Long[]::new);
+            dto.setDepartmentIds(departmentIds);
         }
         
         dto.setQualification(entity.getQualification());

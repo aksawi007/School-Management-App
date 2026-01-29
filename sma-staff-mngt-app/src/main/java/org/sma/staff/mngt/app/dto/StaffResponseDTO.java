@@ -29,6 +29,7 @@ public class StaffResponseDTO {
     private String designation;
     private Long departmentId;
     private String departmentName;
+    private Long[] departmentIds;
     private String qualification;
     private String specialization;
     private Integer experienceYears;
@@ -206,6 +207,14 @@ public class StaffResponseDTO {
 
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
+    }
+
+    public Long[] getDepartmentIds() {
+        return departmentIds;
+    }
+
+    public void setDepartmentIds(Long[] departmentIds) {
+        this.departmentIds = departmentIds;
     }
 
     public String getQualification() {
