@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { SectionMasterService, SectionMasterResponse, ClassMasterService, ClassMasterResponse, AcademicYearService, AcademicYearResponse, StudentClassSectionService, StudentClassSectionResponse } from 'sma-shared-lib';
+import { SectionMasterService, SectionMasterResponse, ClassMasterService, ClassMasterResponse, AcademicYearResponse, StudentClassSectionService, StudentClassSectionResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ClassStudentsDialogComponent } from '../class-students-dialog/class-students-dialog.component';
+import { AcademicYearCacheService } from '../../services/academic-year-cache.service';
 
 @Component({
   selector: 'app-section-list',
@@ -24,7 +25,7 @@ export class SectionListComponent implements OnInit {
   constructor(
     private sectionMasterService: SectionMasterService,
     private classMasterService: ClassMasterService,
-    private academicYearService: AcademicYearService,
+    private academicYearCache: AcademicYearCacheService,
     private studentClassSectionService: StudentClassSectionService,
     private router: Router,
     private route: ActivatedRoute,
@@ -77,7 +78,7 @@ export class SectionListComponent implements OnInit {
   }
 
   loadAcademicYears(): void {
-    this.academicYearService.getAllAcademicYears().subscribe({
+    this.academicYearCache.getAcademicYears().subscribe({
       next: (years) => {
         this.academicYears = years;
         // Auto-select current academic year if not already set from query params

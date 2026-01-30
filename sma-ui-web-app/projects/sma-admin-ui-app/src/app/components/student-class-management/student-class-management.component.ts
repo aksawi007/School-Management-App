@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   StudentClassSectionService,
   StudentClassSectionResponse,
-  AcademicYearService,
   AcademicYearResponse,
   ClassMasterService,
   ClassMasterResponse,
@@ -12,6 +11,7 @@ import {
   SectionMasterResponse
 } from 'sma-shared-lib';
 import { StudentClassAssignDialogComponent } from '../student-class-assign-dialog/student-class-assign-dialog.component';
+import { AcademicYearCacheService } from '../../services/academic-year-cache.service';
 
 @Component({
   selector: 'app-student-class-management',
@@ -34,7 +34,7 @@ export class StudentClassManagementComponent implements OnInit {
 
   constructor(
     private studentClassSectionService: StudentClassSectionService,
-    private academicYearService: AcademicYearService,
+    private academicYearCache: AcademicYearCacheService,
     private classMasterService: ClassMasterService,
     private sectionService: SectionMasterService,
     private dialog: MatDialog,
@@ -60,7 +60,7 @@ export class StudentClassManagementComponent implements OnInit {
   }
 
   loadAcademicYears(): void {
-    this.academicYearService.getAllAcademicYears().subscribe({
+    this.academicYearCache.getAcademicYears().subscribe({
       next: (years) => {
         this.academicYears = years;
         const currentYear = years.find(y => y.currentYear === true);
