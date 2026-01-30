@@ -5,6 +5,12 @@
     "changeOrigin": true,
     "logLevel": "debug"
   },
+  "/api/schools/*/students*": {
+    "target": "http://localhost:9091",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
   "/api/*": {
     "target": "http://localhost:9090",
     "secure": false,

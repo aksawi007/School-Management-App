@@ -13,6 +13,7 @@ import { SubjectListComponent } from './components/subject-list/subject-list.com
 import { SubjectFormComponent } from './components/subject-form/subject-form.component';
 import { DepartmentListComponent } from './components/department-list/department-list.component';
 import { DepartmentFormComponent } from './components/department-form/department-form.component';
+import { StudentClassManagementComponent } from './components/student-class-management/student-class-management.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -38,6 +39,8 @@ const routes: Routes = [
   { path: 'departments', component: DepartmentListComponent },
   { path: 'departments/new', component: DepartmentFormComponent },
   { path: 'departments/:id/edit', component: DepartmentFormComponent },
+  
+  { path: 'student-class-management', component: StudentClassManagementComponent },
 ];
 
 @NgModule({

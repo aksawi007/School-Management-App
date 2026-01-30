@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { SectionMasterService, SectionMasterResponse, ClassMasterService, ClassMasterResponse, AcademicYearService, AcademicYearResponse } from 'sma-shared-lib';
+import { SectionMasterService, SectionMasterResponse, ClassMasterService, ClassMasterResponse, AcademicYearService, AcademicYearResponse, StudentClassSectionService, StudentClassSectionResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ClassStudentsDialogComponent } from '../class-students-dialog/class-students-dialog.component';
 
 @Component({
   selector: 'app-section-list',
@@ -15,7 +17,7 @@ export class SectionListComponent implements OnInit {
   academicYears: AcademicYearResponse[] = [];
   selectedAcademicYearId?: number;
   selectedClassId?: string;
-  displayedColumns: string[] = ['className', 'sectionCode', 'sectionName', 'capacity', 'roomNumber', 'actions'];
+  displayedColumns: string[] = ['className', 'sectionCode', 'sectionName', 'capacity', 'roomNumber', 'studentCount', 'actions'];
   loading = true;
   schoolId: number = 0;
 
@@ -23,9 +25,11 @@ export class SectionListComponent implements OnInit {
     private sectionMasterService: SectionMasterService,
     private classMasterService: ClassMasterService,
     private academicYearService: AcademicYearService,
+    private studentClassSectionService: StudentClassSectionService,
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -187,5 +191,18 @@ export class SectionListComponent implements OnInit {
         }
       });
     }
+  }
+
+  viewStudents(section: SectionMasterResponse): void {
+    this.dialog.open(ClassStudentsDialogComponent, {
+      width: '800px',
+      data: {
+        academicYearId: this.selectedAcademicYearId,
+        classId: this.selectedClassId,
+        sectionId: section.id,
+        className: section.className,
+        sectionName: section.sectionName
+      }
+    });
   }
 }

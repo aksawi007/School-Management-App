@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ClassMasterService, ClassMasterResponse, AcademicYearService, AcademicYearResponse } from 'sma-shared-lib';
+import { ClassMasterService, ClassMasterResponse, AcademicYearService, AcademicYearResponse, StudentClassSectionService, StudentClassSectionResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ClassStudentsDialogComponent } from '../class-students-dialog/class-students-dialog.component';
 
 @Component({
   selector: 'app-class-list',
@@ -12,15 +14,17 @@ export class ClassListComponent implements OnInit {
   classes: ClassMasterResponse[] = [];
   academicYears: AcademicYearResponse[] = [];
   selectedAcademicYearId?: number;
-  displayedColumns: string[] = ['classCode', 'className', 'academicYearName', 'displayOrder', 'description', 'actions'];
+  displayedColumns: string[] = ['classCode', 'className', 'academicYearName', 'displayOrder', 'description', 'studentCount', 'actions'];
   loading = true;
   schoolId: number = 0;
 
   constructor(
     private classMasterService: ClassMasterService,
     private academicYearService: AcademicYearService,
+    private studentClassSectionService: StudentClassSectionService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -124,6 +128,17 @@ export class ClassListComponent implements OnInit {
         classId: classId,
         academicYearId: this.selectedAcademicYearId 
       } 
+    });
+  }
+
+  viewStudents(classItem: ClassMasterResponse): void {
+    this.dialog.open(ClassStudentsDialogComponent, {
+      width: '800px',
+      data: {
+        academicYearId: this.selectedAcademicYearId,
+        classId: classItem.id,
+        className: classItem.className
+      }
     });
   }
 }

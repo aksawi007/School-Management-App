@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>
+  Students in {{ data.className }}{{ data.sectionName ? ' - ' + data.sectionName : '' }}
+</h2>
+
+<mat-dialog-content>
+  <div *ngIf="loading" class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && students.length === 0" class="no-data">
+    <mat-icon>people_outline</mat-icon>
+    <p>No students assigned to this {{ data.sectionName ? 'section' : 'class' }} yet.</p>
+  </div>
+
+  <table mat-table [dataSource]="students" *ngIf="!loading && students.length > 0" class="students-table">
+    <ng-container matColumnDef="admissionNumber">
+      <th mat-header-cell *matHeaderCellDef>Admission No.</th>
+      <td mat-cell *matCellDef="let student">{{ student.admissionNumber }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="studentName">
+      <th mat-header-cell *matHeaderCellDef>Student Name</th>
+      <td mat-cell *matCellDef="let student">{{ student.studentName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="rollNumber">
+      <th mat-header-cell *matHeaderCellDef>Roll Number</th>
+      <td mat-cell *matCellDef="let student">{{ student.rollNumber || '-' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="sectionName">
+      <th mat-header-cell *matHeaderCellDef>Section</th>
+      <td mat-cell *matCellDef="let student">{{ student.sectionName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="enrollmentDate">
+      <th mat-header-cell *matHeaderCellDef>Enrollment Date</th>
+      <td mat-cell *matCellDef="let student">{{ student.enrollmentDate | date }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <div *ngIf="!loading && students.length > 0" class="student-count">
+    <strong>Total Students:</strong> {{ students.length }}
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

@@ -60,6 +60,16 @@
           <td mat-cell *matCellDef="let section">{{ section.roomNumber || '-' }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="studentCount">
+          <th mat-header-cell *matHeaderCellDef>Students</th>
+          <td mat-cell *matCellDef="let section">
+            <button mat-button color="primary" (click)="viewStudents(section)" matTooltip="View Students">
+              <mat-icon>people</mat-icon>
+              View
+            </button>
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef>Actions</th>
           <td mat-cell *matCellDef="let section">

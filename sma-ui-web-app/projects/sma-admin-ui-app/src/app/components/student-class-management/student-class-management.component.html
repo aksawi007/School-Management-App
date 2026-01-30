@@ -1,0 +1,110 @@
+<div class="student-class-management-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Student Class Management</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="filter-bar">
+        <mat-form-field appearance="outline">
+          <mat-label>Academic Year</mat-label>
+          <mat-select [(ngModel)]="selectedAcademicYearId" (selectionChange)="onAcademicYearChange()">
+            <mat-option *ngFor="let year of academicYears" [value]="year.yearId">
+              {{ year.yearName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Class</mat-label>
+          <mat-select [(ngModel)]="selectedClassId" (selectionChange)="onClassChange()" [disabled]="!selectedAcademicYearId">
+            <mat-option *ngFor="let class of classes" [value]="class.id">
+              {{ class.className }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Section (Optional)</mat-label>
+          <mat-select [(ngModel)]="selectedSectionId" (selectionChange)="onSectionChange()" [disabled]="!selectedClassId">
+            <mat-option [value]="undefined">All Sections</mat-option>
+            <mat-option *ngFor="let section of sections" [value]="section.id">
+              {{ section.sectionName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" (click)="assignStudent()" [disabled]="!selectedClassId">
+          <mat-icon>person_add</mat-icon>
+          Assign Student
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="loading-spinner">
+        <mat-spinner></mat-spinner>
+      </div>
+
+      <table mat-table [dataSource]="students" *ngIf="!loading && students.length > 0" class="mat-elevation-z2">
+        <ng-container matColumnDef="admissionNumber">
+          <th mat-header-cell *matHeaderCellDef>Admission No.</th>
+          <td mat-cell *matCellDef="let student">{{ student.admissionNumber }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="studentName">
+          <th mat-header-cell *matHeaderCellDef>Student Name</th>
+          <td mat-cell *matCellDef="let student"><strong>{{ student.studentName }}</strong></td>
+        </ng-container>
+
+        <ng-container matColumnDef="rollNumber">
+          <th mat-header-cell *matHeaderCellDef>Roll No.</th>
+          <td mat-cell *matCellDef="let student">{{ student.rollNumber || '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="className">
+          <th mat-header-cell *matHeaderCellDef>Class</th>
+          <td mat-cell *matCellDef="let student">{{ student.className }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="sectionName">
+          <th mat-header-cell *matHeaderCellDef>Section</th>
+          <td mat-cell *matCellDef="let student">{{ student.sectionName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="enrollmentDate">
+          <th mat-header-cell *matHeaderCellDef>Enrollment Date</th>
+          <td mat-cell *matCellDef="let student">{{ formatDate(student.enrollmentDate) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let student">
+            <button mat-icon-button color="primary" (click)="updateStudent(student)" matTooltip="Update">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="removeStudent(student)" matTooltip="Remove">
+              <mat-icon>remove_circle</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="!loading && !selectedAcademicYearId" class="no-data">
+        <mat-icon>info</mat-icon>
+        <p>Please select an academic year to view students.</p>
+      </div>
+
+      <div *ngIf="!loading && selectedAcademicYearId && !selectedClassId" class="no-data">
+        <mat-icon>info</mat-icon>
+        <p>Please select a class to view students.</p>
+      </div>
+
+      <div *ngIf="!loading && selectedClassId && students.length === 0" class="no-data">
+        <mat-icon>info</mat-icon>
+        <p>No students assigned. Click "Assign Student" to add students to this class.</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

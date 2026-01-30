@@ -1,0 +1,79 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Update' : 'Assign' }} Student to Class/Section</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="assignForm">
+    <div class="form-row" *ngIf="!isEdit">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Select Student</mat-label>
+        <mat-select formControlName="studentId" [disabled]="loadingStudents">
+          <mat-option *ngFor="let student of students" [value]="student.id">
+            {{ student.admissionNo }} - {{ student.firstName }} {{ student.lastName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="hasError('studentId', 'required')">Student is required</mat-error>
+        <mat-hint *ngIf="loadingStudents">Loading students...</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row" *ngIf="isEdit && data.student">
+      <div class="student-info">
+        <strong>Student:</strong> {{ data.student.studentName }} ({{ data.student.admissionNumber }})
+      </div>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Class</mat-label>
+        <mat-select formControlName="classId">
+          <mat-option *ngFor="let class of data.classes" [value]="class.id">
+            {{ class.className }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="hasError('classId', 'required')">Class is required</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Section</mat-label>
+        <mat-select formControlName="sectionId">
+          <mat-option *ngFor="let section of data.sections" [value]="section.id">
+            {{ section.sectionName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="hasError('sectionId', 'required')">Section is required</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Roll Number</mat-label>
+        <input matInput formControlName="rollNumber" placeholder="Enter roll number">
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Enrollment Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="enrollmentDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Remarks</mat-label>
+        <textarea matInput formControlName="remarks" rows="3" placeholder="Optional remarks"></textarea>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="saving">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="assignForm.invalid || saving">
+    <mat-spinner diameter="20" *ngIf="saving"></mat-spinner>
+    <span *ngIf="!saving">{{ isEdit ? 'Update' : 'Assign' }}</span>
+  </button>
+</mat-dialog-actions>
