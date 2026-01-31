@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SubjectMasterService, SubjectMasterRequest, ClassMasterService, ClassMasterResponse, DepartmentService, DepartmentResponse } from 'sma-shared-lib';
+import { SubjectMasterService, SubjectMasterRequest, ClassMasterResponse, DepartmentService, DepartmentResponse } from 'sma-shared-lib';
+import { AdminCacheService } from '../../services/admin-cache.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -22,7 +23,7 @@ export class SubjectFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private subjectMasterService: SubjectMasterService,
-    private classMasterService: ClassMasterService,
+    private adminCache: AdminCacheService,
     private departmentService: DepartmentService,
     private router: Router,
     private route: ActivatedRoute,
@@ -83,7 +84,7 @@ export class SubjectFormComponent implements OnInit {
   }
 
   loadClasses(): void {
-    this.classMasterService.getAllClassesBySchool(this.schoolId).subscribe({
+    this.adminCache.getClasses().subscribe({
       next: (classes) => {
         this.classes = classes;
       },

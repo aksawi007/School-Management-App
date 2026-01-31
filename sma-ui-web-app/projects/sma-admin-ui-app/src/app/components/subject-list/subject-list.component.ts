@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SubjectMasterService, SubjectMasterResponse, ClassMasterService, ClassMasterResponse } from 'sma-shared-lib';
+import { SubjectMasterService, SubjectMasterResponse, ClassMasterResponse } from 'sma-shared-lib';
+import { AdminCacheService } from '../../services/admin-cache.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -21,7 +22,7 @@ export class SubjectListComponent implements OnInit {
 
   constructor(
     private subjectMasterService: SubjectMasterService,
-    private classMasterService: ClassMasterService,
+    private adminCache: AdminCacheService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {}
@@ -53,7 +54,7 @@ export class SubjectListComponent implements OnInit {
   }
 
   loadClasses(): void {
-    this.classMasterService.getAllClassesBySchool(this.schoolId).subscribe({
+    this.adminCache.getClasses().subscribe({
       next: (classes) => {
         this.classes = classes.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
       },

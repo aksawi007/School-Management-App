@@ -30,12 +30,11 @@ export class DailyScheduleViewComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private sessionService: DailyClassSessionService,
-    private classService: ClassMasterService,
+    private adminCache: AdminCacheService,
     private sectionService: SectionMasterService,
     private academicYearService: AcademicYearService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private adminCache: AdminCacheService
+    private snackBar: MatSnackBar
   ) {
     this.schoolId = this.adminCache.getSchoolId();
     this.filterForm = this.fb.group({
@@ -51,7 +50,7 @@ export class DailyScheduleViewComponent implements OnInit {
   }
 
   loadMasterData(): void {
-    this.classService.getAllClassesBySchool(this.schoolId).subscribe((data: any) => this.classes = data);
+    this.adminCache.getClasses().subscribe((data: any) => this.classes = data);
     // TODO: API needs getAllSectionsBySchool method
     this.sections = []; // Temporarily empty until API is added
     this.academicYearService.getAllAcademicYears().subscribe((data: any) => this.academicYears = data);

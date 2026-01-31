@@ -6,7 +6,6 @@ import {
   ClassRoutineMaster, 
   RoutineTimeSlotService, 
   RoutineTimeSlot,
-  ClassMasterService,
   ClassMasterResponse,
   SectionMasterService,
   SectionMasterResponse,
@@ -49,13 +48,12 @@ export class RoutineBuilderComponent implements OnInit {
   constructor(
     private routineService: ClassRoutineMasterService,
     private timeSlotService: RoutineTimeSlotService,
-    private classService: ClassMasterService,
+    private adminCache: AdminCacheService,
     private sectionService: SectionMasterService,
     private subjectService: SubjectMasterService,
     private academicYearService: AcademicYearService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private adminCache: AdminCacheService
+    private snackBar: MatSnackBar
   ) {
     this.schoolId = this.adminCache.getSchoolId();
   }
@@ -107,7 +105,7 @@ export class RoutineBuilderComponent implements OnInit {
   }
 
   loadClasses(): void {
-    this.classService.getAllClassesBySchool(this.schoolId).subscribe({
+    this.adminCache.getClasses().subscribe({
       next: (data: ClassMasterResponse[]) => this.classes = data,
       error: (error: any) => this.showError('Failed to load classes')
     });

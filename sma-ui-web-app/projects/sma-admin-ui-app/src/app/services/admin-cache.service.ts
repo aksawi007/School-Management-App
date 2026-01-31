@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AcademicYearService, AcademicYearResponse } from 'sma-shared-lib';
+import { AcademicYearService, AcademicYearResponse, ClassMasterService, ClassMasterResponse } from 'sma-shared-lib';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
 export interface SchoolDetails {
@@ -24,7 +24,14 @@ export class AdminCacheService {
   private academicYearsLoaded = false;
   private loadingPromise: Promise<AcademicYearResponse[]> | null = null;
 
-  constructor(private academicYearService: AcademicYearService) {
+  private classes$ = new BehaviorSubject<ClassMasterResponse[]>([]);
+  private classesLoaded = false;
+  private classesLoadingPromise: Promise<ClassMasterResponse[]> | null = null;
+
+  constructor(
+    private academicYearService: AcademicYearService,
+    private classMasterService: ClassMasterService
+  ) {
     this.initializeSchoolContext();
   }
 
@@ -48,6 +55,8 @@ export class AdminCacheService {
           
           // Auto-load academic years when school context is received
           this.loadAcademicYears();
+          // Auto-load classes when school context is received
+          this.loadClasses();
         }
       }
     });
@@ -102,6 +111,80 @@ export class AdminCacheService {
         observer.error(error);
       });
     });
+  }
+
+  /**
+   * Get classes - loads from cache if available, otherwise fetches from API
+   */
+  getClasses(): Observable<ClassMasterResponse[]> {
+    if (this.classesLoaded) {
+      return of(this.classes$.value);
+    }
+    return new Observable(observer => {
+      this.loadClasses().then(classes => {
+        observer.next(classes);
+        observer.complete();
+      }).catch(error => {
+        observer.error(error);
+      });
+    });
+  }
+
+  /**
+   * Load classes from API and cache them
+   */
+  private async loadClasses(): Promise<ClassMasterResponse[]> {
+    if (this.classesLoadingPromise) {
+      return this.classesLoadingPromise;
+    }
+
+    const schoolId = this.getSchoolId();
+    if (!schoolId) {
+      console.warn('Cannot load classes: School context not available');
+      return Promise.resolve([]);
+    }
+
+    this.classesLoadingPromise = new Promise((resolve, reject) => {
+      this.classMasterService.getAllClassesBySchool(schoolId).subscribe({
+        next: (classes: ClassMasterResponse[]) => {
+          console.log('Classes loaded from API:', classes);
+          this.classes$.next(classes);
+          this.classesLoaded = true;
+          this.classesLoadingPromise = null;
+          resolve(classes);
+        },
+        error: (error: any) => {
+          console.error('Failed to load classes:', error);
+          this.classesLoadingPromise = null;
+          reject(error);
+        }
+      });
+    });
+
+    return this.classesLoadingPromise;
+  }
+
+  /**
+   * Refresh classes from API
+   */
+  refreshClasses(): Observable<ClassMasterResponse[]> {
+    this.classesLoaded = false;
+    this.classesLoadingPromise = null;
+    return this.getClasses();
+  }
+
+  /**
+   * Get cached classes synchronously (returns empty array if not loaded)
+   */
+  getCachedClasses(): ClassMasterResponse[] {
+    return this.classes$.value;
+  }
+
+  /**
+   * Check if classes are loaded
+   */
+  areClassesLoaded(): boolean {
+    return this.classesLoaded;
   }
 
   /**
@@ -175,5 +258,8 @@ export class AdminCacheService {
     this.academicYears$.next([]);
     this.academicYearsLoaded = false;
     this.loadingPromise = null;
+    this.classes$.next([]);
+    this.classesLoaded = false;
+    this.classesLoadingPromise = null;
   }
 }

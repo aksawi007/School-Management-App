@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SectionMasterService, SectionMasterRequest, ClassMasterService, ClassMasterResponse, AcademicYearResponse } from 'sma-shared-lib';
+import { SectionMasterService, SectionMasterRequest, ClassMasterResponse, AcademicYearResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AdminCacheService } from '../../services/admin-cache.service';
 
@@ -25,11 +25,11 @@ export class SectionFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private sectionMasterService: SectionMasterService,
-    private classMasterService: ClassMasterService,
     private adminCache: AdminCacheService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
+    // private classMasterService: ClassMasterService, (removed)
   ) {
     this.createForm();
   }
@@ -104,7 +104,7 @@ export class SectionFormComponent implements OnInit {
   }
 
   loadClasses(): void {
-    this.classMasterService.getAllClassesBySchool(this.schoolId).subscribe({
+    this.adminCache.getClasses().subscribe({
       next: (classes) => {
         this.allClasses = classes.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
         this.filterClassesByAcademicYear();

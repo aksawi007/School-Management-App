@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { SectionMasterService, SectionMasterResponse, ClassMasterService, ClassMasterResponse, AcademicYearResponse, StudentClassSectionService, StudentClassSectionResponse } from 'sma-shared-lib';
+import { SectionMasterService, SectionMasterResponse, ClassMasterResponse, AcademicYearResponse, StudentClassSectionService, StudentClassSectionResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ClassStudentsDialogComponent } from '../class-students-dialog/class-students-dialog.component';
@@ -24,7 +24,7 @@ export class SectionListComponent implements OnInit {
 
   constructor(
     private sectionMasterService: SectionMasterService,
-    private classMasterService: ClassMasterService,
+    // private classMasterService: ClassMasterService, (removed)
     private adminCache: AdminCacheService,
     private studentClassSectionService: StudentClassSectionService,
     private router: Router,
@@ -96,7 +96,7 @@ export class SectionListComponent implements OnInit {
   }
 
   loadClasses(): void {
-    this.classMasterService.getAllClassesBySchool(this.schoolId).subscribe({
+    this.adminCache.getClasses().subscribe({
       next: (classes) => {
         this.allClasses = classes.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
         this.filterClassesByAcademicYear();
