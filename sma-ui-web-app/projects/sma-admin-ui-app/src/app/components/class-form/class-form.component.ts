@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ClassMasterService, ClassMasterRequest, AcademicYearResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AcademicYearCacheService } from '../../services/academic-year-cache.service';
+import { AdminCacheService } from '../../services/admin-cache.service';
 
 @Component({
   selector: 'app-class-form',
@@ -21,7 +21,7 @@ export class ClassFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private classMasterService: ClassMasterService,
-    private academicYearCache: AcademicYearCacheService,
+    private adminCache: AdminCacheService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
@@ -70,7 +70,7 @@ export class ClassFormComponent implements OnInit {
   }
 
   loadAcademicYears(): void {
-    this.academicYearCache.getAcademicYears().subscribe({
+    this.adminCache.getAcademicYears().subscribe({
       next: (years) => {
         this.academicYears = years;
       },

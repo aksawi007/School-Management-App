@@ -9,3 +9,6 @@ export * from './staff';
 
 // Master Data Models
 export * from './master';
+
+// Routine Management Models
+export * from './routine';

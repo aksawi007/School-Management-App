@@ -66,7 +66,7 @@ app:
     jwt-expiration-in-ms: 86400000
     jwt-refresh-expiration-in-ms: 604800000
     enable-cors: true
-    exclude-patterns: /auth/**,/public/**,/actuator/**,/swagger-ui.html,/swagger-ui/**,/v2/api-docs,/swagger-resources/**,/webjars/**,/class/**,/section/**,/subject/**,/academic-year/**
+    exclude-patterns: /auth/**,/public/**,/actuator/**,/swagger-ui.html,/swagger-ui/**,/v2/api-docs,/swagger-resources/**,/webjars/**,/class/**,/section/**,/subject/**,/academic-year/**,/routine/**
 
 ##########################################################################################
 ## App basic configuration

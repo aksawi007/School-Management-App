@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // Allow auth endpoints
                 .antMatchers("/auth/**", "/public/**").permitAll()
                 // Allow all API endpoints (temporary for development)
-                .antMatchers("/api/**", "/school/**", "/academic-year/**", "/student/**", "/staff/**", "/class/**", "/section/**", "/subject/**", "/department/**", "/student-class-section/**").permitAll()
+                .antMatchers("/api/**", "/school/**", "/schools/**", "/academic-year/**", "/student/**", "/staff/**", "/class/**", "/section/**", "/subject/**", "/department/**", "/student-class-section/**", "/routine/**").permitAll()
                 // All other requests require authentication
                 .anyRequest().authenticated()
             .and()

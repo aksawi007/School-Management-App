@@ -1,0 +1,122 @@
+<div class="daily-schedule-view">
+  <h2>Daily Class Schedule</h2>
+
+  <div class="filter-section">
+    <form [formGroup]="filterForm" (ngSubmit)="loadSchedule()">
+      <mat-form-field appearance="outline">
+        <mat-label>Academic Year</mat-label>
+        <mat-select formControlName="academicYearId">
+          <mat-option *ngFor="let year of academicYears" [value]="year.id">
+            {{ year.yearName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Class</mat-label>
+        <mat-select formControlName="classId">
+          <mat-option *ngFor="let class of classes" [value]="class.id">
+            {{ class.className }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Section</mat-label>
+        <mat-select formControlName="sectionId">
+          <mat-option *ngFor="let section of sections" [value]="section.id">
+            {{ section.sectionName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date</mat-label>
+        <input matInput type="date" formControlName="scheduleDate">
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit" [disabled]="!filterForm.valid || loading">
+        Load Schedule
+      </button>
+    </form>
+  </div>
+
+  <div class="schedule-section" *ngIf="sessions.length > 0">
+    <h3>Schedule for {{ filterForm.value.scheduleDate | date }}</h3>
+    
+    <div class="sessions-grid">
+      <mat-card *ngFor="let session of sessions" class="session-card" [class]="getStatusClass(session.sessionStatus)">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>schedule</mat-icon>
+            {{ session.timeSlot?.slotName }}
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ session.timeSlot?.startTime }} - {{ session.timeSlot?.endTime }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="session-details">
+            <div class="detail-row">
+              <strong>Subject:</strong>
+              <span [class.overridden]="session.subjectOverride">
+                {{ getEffectiveSubject(session) }}
+              </span>
+            </div>
+
+            <div class="detail-row">
+              <strong>Teacher:</strong>
+              <span [class.substitute]="session.teacherOverride">
+                {{ getEffectiveTeacher(session) }}
+                <mat-icon *ngIf="session.teacherOverride" class="substitute-icon">swap_horiz</mat-icon>
+              </span>
+            </div>
+
+            <div class="detail-row">
+              <strong>Status:</strong>
+              <span class="status-badge" [class]="getStatusClass(session.sessionStatus)">
+                {{ session.sessionStatus }}
+              </span>
+            </div>
+
+            <div class="detail-row" *ngIf="session.remarks">
+              <strong>Remarks:</strong>
+              <span class="remarks">{{ session.remarks }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-button color="primary" (click)="overrideSession(session)">
+            <mat-icon>edit</mat-icon>
+            Override
+          </button>
+
+          <button mat-button [matMenuTriggerFor]="statusMenu">
+            <mat-icon>more_vert</mat-icon>
+            Change Status
+          </button>
+
+          <mat-menu #statusMenu="matMenu">
+            <button mat-menu-item (click)="updateSessionStatus(session.id!, 'SCHEDULED')">Scheduled</button>
+            <button mat-menu-item (click)="updateSessionStatus(session.id!, 'ONGOING')">Ongoing</button>
+            <button mat-menu-item (click)="updateSessionStatus(session.id!, 'COMPLETED')">Completed</button>
+            <button mat-menu-item (click)="updateSessionStatus(session.id!, 'CANCELLED')">Cancelled</button>
+          </mat-menu>
+
+          <a mat-button [routerLink]="['/attendance-marking', session.id]">
+            <mat-icon>fact_check</mat-icon>
+            Mark Attendance
+          </a>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <div *ngIf="sessions.length === 0 && !loading && filterForm.valid" class="no-data">
+    No sessions scheduled for this date. Please create a master routine first.
+  </div>
+
+  <mat-spinner *ngIf="loading"></mat-spinner>
+</div>

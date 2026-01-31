@@ -46,6 +46,12 @@ import { DepartmentStaffDialogComponent } from './components/department-staff-di
 import { StudentClassManagementComponent } from './components/student-class-management/student-class-management.component';
 import { StudentClassAssignDialogComponent } from './components/student-class-assign-dialog/student-class-assign-dialog.component';
 import { ClassStudentsDialogComponent } from './components/class-students-dialog/class-students-dialog.component';
+import { RoutineBuilderComponent } from './components/routine-builder/routine-builder.component';
+import { RoutineEntryDialogComponent } from './components/routine-entry-dialog/routine-entry-dialog.component';
+import { TimeSlotManagementComponent } from './components/time-slot-management/time-slot-management.component';
+import { DailyScheduleViewComponent } from './components/daily-schedule-view/daily-schedule-view.component';
+import { SessionOverrideDialogComponent } from './components/session-override-dialog/session-override-dialog.component';
+import { AttendanceMarkingComponent } from './components/attendance-marking/attendance-marking.component';
 
 import { SmaSharedModule } from 'sma-shared-lib';
 
@@ -63,7 +69,13 @@ import { SmaSharedModule } from 'sma-shared-lib';
     DepartmentStaffDialogComponent,
     StudentClassManagementComponent,
     StudentClassAssignDialogComponent,
-    ClassStudentsDialogComponent
+    ClassStudentsDialogComponent,
+    RoutineBuilderComponent,
+    RoutineEntryDialogComponent,
+    TimeSlotManagementComponent,
+    DailyScheduleViewComponent,
+    SessionOverrideDialogComponent,
+    AttendanceMarkingComponent
   ],
   imports: [
     BrowserModule,

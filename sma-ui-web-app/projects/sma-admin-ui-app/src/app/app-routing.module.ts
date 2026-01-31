@@ -14,6 +14,10 @@ import { SubjectFormComponent } from './components/subject-form/subject-form.com
 import { DepartmentListComponent } from './components/department-list/department-list.component';
 import { DepartmentFormComponent } from './components/department-form/department-form.component';
 import { StudentClassManagementComponent } from './components/student-class-management/student-class-management.component';
+import { RoutineBuilderComponent } from './components/routine-builder/routine-builder.component';
+import { TimeSlotManagementComponent } from './components/time-slot-management/time-slot-management.component';
+import { DailyScheduleViewComponent } from './components/daily-schedule-view/daily-schedule-view.component';
+import { AttendanceMarkingComponent } from './components/attendance-marking/attendance-marking.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -41,6 +45,12 @@ const routes: Routes = [
   { path: 'departments/:id/edit', component: DepartmentFormComponent },
   
   { path: 'student-class-management', component: StudentClassManagementComponent },
+  
+  // Routine Management
+  { path: 'time-slot-management', component: TimeSlotManagementComponent },
+  { path: 'routine-builder', component: RoutineBuilderComponent },
+  { path: 'daily-schedule-view', component: DailyScheduleViewComponent },
+  { path: 'attendance-marking/:sessionId', component: AttendanceMarkingComponent },
 ];
 
 @NgModule({

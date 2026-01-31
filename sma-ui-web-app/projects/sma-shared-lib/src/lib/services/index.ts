@@ -10,6 +10,9 @@ export * from './staff';
 // Master Data Services
 export * from './master';
 
+// Routine Management Services
+export * from './routine';
+
 // Common Services
 export * from './app-context.service';
 export { SchoolContextService } from './school-context.service';

@@ -1,0 +1,86 @@
+<div class="attendance-marking">
+  <div class="header">
+    <button mat-icon-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2>Mark Attendance</h2>
+  </div>
+
+  <div class="session-info" *ngIf="session">
+    <mat-card>
+      <mat-card-content>
+        <p><strong>Date:</strong> {{ session.sessionDate | date }}</p>
+        <p><strong>Time:</strong> {{ session.timeSlot?.slotName }} ({{ session.timeSlot?.startTime }} - {{ session.timeSlot?.endTime }})</p>
+        <p><strong>Subject:</strong> {{ session.routineMaster?.subject?.subjectName }}</p>
+        <p><strong>Teacher:</strong> {{ session.routineMaster?.teacher?.staffName }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="quick-actions">
+    <button mat-raised-button (click)="markAllAs('PRESENT')" [disabled]="saving">
+      Mark All Present
+    </button>
+    <button mat-raised-button (click)="markAllAs('ABSENT')" [disabled]="saving">
+      Mark All Absent
+    </button>
+    <button mat-raised-button (click)="toggleSelectAll()" [disabled]="saving">
+      {{ selectAll ? 'Clear All' : 'Select All Present' }}
+    </button>
+  </div>
+
+  <div class="attendance-table">
+    <table mat-table [dataSource]="attendanceRecords" class="mat-elevation-z2">
+      <ng-container matColumnDef="rollNumber">
+        <th mat-header-cell *matHeaderCellDef>Roll No</th>
+        <td mat-cell *matCellDef="let record">{{ record.rollNumber }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="studentName">
+        <th mat-header-cell *matHeaderCellDef>Student Name</th>
+        <td mat-cell *matCellDef="let record">{{ record.studentName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let record">
+          <mat-form-field appearance="outline">
+            <mat-select [(ngModel)]="record.status" [class]="getStatusClass(record.status)">
+              <mat-option *ngFor="let status of attendanceStatuses" [value]="status">
+                {{ status }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="remarks">
+        <th mat-header-cell *matHeaderCellDef>Remarks</th>
+        <td mat-cell *matCellDef="let record">
+          <mat-form-field appearance="outline">
+            <input matInput [(ngModel)]="record.remarks" placeholder="Optional remarks">
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['rollNumber', 'studentName', 'status', 'remarks']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['rollNumber', 'studentName', 'status', 'remarks']" 
+          [class]="getStatusClass(row.status)"></tr>
+    </table>
+
+    <div *ngIf="attendanceRecords.length === 0 && !loading" class="no-data">
+      No students found for this session.
+    </div>
+  </div>
+
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="saving || attendanceRecords.length === 0">
+      {{ saving ? 'Saving...' : 'Submit Attendance' }}
+    </button>
+    <button mat-button (click)="goBack()" [disabled]="saving">
+      Cancel
+    </button>
+  </div>
+
+  <mat-spinner *ngIf="loading"></mat-spinner>
+</div>

@@ -4,7 +4,7 @@ import { ClassMasterService, ClassMasterResponse, AcademicYearResponse, StudentC
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { ClassStudentsDialogComponent } from '../class-students-dialog/class-students-dialog.component';
-import { AcademicYearCacheService } from '../../services/academic-year-cache.service';
+import { AdminCacheService } from '../../services/admin-cache.service';
 
 @Component({
   selector: 'app-class-list',
@@ -21,7 +21,7 @@ export class ClassListComponent implements OnInit {
 
   constructor(
     private classMasterService: ClassMasterService,
-    private academicYearCache: AcademicYearCacheService,
+    private adminCache: AdminCacheService,
     private studentClassSectionService: StudentClassSectionService,
     private router: Router,
     private snackBar: MatSnackBar,
@@ -54,7 +54,7 @@ export class ClassListComponent implements OnInit {
   }
 
   loadAcademicYears(): void {
-    this.academicYearCache.getAcademicYears().subscribe({
+    this.adminCache.getAcademicYears().subscribe({
       next: (years) => {
         this.academicYears = years;
         // Auto-select current academic year

@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Override Session</h2>
+
+<mat-dialog-content>
+  <div class="session-info">
+    <p><strong>Time Slot:</strong> {{ data.session.timeSlot?.slotName }}</p>
+    <p><strong>Current Subject:</strong> {{ data.session.routineMaster?.subject?.subjectName || 'N/A' }}</p>
+    <p><strong>Current Teacher:</strong> {{ data.session.routineMaster?.teacher?.staffName || 'N/A' }}</p>
+  </div>
+
+  <form [formGroup]="overrideForm">
+    <mat-form-field appearance="outline">
+      <mat-label>Override Subject (Optional)</mat-label>
+      <mat-select formControlName="overriddenSubjectId">
+        <mat-option value="">Keep Current Subject</mat-option>
+        <mat-option *ngFor="let subject of subjects" [value]="subject.id">
+          {{ subject.subjectName }}
+        </mat-option>
+      </mat-select>
+      <mat-hint>Leave empty to keep the scheduled subject</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Substitute Teacher (Optional)</mat-label>
+      <mat-select formControlName="substituteTeacherId">
+        <mat-option value="">Keep Current Teacher</mat-option>
+        <mat-option *ngFor="let teacher of teachers" [value]="teacher.id">
+          {{ teacher.staffName }} ({{ teacher.staffCode }})
+        </mat-option>
+      </mat-select>
+      <mat-hint>Leave empty to keep the scheduled teacher</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Remarks</mat-label>
+      <textarea matInput formControlName="remarks" rows="3" placeholder="Reason for override..."></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="loading">
+    {{ loading ? 'Saving...' : 'Save Override' }}
+  </button>
+</mat-dialog-actions>

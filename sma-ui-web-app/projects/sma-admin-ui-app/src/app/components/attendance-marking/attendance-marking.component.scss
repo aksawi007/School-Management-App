@@ -1,0 +1,149 @@
+.attendance-marking {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+
+    h2 {
+      margin: 0;
+      color: #333;
+    }
+  }
+
+  .session-info {
+    margin-bottom: 20px;
+
+    mat-card {
+      mat-card-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+
+        p {
+          margin: 0;
+          font-size: 14px;
+
+          strong {
+            color: #666;
+          }
+        }
+      }
+    }
+  }
+
+  .quick-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .attendance-table {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+
+    table {
+      width: 100%;
+
+      th {
+        font-weight: 600;
+        background: #f5f5f5;
+      }
+
+      td {
+        mat-form-field {
+          width: 100%;
+          margin: 0;
+
+          &.status-present {
+            ::ng-deep .mat-select-value {
+              color: #4caf50;
+            }
+          }
+
+          &.status-absent {
+            ::ng-deep .mat-select-value {
+              color: #f44336;
+            }
+          }
+
+          &.status-late {
+            ::ng-deep .mat-select-value {
+              color: #ff9800;
+            }
+          }
+
+          &.status-excused {
+            ::ng-deep .mat-select-value {
+              color: #2196f3;
+            }
+          }
+
+          &.status-sick_leave {
+            ::ng-deep .mat-select-value {
+              color: #9c27b0;
+            }
+          }
+        }
+      }
+
+      tr {
+        transition: background-color 0.2s;
+
+        &.status-present {
+          background-color: #e8f5e9;
+        }
+
+        &.status-absent {
+          background-color: #ffebee;
+        }
+
+        &.status-late {
+          background-color: #fff3e0;
+        }
+
+        &.status-excused {
+          background-color: #e3f2fd;
+        }
+
+        &.status-sick_leave {
+          background-color: #f3e5f5;
+        }
+
+        &:hover {
+          background-color: #f5f5f5 !important;
+        }
+      }
+    }
+
+    .no-data {
+      padding: 40px;
+      text-align: center;
+      color: #999;
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  mat-spinner {
+    margin: 40px auto;
+  }
+}

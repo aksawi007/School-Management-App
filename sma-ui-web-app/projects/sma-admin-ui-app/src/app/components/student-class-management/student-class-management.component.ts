@@ -11,7 +11,7 @@ import {
   SectionMasterResponse
 } from 'sma-shared-lib';
 import { StudentClassAssignDialogComponent } from '../student-class-assign-dialog/student-class-assign-dialog.component';
-import { AcademicYearCacheService } from '../../services/academic-year-cache.service';
+import { AdminCacheService } from '../../services/admin-cache.service';
 
 @Component({
   selector: 'app-student-class-management',
@@ -34,7 +34,7 @@ export class StudentClassManagementComponent implements OnInit {
 
   constructor(
     private studentClassSectionService: StudentClassSectionService,
-    private academicYearCache: AcademicYearCacheService,
+    private adminCache: AdminCacheService,
     private classMasterService: ClassMasterService,
     private sectionService: SectionMasterService,
     private dialog: MatDialog,
@@ -42,25 +42,18 @@ export class StudentClassManagementComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    window.addEventListener('message', (event) => {
-      if (event.origin !== 'http://localhost:4300') return;
-      
-      if (event.data && event.data.type === 'SCHOOL_CONTEXT') {
-        const school = event.data.school;
-        if (school) {
-          this.schoolId = school.schoolId;
-          this.loadAcademicYears();
-        }
+    this.adminCache.initializeSchoolContext();
+    
+    this.adminCache.getSchoolDetails().subscribe(school => {
+      if (school) {
+        this.schoolId = school.schoolId;
+        this.loadAcademicYears();
       }
     });
-    
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({ type: 'REQUEST_CONTEXT' }, 'http://localhost:4300');
-    }
   }
 
   loadAcademicYears(): void {
-    this.academicYearCache.getAcademicYears().subscribe({
+    this.adminCache.getAcademicYears().subscribe({
       next: (years) => {
         this.academicYears = years;
         const currentYear = years.find(y => y.currentYear === true);

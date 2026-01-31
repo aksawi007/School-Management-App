@@ -77,6 +77,26 @@
     <mat-divider></mat-divider>
     
     <div class="menu-section">
+      <div class="section-title">Routine Management</div>
+      <mat-nav-list>
+        <a mat-list-item routerLink="/time-slot-management" routerLinkActive="active">
+          <mat-icon>schedule</mat-icon>
+          <span>Time Slot Management</span>
+        </a>
+        <a mat-list-item routerLink="/routine-builder" routerLinkActive="active">
+          <mat-icon>view_week</mat-icon>
+          <span>Routine Builder</span>
+        </a>
+        <a mat-list-item routerLink="/daily-schedule-view" routerLinkActive="active">
+          <mat-icon>today</mat-icon>
+          <span>Daily Schedule</span>
+        </a>
+      </mat-nav-list>
+    </div>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="menu-section">
       <div class="section-title">Financial Management</div>
       <mat-nav-list>
         <a mat-list-item routerLink="/fee-structure" routerLinkActive="active">

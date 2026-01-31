@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit' : 'Add' }} Routine Entry</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="routineForm">
+    <div class="info-section">
+      <p><strong>Day:</strong> {{ data.dayOfWeek }}</p>
+      <p><strong>Time Slot:</strong> {{ data.timeSlotName }}</p>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Subject</mat-label>
+      <mat-select formControlName="subjectId" required>
+        <mat-option *ngFor="let subject of data.subjects" [value]="subject.id">
+          {{ subject.subjectName }} ({{ subject.subjectCode }})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="routineForm.get('subjectId')?.hasError('required')">
+        Subject is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Teacher</mat-label>
+      <mat-select formControlName="teacherId" required>
+        <mat-option *ngFor="let teacher of teachers" [value]="teacher.id">
+          {{ teacher.firstName }} {{ teacher.lastName }} ({{ teacher.employeeCode }})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="routineForm.get('teacherId')?.hasError('required')">
+        Teacher is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Remarks (Optional)</mat-label>
+      <textarea matInput formControlName="remarks" rows="3"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="loading || routineForm.invalid">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <span *ngIf="!loading">{{ isEdit ? 'Update' : 'Create' }}</span>
+  </button>
+</mat-dialog-actions>

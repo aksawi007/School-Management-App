@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SectionMasterService, SectionMasterRequest, ClassMasterService, ClassMasterResponse, AcademicYearResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { AcademicYearCacheService } from '../../services/academic-year-cache.service';
+import { AdminCacheService } from '../../services/admin-cache.service';
 
 @Component({
   selector: 'app-section-form',
@@ -26,7 +26,7 @@ export class SectionFormComponent implements OnInit {
     private fb: FormBuilder,
     private sectionMasterService: SectionMasterService,
     private classMasterService: ClassMasterService,
-    private academicYearCache: AcademicYearCacheService,
+    private adminCache: AdminCacheService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
@@ -92,7 +92,7 @@ export class SectionFormComponent implements OnInit {
   }
 
   loadAcademicYears(): void {
-    this.academicYearCache.getAcademicYears().subscribe({
+    this.adminCache.getAcademicYears().subscribe({
       next: (years) => {
         this.academicYears = years;
       },

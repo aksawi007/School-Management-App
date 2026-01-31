@@ -1,0 +1,96 @@
+<div class="time-slot-management">
+  <h2>Time Slot Management</h2>
+  
+  <div class="form-section">
+    <h3>{{ editMode ? 'Edit' : 'Add New' }} Time Slot</h3>
+    <form [formGroup]="timeSlotForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Slot Name</mat-label>
+        <input matInput formControlName="slotName" placeholder="e.g., Period 1">
+      </mat-form-field>
+
+      <div class="time-fields">
+        <mat-form-field appearance="outline">
+          <mat-label>Start Time</mat-label>
+          <input matInput type="time" formControlName="startTime" placeholder="HH:MM" required>
+          <mat-hint>Format: HH:MM (e.g., 08:00)</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>End Time</mat-label>
+          <input matInput type="time" formControlName="endTime" placeholder="HH:MM" required>
+          <mat-hint>Format: HH:MM (e.g., 08:45)</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Slot Type</mat-label>
+        <mat-select formControlName="slotType">
+          <mat-option *ngFor="let type of slotTypes" [value]="type">{{ type }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Display Order</mat-label>
+        <input matInput type="number" formControlName="displayOrder">
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!timeSlotForm.valid || loading">
+          {{ editMode ? 'Update' : 'Create' }}
+        </button>
+        <button mat-button type="button" (click)="resetForm()" [disabled]="loading">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="table-section">
+    <h3>Existing Time Slots</h3>
+    <table mat-table [dataSource]="timeSlots" class="mat-elevation-z2">
+      <ng-container matColumnDef="order">
+        <th mat-header-cell *matHeaderCellDef>Order</th>
+        <td mat-cell *matCellDef="let slot">{{ slot.displayOrder }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Slot Name</th>
+        <td mat-cell *matCellDef="let slot">{{ slot.slotName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef>Time</th>
+        <td mat-cell *matCellDef="let slot">{{ slot.startTime }} - {{ slot.endTime }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let slot">
+          <span [class]="'slot-type-' + slot.slotType">{{ slot.slotType }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let slot">
+          <button mat-icon-button (click)="editSlot(slot)" [disabled]="loading">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="deleteSlot(slot.id!)" [disabled]="loading" color="warn">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['order', 'name', 'time', 'type', 'actions']"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['order', 'name', 'time', 'type', 'actions']"></tr>
+    </table>
+
+    <div *ngIf="timeSlots.length === 0 && !loading" class="no-data">
+      No time slots configured. Add your first time slot above.
+    </div>
+  </div>
+
+  <mat-spinner *ngIf="loading"></mat-spinner>
+</div>
