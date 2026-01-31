@@ -7,6 +7,7 @@ public class SubjectMasterRequest {
     
     private Long schoolId;
     private String classId;
+    private Long departmentId;
     private String subjectCode;
     private String subjectName;
     private String subjectType; // CORE, ELECTIVE, OPTIONAL, EXTRA_CURRICULAR
@@ -31,6 +32,14 @@ public class SubjectMasterRequest {
 
     public void setClassId(String classId) {
         this.classId = classId;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 
     public String getSubjectCode() {

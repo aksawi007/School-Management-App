@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ClassRoutineMasterService, ClassRoutineMasterRequest, StaffService, StaffResponse } from 'sma-shared-lib';
+import { ClassRoutineMasterService, ClassRoutineMasterRequest, StaffSubjectMappingService, StaffSubjectMappingResponse } from 'sma-shared-lib';
 
 @Component({
   selector: 'app-routine-entry-dialog',
@@ -11,14 +11,14 @@ import { ClassRoutineMasterService, ClassRoutineMasterRequest, StaffService, Sta
 })
 export class RoutineEntryDialogComponent implements OnInit {
   routineForm: FormGroup;
-  teachers: StaffResponse[] = [];
+  teachers: StaffSubjectMappingResponse[] = [];
   loading = false;
   isEdit = false;
 
   constructor(
     private fb: FormBuilder,
     private routineService: ClassRoutineMasterService,
-    private staffService: StaffService,
+    private staffSubjectMappingService: StaffSubjectMappingService,
     private dialogRef: MatDialogRef<RoutineEntryDialogComponent>,
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -33,16 +33,39 @@ export class RoutineEntryDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadTeachers();
+    // Load qualified teachers when subject is selected
+    if (this.data.routine?.subjectId) {
+      this.loadQualifiedTeachers(this.data.routine.subjectId);
+    }
+    
+    // Listen to subject changes to reload qualified teachers
+    this.routineForm.get('subjectId')?.valueChanges.subscribe(subjectId => {
+      if (subjectId) {
+        this.loadQualifiedTeachers(subjectId);
+      } else {
+        this.teachers = [];
+      }
+    });
   }
 
-  loadTeachers(): void {
-    this.staffService.getAllStaffBySchool(this.data.schoolId).subscribe({
-      next: (data: StaffResponse[]) => {
-        this.teachers = data.filter((s: StaffResponse) => s.staffType === 'TEACHING');
+  loadQualifiedTeachers(subjectId: number): void {
+    this.loading = true;
+    this.staffSubjectMappingService.getQualifiedTeachersForSubject(
+      this.data.schoolId, 
+      subjectId, 
+      this.data.classId
+    ).subscribe({
+      next: (data: StaffSubjectMappingResponse[]) => {
+        this.teachers = data;
+        this.loading = false;
+        
+        if (this.teachers.length === 0) {
+          this.snackBar.open('No qualified teachers found for this subject', 'Close', { duration: 3000 });
+        }
       },
       error: (error: any) => {
-        this.snackBar.open('Failed to load teachers', 'Close', { duration: 3000 });
+        this.snackBar.open('Failed to load qualified teachers', 'Close', { duration: 3000 });
+        this.loading = false;
       }
     });
   }

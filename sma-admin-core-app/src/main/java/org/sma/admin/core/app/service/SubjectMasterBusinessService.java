@@ -4,9 +4,11 @@ import org.sma.admin.core.app.model.request.SubjectMasterRequest;
 import org.sma.admin.core.app.model.response.SubjectMasterResponse;
 import org.sma.jpa.model.master.SubjectMaster;
 import org.sma.jpa.model.master.ClassMaster;
+import org.sma.jpa.model.master.DepartmentMaster;
 import org.sma.jpa.model.school.SchoolProfile;
 import org.sma.jpa.repository.master.SubjectMasterRepository;
 import org.sma.jpa.repository.master.ClassMasterRepository;
+import org.sma.jpa.repository.master.DepartmentMasterRepository;
 import org.sma.jpa.repository.school.SchoolProfileRepository;
 import org.sma.platform.core.exception.SmaException;
 import org.sma.platform.core.service.ServiceRequestContext;
@@ -33,6 +35,9 @@ public class SubjectMasterBusinessService {
 
     @Autowired
     private ClassMasterRepository classMasterRepository;
+
+    @Autowired
+    private DepartmentMasterRepository departmentMasterRepository;
 
     /**
      * Create new subject
@@ -76,10 +81,18 @@ public class SubjectMasterBusinessService {
             throw new SmaException("Subject code already exists for this class: " + request.getSubjectCode());
         }
 
+        // Fetch department if provided
+        DepartmentMaster department = null;
+        if (request.getDepartmentId() != null) {
+            department = departmentMasterRepository.findById(request.getDepartmentId())
+                    .orElse(null);
+        }
+
         // Create subject entity
         SubjectMaster subjectMaster = new SubjectMaster();
         subjectMaster.setSchool(school);
         subjectMaster.setClassMaster(classMaster);
+        subjectMaster.setDepartment(department);
         subjectMaster.setSubjectCode(request.getSubjectCode());
         subjectMaster.setSubjectName(request.getSubjectName());
         subjectMaster.setSubjectType(request.getSubjectType());
@@ -161,7 +174,15 @@ public class SubjectMasterBusinessService {
         SubjectMaster existingSubject = subjectMasterRepository.findById(subjectId)
                 .orElseThrow(() -> new SmaException("Subject not found with id: " + subjectId));
 
+        // Fetch department if provided
+        DepartmentMaster department = null;
+        if (request.getDepartmentId() != null) {
+            department = departmentMasterRepository.findById(request.getDepartmentId())
+                    .orElse(null);
+        }
+
         // Update fields
+        existingSubject.setDepartment(department);
         existingSubject.setSubjectCode(request.getSubjectCode());
         existingSubject.setSubjectName(request.getSubjectName());
         existingSubject.setSubjectType(request.getSubjectType());
@@ -195,6 +216,8 @@ public class SubjectMasterBusinessService {
         response.setSchoolId(subjectMaster.getSchool() != null ? subjectMaster.getSchool().getId() : null);
         response.setClassId(subjectMaster.getClassMaster() != null ? subjectMaster.getClassMaster().getId().toString() : null);
         response.setClassName(subjectMaster.getClassMaster() != null ? subjectMaster.getClassMaster().getClassName() : null);
+        response.setDepartmentId(subjectMaster.getDepartment() != null ? subjectMaster.getDepartment().getId() : null);
+        response.setDepartmentName(subjectMaster.getDepartment() != null ? subjectMaster.getDepartment().getDepartmentName() : null);
         response.setSubjectCode(subjectMaster.getSubjectCode());
         response.setSubjectName(subjectMaster.getSubjectName());
         response.setSubjectType(subjectMaster.getSubjectType());

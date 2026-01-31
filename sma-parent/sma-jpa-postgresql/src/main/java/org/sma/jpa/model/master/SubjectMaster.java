@@ -1,5 +1,6 @@
 package org.sma.jpa.model.master;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.sma.jpa.model.BaseEntity;
 import org.sma.jpa.model.school.SchoolProfile;
 
@@ -15,11 +16,18 @@ public class SubjectMaster extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private SchoolProfile school;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "class_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private ClassMaster classMaster;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private DepartmentMaster department;
 
     @Column(name = "subject_code", nullable = false, length = 20)
     private String subjectCode;
@@ -60,6 +68,14 @@ public class SubjectMaster extends BaseEntity {
 
     public void setClassMaster(ClassMaster classMaster) {
         this.classMaster = classMaster;
+    }
+
+    public DepartmentMaster getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(DepartmentMaster department) {
+        this.department = department;
     }
 
     public String getSubjectCode() {

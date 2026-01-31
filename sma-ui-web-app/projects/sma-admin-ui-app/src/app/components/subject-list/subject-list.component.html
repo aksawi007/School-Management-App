@@ -53,6 +53,11 @@
           <td mat-cell *matCellDef="let subject">{{ subject.className || '-' }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="departmentName">
+          <th mat-header-cell *matHeaderCellDef>Department</th>
+          <td mat-cell *matCellDef="let subject">{{ subject.departmentName || '-' }}</td>
+        </ng-container>
+
         <ng-container matColumnDef="subjectType">
           <th mat-header-cell *matHeaderCellDef>Type</th>
           <td mat-cell *matCellDef="let subject">

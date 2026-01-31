@@ -17,6 +17,8 @@ export interface SubjectMaster {
   schoolId: number;
   classId: string;
   className?: string;
+  departmentId?: number;
+  departmentName?: string;
   subjectCode: string;
   subjectName: string;
   subjectType?: string;
@@ -33,6 +35,7 @@ export interface SubjectMaster {
 export interface SubjectMasterRequest {
   schoolId: number;
   classId: string;
+  departmentId?: number;
   subjectCode: string;
   subjectName: string;
   subjectType?: string;

@@ -9,6 +9,8 @@ public class SubjectMasterResponse {
     private Long schoolId;
     private String classId;
     private String className;
+    private Long departmentId;
+    private String departmentName;
     private String subjectCode;
     private String subjectName;
     private String subjectType;
@@ -49,6 +51,22 @@ public class SubjectMasterResponse {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
     }
 
     public String getSubjectCode() {

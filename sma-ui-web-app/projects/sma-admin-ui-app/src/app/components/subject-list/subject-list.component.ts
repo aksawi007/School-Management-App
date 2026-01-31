@@ -15,7 +15,7 @@ export class SubjectListComponent implements OnInit {
   selectedType = 'ALL';
   selectedClassId?: number;
   subjectTypes = ['ALL', 'CORE', 'ELECTIVE', 'OPTIONAL', 'EXTRA_CURRICULAR'];
-  displayedColumns: string[] = ['subjectCode', 'subjectName', 'className', 'subjectType', 'credits', 'maxMarks', 'isMandatory', 'actions'];
+  displayedColumns: string[] = ['subjectCode', 'subjectName', 'className', 'departmentName', 'subjectType', 'credits', 'maxMarks', 'isMandatory', 'actions'];
   loading = true;
   schoolId: number = 0;
 

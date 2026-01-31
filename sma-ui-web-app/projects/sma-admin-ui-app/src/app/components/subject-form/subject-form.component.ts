@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SubjectMasterService, SubjectMasterRequest, ClassMasterService, ClassMasterResponse } from 'sma-shared-lib';
+import { SubjectMasterService, SubjectMasterRequest, ClassMasterService, ClassMasterResponse, DepartmentService, DepartmentResponse } from 'sma-shared-lib';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -16,12 +16,14 @@ export class SubjectFormComponent implements OnInit {
   loading = false;
   schoolId: number = 0;
   classes: ClassMasterResponse[] = [];
+  departments: DepartmentResponse[] = [];
   subjectTypes = ['CORE', 'ELECTIVE', 'OPTIONAL', 'EXTRA_CURRICULAR'];
 
   constructor(
     private fb: FormBuilder,
     private subjectMasterService: SubjectMasterService,
     private classMasterService: ClassMasterService,
+    private departmentService: DepartmentService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
@@ -48,8 +50,9 @@ export class SubjectFormComponent implements OnInit {
           this.schoolId = school.schoolId;
           this.subjectForm.patchValue({ schoolId: this.schoolId });
           
-          // Load classes for the school
+          // Load classes and departments for the school
           this.loadClasses();
+          this.loadDepartments();
           
           if (this.isEditMode && this.subjectId) {
             this.loadSubject();
@@ -68,6 +71,7 @@ export class SubjectFormComponent implements OnInit {
     this.subjectForm = this.fb.group({
       schoolId: [this.schoolId, Validators.required],
       classId: ['', Validators.required],
+      departmentId: [''],
       subjectCode: ['', Validators.required],
       subjectName: ['', Validators.required],
       subjectType: ['CORE', Validators.required],
@@ -90,6 +94,18 @@ export class SubjectFormComponent implements OnInit {
     });
   }
 
+  loadDepartments(): void {
+    this.departmentService.getDepartmentsBySchool(this.schoolId).subscribe({
+      next: (departments) => {
+        this.departments = departments;
+      },
+      error: (error) => {
+        console.error('Error loading departments:', error);
+        this.snackBar.open('Error loading departments', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
   loadSubject(): void {
     if (!this.subjectId) return;
 
@@ -99,6 +115,7 @@ export class SubjectFormComponent implements OnInit {
         this.subjectForm.patchValue({
           schoolId: subject.schoolId,
           classId: subject.classId,
+          departmentId: subject.departmentId,
           subjectCode: subject.subjectCode,
           subjectName: subject.subjectName,
           subjectType: subject.subjectType,

@@ -21,14 +21,16 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Teacher</mat-label>
-      <mat-select formControlName="teacherId" required>
-        <mat-option *ngFor="let teacher of teachers" [value]="teacher.id">
-          {{ teacher.firstName }} {{ teacher.lastName }} ({{ teacher.employeeCode }})
+      <mat-select formControlName="teacherId" required [disabled]="!routineForm.get('subjectId')?.value || loading">
+        <mat-option *ngFor="let teacher of teachers" [value]="teacher.staffId">
+          {{ teacher.staffName }} ({{ teacher.employeeCode }}) - {{ teacher.proficiencyLevel }}
         </mat-option>
       </mat-select>
       <mat-error *ngIf="routineForm.get('teacherId')?.hasError('required')">
         Teacher is required
       </mat-error>
+      <mat-hint *ngIf="!routineForm.get('subjectId')?.value">Please select a subject first</mat-hint>
+      <mat-hint *ngIf="routineForm.get('subjectId')?.value && teachers.length === 0 && !loading">No qualified teachers available for this subject</mat-hint>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
