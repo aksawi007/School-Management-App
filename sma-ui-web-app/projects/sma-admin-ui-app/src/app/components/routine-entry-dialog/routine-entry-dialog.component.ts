@@ -2,7 +2,25 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ClassRoutineMasterService, ClassRoutineMasterRequest, StaffSubjectMappingService, StaffSubjectMappingResponse } from 'sma-shared-lib';
+import { ClassRoutineMasterService, ClassRoutineMasterRequest, StaffSubjectMappingService } from 'sma-shared-lib';
+
+interface TeacherResponse {
+  staffId: number;
+  employeeCode: string;
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  staffType?: string;
+  designation?: string;
+  roleInDepartment?: string;
+  isPrimaryDepartment?: boolean;
+  assignmentDate?: string;
+  memberSince?: string;
+  remarks?: string;
+}
 
 @Component({
   selector: 'app-routine-entry-dialog',
@@ -11,9 +29,10 @@ import { ClassRoutineMasterService, ClassRoutineMasterRequest, StaffSubjectMappi
 })
 export class RoutineEntryDialogComponent implements OnInit {
   routineForm: FormGroup;
-  teachers: StaffSubjectMappingResponse[] = [];
+  teachers: TeacherResponse[] = [];
   loading = false;
   isEdit = false;
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -50,12 +69,13 @@ export class RoutineEntryDialogComponent implements OnInit {
 
   loadQualifiedTeachers(subjectId: number): void {
     this.loading = true;
+    this.errorMessage = '';
     this.staffSubjectMappingService.getQualifiedTeachersForSubject(
       this.data.schoolId, 
       subjectId, 
       this.data.classId
     ).subscribe({
-      next: (data: StaffSubjectMappingResponse[]) => {
+      next: (data: TeacherResponse[]) => {
         this.teachers = data;
         this.loading = false;
         
@@ -64,8 +84,18 @@ export class RoutineEntryDialogComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        this.snackBar.open('Failed to load qualified teachers', 'Close', { duration: 3000 });
         this.loading = false;
+        const errorMsg = error?.error?.error || 'Failed to load qualified teachers';
+        this.errorMessage = errorMsg;
+        
+        // Check for specific error about department not linked
+        if (errorMsg.toLowerCase().includes('not linked to any department')) {
+          this.snackBar.open(errorMsg, 'Close', { duration: 4000 });
+        } else {
+          this.snackBar.open(errorMsg, 'Close', { duration: 3000 });
+        }
+        
+        this.teachers = [];
       }
     });
   }

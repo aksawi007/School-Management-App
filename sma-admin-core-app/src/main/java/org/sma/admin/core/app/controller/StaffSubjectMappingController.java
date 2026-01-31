@@ -4,6 +4,8 @@ import org.sma.admin.core.app.model.request.StaffSubjectMappingRequest;
 import org.sma.admin.core.app.model.response.StaffSubjectMappingResponse;
 import org.sma.admin.core.app.service.StaffSubjectMappingBusinessService;
 import org.sma.platform.core.exception.SmaException;
+import org.sma.platform.core.restcontroller.ApiRestServiceBinding;
+import org.sma.platform.core.service.ServiceRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/schools/{schoolId}/staff-subjects")
 @CrossOrigin
-public class StaffSubjectMappingController {
+public class StaffSubjectMappingController  extends ApiRestServiceBinding{
 
     @Autowired
     private StaffSubjectMappingBusinessService staffSubjectMappingService;
@@ -88,21 +90,23 @@ public class StaffSubjectMappingController {
 
     /**
      * Get qualified teachers for a subject (optionally filtered by class)
+     * Updated logic: Gets staff based on subject's linked department using getDepartmentStaff logic
      */
     @GetMapping("/qualified")
-    public ResponseEntity<List<StaffSubjectMappingResponse>> getQualifiedTeachers(
+    public ResponseEntity<?> getQualifiedTeachers(
             @PathVariable Long schoolId,
             @RequestParam Long subjectId,
             @RequestParam(required = false) Long classId) {
-        
-        List<StaffSubjectMappingResponse> mappings;
-        if (classId != null) {
-            mappings = staffSubjectMappingService.getQualifiedTeachersForClassSubject(schoolId, classId, subjectId);
-        } else {
-            mappings = staffSubjectMappingService.getQualifiedTeachersForSubject(schoolId, subjectId);
+                 ServiceRequestContext context = createServiceRequestContext("getQualifiedTeachers", 
+            schoolId.toString(), subjectId.toString());
+        try {
+            List<?> staffList = staffSubjectMappingService.getStaffBySubjectDepartment(context, schoolId, subjectId);
+            return ResponseEntity.ok(staffList);
+        } catch (SmaException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
-        
-        return ResponseEntity.ok(mappings);
     }
 
     /**
