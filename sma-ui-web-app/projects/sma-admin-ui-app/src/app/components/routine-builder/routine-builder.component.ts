@@ -159,27 +159,40 @@ export class RoutineBuilderComponent implements OnInit {
       this.selectedSectionId
     ).subscribe({
       next: (data) => {
+        console.log('Routine data received:', data);
+        console.log('Number of routines:', data.length);
         this.routineData = data;
+        console.log('TimeSlots available:', this.timeSlots.length);
         this.buildGrid();
         this.loading = false;
       },
       error: (error) => {
-        this.showError('Failed to load routine');
+        console.error('Error loading routine:', error);
+        const errorMsg = error?.error?.message || error?.message || 'Failed to load routine';
+        this.showError(errorMsg);
         this.loading = false;
       }
     });
   }
 
   buildGrid(): void {
+    if (!this.timeSlots || this.timeSlots.length === 0) {
+      console.warn('No time slots available to build grid');
+      return;
+    }
+    
     this.routineGrid = [];
     
     for (const day of this.daysOfWeek) {
       const dayRow: RoutineCell[] = [];
       
       for (const timeSlot of this.timeSlots) {
-        const routine = this.routineData.find(r => 
-          r.dayOfWeek === day && r.timeSlotId === timeSlot.id
-        );
+        const routine = this.routineData.find(r => {
+          const dayMatch = r.dayOfWeek === day;
+          // Check both timeSlotId and timeSlot.id since API returns nested object
+          const slotMatch = r.timeSlotId === timeSlot.id || r.timeSlot?.id === timeSlot.id;
+          return dayMatch && slotMatch;
+        });
         
         dayRow.push({
           dayOfWeek: day,
@@ -190,14 +203,56 @@ export class RoutineBuilderComponent implements OnInit {
       
       this.routineGrid.push(dayRow);
     }
+    
+    console.log('=== Grid Build Complete ===');
+    console.log('Final routineGrid:', this.routineGrid);
+    
+    // Count how many cells have routines
+    let cellsWithData = 0;
+    this.routineGrid.forEach(row => {
+      row.forEach(cell => {
+        if (cell.routine) cellsWithData++;
+      });
+    });
+    console.log('Total cells with routine data:', cellsWithData);
   }
 
-  openRoutineDialog(cell: RoutineCell): void {
+  getRoutineCell(dayIndex: number, slotIndex: number): RoutineCell | undefined {
+    if (!this.routineGrid || dayIndex < 0 || dayIndex >= this.routineGrid.length) {
+      return undefined;
+    }
+    const dayRow = this.routineGrid[dayIndex];
+    if (!dayRow || slotIndex < 0 || slotIndex >= dayRow.length) {
+      return undefined;
+    }
+    return dayRow[slotIndex];
+  }
+
+  getTeacherName(teacher: any): string {
+    if (!teacher) return '';
+    
+    // Try different name properties in order of preference
+    if (teacher.fullName) return teacher.fullName;
+    if (teacher.firstName && teacher.lastName) return `${teacher.firstName} ${teacher.lastName}`;
+    if (teacher.firstName) return teacher.firstName;
+    if (teacher.lastName) return teacher.lastName;
+    if (teacher.employeeCode) return teacher.employeeCode;
+    
+    return '';
+  }
+
+  openRoutineDialog(cell: RoutineCell | undefined): void {
+    if (!cell) {
+      this.snackBar.open('Unable to open routine dialog', 'Close', { duration: 3000 });
+      return;
+    }
+
     if (!this.selectedAcademicYearId || !this.selectedClassId || !this.selectedSectionId) {
       this.snackBar.open('Please select Academic Year, Class, and Section first', 'Close', { duration: 3000 });
       return;
     }
 
+    // Don't add duplicate - just pass the subjects we have
     const dialogRef = this.dialog.open(RoutineEntryDialogComponent, {
       width: '500px',
       data: {
@@ -220,8 +275,10 @@ export class RoutineBuilderComponent implements OnInit {
     });
   }
 
-  deleteRoutine(cell: RoutineCell): void {
-    if (!cell.routine?.id) return;
+  deleteRoutine(cell: RoutineCell | undefined): void {
+    if (!cell || !cell.routine?.id) {
+      return;
+    }
 
     if (confirm('Are you sure you want to delete this routine entry?')) {
       this.routineService.deleteRoutineEntry(this.schoolId, cell.routine.id).subscribe({

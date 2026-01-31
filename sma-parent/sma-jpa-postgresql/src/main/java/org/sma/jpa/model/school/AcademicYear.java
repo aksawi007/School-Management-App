@@ -1,5 +1,6 @@
 package org.sma.jpa.model.school;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.sma.jpa.model.BaseEntity;
 
 import javax.persistence.*;
@@ -15,6 +16,7 @@ public class AcademicYear extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private SchoolProfile school;
 
     @Column(name = "year_code", nullable = false, length = 20)

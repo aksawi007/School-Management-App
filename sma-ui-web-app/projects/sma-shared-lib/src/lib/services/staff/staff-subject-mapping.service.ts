@@ -81,11 +81,15 @@ export class StaffSubjectMappingService {
    * @param schoolId School ID
    * @param subjectId Subject ID
    * @param classId Optional class ID to filter by grade level
+   * @param departmentId Optional department ID linked to the subject
    */
-  getQualifiedTeachersForSubject(schoolId: number, subjectId: number, classId?: number): Observable<StaffSubjectMappingResponse[]> {
+  getQualifiedTeachersForSubject(schoolId: number, subjectId: number, classId?: number, departmentId?: number): Observable<StaffSubjectMappingResponse[]> {
     let params = new HttpParams().set('subjectId', subjectId.toString());
     if (classId) {
       params = params.set('classId', classId.toString());
+    }
+    if (departmentId) {
+      params = params.set('departmentId', departmentId.toString());
     }
     return this.http.get<StaffSubjectMappingResponse[]>(
       `${this.baseUrl}/${schoolId}/staff-subjects/qualified`,

@@ -9,7 +9,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Subject</mat-label>
-      <mat-select formControlName="subjectId" required>
+      <mat-select formControlName="subjectId" required [compareWith]="compareIds">
         <mat-option *ngFor="let subject of data.subjects" [value]="subject.id">
           {{ subject.subjectName }} ({{ subject.subjectCode }})
         </mat-option>
@@ -21,7 +21,7 @@
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Teacher</mat-label>
-      <mat-select formControlName="teacherId" required [disabled]="!routineForm.get('subjectId')?.value || loading">
+      <mat-select formControlName="teacherId" required [disabled]="!routineForm.get('subjectId')?.value || loading" [compareWith]="compareIds">
         <mat-option *ngFor="let teacher of teachers" [value]="teacher.staffId">
           {{ teacher.fullName || (teacher.firstName + ' ' + teacher.lastName) }} ({{ teacher.employeeCode }})
         </mat-option>

@@ -45,7 +45,7 @@
         </div>
 
         <div class="grid-body">
-          <div class="grid-row" *ngFor="let timeSlot of timeSlots">
+          <div class="grid-row" *ngFor="let timeSlot of timeSlots; let slotIndex = index">
             <div class="time-slot-cell">
               <div class="slot-name">{{ timeSlot.slotName }}</div>
               <div class="slot-time">{{ timeSlot.startTime }} - {{ timeSlot.endTime }}</div>
@@ -53,22 +53,22 @@
 
             <div class="routine-cell" 
                  *ngFor="let day of daysOfWeek; let dayIndex = index"
-                 (click)="openRoutineDialog(routineGrid[dayIndex][timeSlots.indexOf(timeSlot)])">
-              <div *ngIf="routineGrid[dayIndex] && routineGrid[dayIndex][timeSlots.indexOf(timeSlot)]?.routine" 
+                 (click)="openRoutineDialog(getRoutineCell(dayIndex, slotIndex))">
+              <div *ngIf="getRoutineCell(dayIndex, slotIndex)?.routine" 
                    class="routine-entry">
                 <div class="subject-name">
-                  {{ routineGrid[dayIndex][timeSlots.indexOf(timeSlot)].routine?.subject?.subjectName || 'Unknown' }}
+                  {{ getRoutineCell(dayIndex, slotIndex)?.routine?.subject?.subjectName || 'Unknown' }}
                 </div>
                 <div class="teacher-name">
-                  {{ routineGrid[dayIndex][timeSlots.indexOf(timeSlot)].routine?.teacher?.firstName || 'TBD' }}
+                  {{ getTeacherName(getRoutineCell(dayIndex, slotIndex)?.routine?.teacher) || 'TBD' }}
                 </div>
                 <button mat-icon-button 
                         class="delete-btn"
-                        (click)="deleteRoutine(routineGrid[dayIndex][timeSlots.indexOf(timeSlot)]); $event.stopPropagation()">
+                        (click)="deleteRoutine(getRoutineCell(dayIndex, slotIndex)); $event.stopPropagation()">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
-              <div *ngIf="!routineGrid[dayIndex] || !routineGrid[dayIndex][timeSlots.indexOf(timeSlot)]?.routine" 
+              <div *ngIf="!getRoutineCell(dayIndex, slotIndex)?.routine" 
                    class="empty-cell">
                 <mat-icon>add</mat-icon>
                 <span>Add</span>

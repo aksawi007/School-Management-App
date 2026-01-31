@@ -120,18 +120,20 @@ public class StaffSubjectMappingBusinessService {
      * Returns DepartmentStaffResponse list instead of StaffSubjectMappingResponse
      * @throws SmaException if subject is not linked to any department
      */
-    public List<DepartmentStaffResponse> getStaffBySubjectDepartment(ServiceRequestContext context, Long schoolId, Long subjectId) throws SmaException {
+    public List<DepartmentStaffResponse> getStaffBySubjectDepartment(ServiceRequestContext context, Long schoolId, Long subjectId, Long departmentId) throws SmaException {
         // Get subject and fetch its department
-        SubjectMaster subject = subjectRepository.findById(subjectId)
-                .orElseThrow(() -> new SmaException("Subject not found with id: " + subjectId));
+        if(departmentId==null) {
+            SubjectMaster subject = subjectRepository.findById(subjectId)
+                    .orElseThrow(() -> new SmaException("Subject not found with id: " + subjectId));
 
-        DepartmentMaster department = subject.getDepartment();
-        if (department == null) {
-            throw new SmaException("Subject is not linked to any department");
+            DepartmentMaster department = subject.getDepartment();
+            departmentId = department.getId();
+            if (department == null) {
+                throw new SmaException("Subject is not linked to any department");
+            }
         }
-
         // Get all staff mappings for this department
-       List<DepartmentStaffResponse> response = departmentBusinessService.getDepartmentStaff(context, department.getId());
+       List<DepartmentStaffResponse> response = departmentBusinessService.getDepartmentStaff(context, departmentId);
             return response;
     }
 

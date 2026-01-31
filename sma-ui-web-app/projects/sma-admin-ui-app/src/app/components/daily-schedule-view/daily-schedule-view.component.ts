@@ -107,7 +107,10 @@ export class DailyScheduleViewComponent implements OnInit {
 
   getEffectiveTeacher(session: DailyClassSession): string {
     // For now, return routineMaster teacher or 'Not Assigned'
-    return session.routineMaster?.teacher?.staffName || 'Not Assigned';
+    return session.routineMaster?.teacher?.staffName || 
+           (session.routineMaster?.teacher?.firstName && session.routineMaster?.teacher?.lastName ? 
+            `${session.routineMaster.teacher.firstName} ${session.routineMaster.teacher.lastName}` : 
+            'Not Assigned');
   }
 
   getEffectiveSubject(session: DailyClassSession): string {

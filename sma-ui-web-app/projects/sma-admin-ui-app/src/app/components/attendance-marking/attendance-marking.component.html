@@ -12,7 +12,7 @@
         <p><strong>Date:</strong> {{ session.sessionDate | date }}</p>
         <p><strong>Time:</strong> {{ session.timeSlot?.slotName }} ({{ session.timeSlot?.startTime }} - {{ session.timeSlot?.endTime }})</p>
         <p><strong>Subject:</strong> {{ session.routineMaster?.subject?.subjectName }}</p>
-        <p><strong>Teacher:</strong> {{ session.routineMaster?.teacher?.staffName }}</p>
+        <p><strong>Teacher:</strong> {{ session.routineMaster?.teacher?.staffName || (session.routineMaster?.teacher?.firstName + ' ' + session.routineMaster?.teacher?.lastName) || 'Not Assigned' }}</p>
       </mat-card-content>
     </mat-card>
   </div>

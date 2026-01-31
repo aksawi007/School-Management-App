@@ -4,7 +4,7 @@
   <div class="session-info">
     <p><strong>Time Slot:</strong> {{ data.session.timeSlot?.slotName }}</p>
     <p><strong>Current Subject:</strong> {{ data.session.routineMaster?.subject?.subjectName || 'N/A' }}</p>
-    <p><strong>Current Teacher:</strong> {{ data.session.routineMaster?.teacher?.staffName || 'N/A' }}</p>
+    <p><strong>Current Teacher:</strong> {{ data.session.routineMaster?.teacher?.staffName || (data.session.routineMaster?.teacher?.firstName + ' ' + data.session.routineMaster?.teacher?.lastName) || 'N/A' }}</p>
   </div>
 
   <form [formGroup]="overrideForm">

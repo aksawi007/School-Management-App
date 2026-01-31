@@ -1,5 +1,6 @@
 package org.sma.jpa.model.master;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.sma.jpa.model.BaseEntity;
 import org.sma.jpa.model.school.AcademicYear;
 import org.sma.jpa.model.school.SchoolProfile;
@@ -16,10 +17,12 @@ public class ClassMaster extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private SchoolProfile school;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "academic_year_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private AcademicYear academicYear;
 
     @Column(name = "class_code", nullable = false, length = 20)

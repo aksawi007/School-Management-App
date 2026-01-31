@@ -1,5 +1,6 @@
 package org.sma.jpa.model.school;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.sma.jpa.model.BaseEntity;
 import javax.persistence.*;
 import java.time.LocalDate;

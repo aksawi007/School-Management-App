@@ -96,11 +96,11 @@ public class StaffSubjectMappingController  extends ApiRestServiceBinding{
     public ResponseEntity<?> getQualifiedTeachers(
             @PathVariable Long schoolId,
             @RequestParam Long subjectId,
-            @RequestParam(required = false) Long classId) {
+            @RequestParam(required = false) Long departmentId) {
                  ServiceRequestContext context = createServiceRequestContext("getQualifiedTeachers", 
             schoolId.toString(), subjectId.toString());
         try {
-            List<?> staffList = staffSubjectMappingService.getStaffBySubjectDepartment(context, schoolId, subjectId);
+            List<?> staffList = staffSubjectMappingService.getStaffBySubjectDepartment(context, schoolId, subjectId, departmentId);
             return ResponseEntity.ok(staffList);
         } catch (SmaException e) {
             Map<String, String> errorResponse = new HashMap<>();

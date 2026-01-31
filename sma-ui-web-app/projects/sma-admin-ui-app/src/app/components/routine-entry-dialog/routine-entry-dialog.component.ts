@@ -52,16 +52,85 @@ export class RoutineEntryDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Load qualified teachers when subject is selected
-    if (this.data.routine?.subjectId) {
-      this.loadQualifiedTeachers(this.data.routine.subjectId);
-    }
-    
     // Listen to subject changes to reload qualified teachers
+    // Set this up FIRST so it catches all changes including the initial patchValue
     this.routineForm.get('subjectId')?.valueChanges.subscribe(subjectId => {
       if (subjectId) {
         this.loadQualifiedTeachers(subjectId);
       } else {
+        this.teachers = [];
+      }
+    });
+
+    // If editing, set form values immediately
+    if (this.isEdit && this.data.routine) {
+      const subjectId = this.data.routine.subjectId || this.data.routine.subject?.id;
+      const teacherId = this.data.routine.teacherId || this.data.routine.teacher?.id;
+      
+      // Set form values - this will trigger valueChanges subscription
+      this.routineForm.patchValue({
+        subjectId: Number(subjectId),
+        teacherId: teacherId ? Number(teacherId) : '',
+        remarks: this.data.routine.remarks || ''
+      }, { emitEvent: true }); // Ensure valueChanges fires
+    }
+  }
+
+  loadQualifiedTeachersAndSetForm(subjectId: number): void {
+    this.loading = true;
+    this.errorMessage = '';
+    
+    // Find the selected subject to get its departmentId
+    // First try to find from data.subjects, if not found check if routine has it
+    let selectedSubject = this.data.subjects?.find((s: any) => s.id === subjectId);
+    
+    // If not found in subjects array, use the subject from routine (it has department info)
+    if (!selectedSubject && this.data.routine?.subject) {
+      console.log('Using subject from routine object');
+      selectedSubject = this.data.routine.subject;
+    }
+    
+    const departmentId = selectedSubject?.departmentId || selectedSubject?.department?.id;
+    
+    console.log('Selected subject:', selectedSubject);
+    console.log('Department ID:', departmentId);
+    
+    // If departmentId is not available, show error
+    if (!departmentId) {
+      this.loading = false;
+      this.errorMessage = 'Subject is not linked to any department';
+      this.snackBar.open(this.errorMessage, 'Close', { duration: 4000 });
+      this.teachers = [];
+      return;
+    }
+    
+    this.staffSubjectMappingService.getQualifiedTeachersForSubject(
+      this.data.schoolId, 
+      subjectId, 
+      this.data.classId,
+      departmentId
+    ).subscribe({
+      next: (data: TeacherResponse[]) => {
+        this.teachers = data;
+        this.loading = false;
+        
+        if (this.teachers.length === 0) {
+          this.snackBar.open('No qualified teachers found for this subject', 'Close', { duration: 3000 });
+        }
+      },
+      error: (error: any) => {
+        this.loading = false;
+        const errorMsg = error?.error?.error || 'Failed to load qualified teachers';
+        this.errorMessage = errorMsg;
+        console.error('Error loading teachers:', errorMsg);
+        
+        // Check for specific error about department not linked
+        if (errorMsg.toLowerCase().includes('not linked to any department')) {
+          this.snackBar.open(errorMsg, 'Close', { duration: 4000 });
+        } else {
+          this.snackBar.open(errorMsg, 'Close', { duration: 3000 });
+        }
+        
         this.teachers = [];
       }
     });
@@ -70,10 +139,31 @@ export class RoutineEntryDialogComponent implements OnInit {
   loadQualifiedTeachers(subjectId: number): void {
     this.loading = true;
     this.errorMessage = '';
+    
+    // Find the selected subject to get its departmentId
+    let selectedSubject = this.data.subjects?.find((s: any) => s.id === subjectId);
+    
+    // If not found in subjects array, try to use the routine's subject (which has full department info)
+    if (!selectedSubject && this.data.routine?.subject && this.data.routine.subject.id === subjectId) {
+      selectedSubject = this.data.routine.subject;
+    }
+    
+    const departmentId = selectedSubject?.departmentId || selectedSubject?.department?.id;
+    
+    // If departmentId is not available, show error
+    if (!departmentId) {
+      this.loading = false;
+      this.errorMessage = 'Subject is not linked to any department';
+      this.snackBar.open(this.errorMessage, 'Close', { duration: 4000 });
+      this.teachers = [];
+      return;
+    }
+    
     this.staffSubjectMappingService.getQualifiedTeachersForSubject(
       this.data.schoolId, 
       subjectId, 
-      this.data.classId
+      this.data.classId,
+      departmentId
     ).subscribe({
       next: (data: TeacherResponse[]) => {
         this.teachers = data;
@@ -138,5 +228,10 @@ export class RoutineEntryDialogComponent implements OnInit {
 
   onCancel(): void {
     this.dialogRef.close(false);
+  }
+
+  compareIds(id1: any, id2: any): boolean {
+    // Compare IDs as numbers to handle type mismatches
+    return Number(id1) === Number(id2);
   }
 }
