@@ -93,6 +93,26 @@ export class ClassRoutineMasterService {
   getRoutineById(schoolId: number, routineId: number): Observable<ClassRoutineMaster> {
     return this.http.get<ClassRoutineMaster>(`${this.getBaseUrl(schoolId)}/${routineId}`);
   }
+
+  checkTeacherAvailability(
+    schoolId: number,
+    teacherId: number,
+    timeSlotId: number,
+    academicYearId: number,
+    classId: number,
+    sectionId: number
+  ): Observable<{ available: boolean; conflictingRoutines: ClassRoutineMaster[] }> {
+    const params = new HttpParams()
+      .set('teacherId', teacherId.toString())
+      .set('timeSlotId', timeSlotId.toString())
+      .set('academicYearId', academicYearId.toString())
+      .set('classId', classId.toString())
+      .set('sectionId', sectionId.toString());
+    return this.http.get<{ available: boolean; conflictingRoutines: ClassRoutineMaster[] }>(
+      `${this.getBaseUrl(schoolId)}/check-availability`,
+      { params }
+    );
+  }
 }
 
 @Injectable({

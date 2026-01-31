@@ -38,6 +38,26 @@ export class ClassRoutineMasterService {
     return this.http.get<ClassRoutineMaster[]>(`/api/schools/${schoolId}/routine/master/teacher`, { params });
   }
 
+  checkTeacherAvailability(
+    schoolId: number,
+    teacherId: number,
+    timeSlotId: number,
+    academicYearId: number,
+    classId: number,
+    sectionId: number
+  ): Observable<{ available: boolean; conflictingRoutines: ClassRoutineMaster[] }> {
+    const params = new HttpParams()
+      .set('teacherId', teacherId.toString())
+      .set('timeSlotId', timeSlotId.toString())
+      .set('academicYearId', academicYearId.toString())
+      .set('classId', classId.toString())
+      .set('sectionId', sectionId.toString());
+    return this.http.get<{ available: boolean; conflictingRoutines: ClassRoutineMaster[] }>(
+      `/api/schools/${schoolId}/routine/master/check-availability`,
+      { params }
+    );
+  }
+
   deleteRoutineEntry(schoolId: number, routineId: number): Observable<any> {
     return this.http.delete(`/api/schools/${schoolId}/routine/master/${routineId}`);
   }

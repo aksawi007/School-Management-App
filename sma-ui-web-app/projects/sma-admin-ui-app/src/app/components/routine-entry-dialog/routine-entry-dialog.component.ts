@@ -198,6 +198,35 @@ export class RoutineEntryDialogComponent implements OnInit {
     this.loading = true;
     const formValue = this.routineForm.value;
 
+    // Check teacher availability before saving
+    this.routineService.checkTeacherAvailability(
+      this.data.schoolId,
+      formValue.teacherId,
+      this.data.timeSlotId,
+      this.data.academicYearId,
+      this.data.classId,
+      this.data.sectionId
+    ).subscribe({
+      next: (result: { available: boolean; conflictingRoutines: any[] }) => {
+        if (!result.available) {
+          this.loading = false;
+          const conflictClass = result.conflictingRoutines?.[0]?.class?.className || 'another class';
+          this.errorMessage = `This teacher is already allocated to ${conflictClass} in the same time slot`;
+          this.snackBar.open(this.errorMessage, 'Close', { duration: 5000 });
+          return;
+        }
+
+        // Teacher is available, proceed with save
+        this.saveRoutine(formValue);
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.snackBar.open('Failed to check teacher availability', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  private saveRoutine(formValue: any): void {
     const request: ClassRoutineMasterRequest = {
       schoolId: this.data.schoolId,
       academicYearId: this.data.academicYearId,

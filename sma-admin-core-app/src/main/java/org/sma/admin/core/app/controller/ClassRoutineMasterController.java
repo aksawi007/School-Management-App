@@ -99,4 +99,17 @@ public class ClassRoutineMasterController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
     }
+
+    @GetMapping("/check-availability")
+    public ResponseEntity<?> checkTeacherAvailability(
+            @PathVariable Long schoolId,
+            @RequestParam Long teacherId,
+            @RequestParam Long timeSlotId,
+            @RequestParam Long academicYearId,
+            @RequestParam Long classId,
+            @RequestParam Long sectionId) {
+        Map<String, Object> result = classRoutineMasterService.checkTeacherAvailability(
+                schoolId, teacherId, timeSlotId, academicYearId, classId, sectionId);
+        return ResponseEntity.ok(result);
+    }
 }

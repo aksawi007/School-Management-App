@@ -64,4 +64,16 @@ public interface ClassRoutineMasterRepository extends JpaRepository<ClassRoutine
             @Param("sectionId") Long sectionId,
             @Param("dayOfWeek") String dayOfWeek,
             @Param("timeSlotId") Long timeSlotId);
+
+    @Query("SELECT crm FROM ClassRoutineMaster crm " +
+           "WHERE crm.school.id = :schoolId " +
+           "AND crm.academicYear.id = :academicYearId " +
+           "AND crm.teacher.id = :teacherId " +
+           "AND crm.timeSlot.id = :timeSlotId " +
+           "AND crm.isActive = true")
+    List<ClassRoutineMaster> findConflictingRoutines(
+            @Param("schoolId") Long schoolId,
+            @Param("teacherId") Long teacherId,
+            @Param("timeSlotId") Long timeSlotId,
+            @Param("academicYearId") Long academicYearId);
 }

@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Optional;
 
 @Service
@@ -135,5 +137,26 @@ public class ClassRoutineMasterBusinessService {
     public ClassRoutineMaster getRoutineById(Long routineId) throws SmaException {
         return classRoutineMasterRepository.findById(routineId)
                 .orElseThrow(() -> new SmaException("Routine entry not found"));
+    }
+
+    public Map<String, Object> checkTeacherAvailability(Long schoolId, Long teacherId, Long timeSlotId,
+                                                         Long academicYearId, Long classId, Long sectionId) {
+        Map<String, Object> result = new HashMap<>();
+        
+        // Find all routine entries for this teacher in the same time slot across all classes
+        List<ClassRoutineMaster> conflictingRoutines = classRoutineMasterRepository
+                .findConflictingRoutines(schoolId, teacherId, timeSlotId, academicYearId);
+        
+        // Filter out the current class to allow updating existing entries
+        conflictingRoutines.removeIf(routine -> 
+            routine.getClassMaster().getId().equals(classId) && 
+            routine.getSection().getId().equals(sectionId)
+        );
+        
+        boolean available = conflictingRoutines.isEmpty();
+        result.put("available", available);
+        result.put("conflictingRoutines", conflictingRoutines);
+        
+        return result;
     }
 }
