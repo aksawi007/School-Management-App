@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>{{ data.slot ? 'Edit' : 'Add New' }} Time Slot</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="timeSlotForm">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Slot Name</mat-label>
+      <input matInput formControlName="slotName" placeholder="e.g., Period 1">
+    </mat-form-field>
+
+    <div class="time-fields">
+      <mat-form-field appearance="outline">
+        <mat-label>Start Time</mat-label>
+        <input matInput type="time" formControlName="startTime" placeholder="HH:MM" required>
+        <mat-hint>Format: HH:MM (e.g., 08:00)</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>End Time</mat-label>
+        <input matInput type="time" formControlName="endTime" placeholder="HH:MM" required>
+        <mat-hint>Format: HH:MM (e.g., 08:45)</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Slot Type</mat-label>
+      <mat-select formControlName="slotType">
+        <mat-option *ngFor="let type of slotTypes" [value]="type">{{ type }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Display Order</mat-label>
+      <input matInput type="number" formControlName="displayOrder">
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!timeSlotForm.valid || loading">
+    {{ loading ? 'Saving...' : (data.slot ? 'Update' : 'Create') }}
+  </button>
+</mat-dialog-actions>

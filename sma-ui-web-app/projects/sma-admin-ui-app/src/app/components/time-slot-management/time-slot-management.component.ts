@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { RoutineTimeSlotService, RoutineTimeSlot, RoutineTimeSlotRequest } from 'sma-shared-lib';
+import { MatDialog } from '@angular/material/dialog';
+import { RoutineTimeSlotService, RoutineTimeSlot } from 'sma-shared-lib';
 import { AdminCacheService } from '../../services/admin-cache.service';
+import { TimeSlotDialogComponent } from '../time-slot-dialog/time-slot-dialog.component';
 
 @Component({
   selector: 'app-time-slot-management',
@@ -11,28 +12,16 @@ import { AdminCacheService } from '../../services/admin-cache.service';
 })
 export class TimeSlotManagementComponent implements OnInit {
   timeSlots: RoutineTimeSlot[] = [];
-  timeSlotForm: FormGroup;
   loading = false;
-  editMode = false;
-  editingSlotId?: number;
   schoolId: number;
 
-  slotTypes = ['TEACHING', 'BREAK', 'LUNCH', 'ASSEMBLY'];
-
   constructor(
-    private fb: FormBuilder,
     private timeSlotService: RoutineTimeSlotService,
     private snackBar: MatSnackBar,
-    private adminCache: AdminCacheService
+    private adminCache: AdminCacheService,
+    private dialog: MatDialog
   ) {
     this.schoolId = this.adminCache.getSchoolId();
-    this.timeSlotForm = this.fb.group({
-      slotName: ['', Validators.required],
-      startTime: ['', Validators.required],
-      endTime: ['', Validators.required],
-      displayOrder: [0, [Validators.required, Validators.min(0)]],
-      slotType: ['TEACHING', Validators.required]
-    });
   }
 
   ngOnInit(): void {
@@ -53,48 +42,29 @@ export class TimeSlotManagementComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    if (this.timeSlotForm.valid) {
-      this.loading = true;
-      const formValue = this.timeSlotForm.value;
-      
-      const request: RoutineTimeSlotRequest = {
-        schoolId: this.schoolId,
-        slotName: formValue.slotName,
-        startTime: formValue.startTime,
-        endTime: formValue.endTime,
-        displayOrder: formValue.displayOrder,
-        slotType: formValue.slotType
-      };
+  openAddDialog(): void {
+    const dialogRef = this.dialog.open(TimeSlotDialogComponent, {
+      width: '500px',
+      data: { schoolId: this.schoolId }
+    });
 
-      const operation = this.editMode
-        ? this.timeSlotService.updateTimeSlot(this.schoolId, this.editingSlotId!, request)
-        : this.timeSlotService.createTimeSlot(this.schoolId, request);
-
-      operation.subscribe({
-        next: () => {
-          this.snackBar.open(`Time slot ${this.editMode ? 'updated' : 'created'} successfully`, 'Close', { duration: 3000 });
-          this.loadTimeSlots();
-          this.resetForm();
-          this.loading = false;
-        },
-        error: (error: any) => {
-          this.snackBar.open(error.error?.message || 'Operation failed', 'Close', { duration: 3000 });
-          this.loading = false;
-        }
-      });
-    }
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadTimeSlots();
+      }
+    });
   }
 
   editSlot(slot: RoutineTimeSlot): void {
-    this.editMode = true;
-    this.editingSlotId = slot.id;
-    this.timeSlotForm.patchValue({
-      slotName: slot.slotName,
-      startTime: slot.startTime,
-      endTime: slot.endTime,
-      displayOrder: slot.displayOrder,
-      slotType: slot.slotType
+    const dialogRef = this.dialog.open(TimeSlotDialogComponent, {
+      width: '500px',
+      data: { schoolId: this.schoolId, slot: slot }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadTimeSlots();
+      }
     });
   }
 
@@ -112,11 +82,5 @@ export class TimeSlotManagementComponent implements OnInit {
         }
       });
     }
-  }
-
-  resetForm(): void {
-    this.timeSlotForm.reset({ displayOrder: 0, slotType: 'TEACHING' });
-    this.editMode = false;
-    this.editingSlotId = undefined;
   }
 }

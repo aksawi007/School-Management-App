@@ -54,6 +54,7 @@ import { TimeSlotManagementComponent } from './components/time-slot-management/t
 import { DailyScheduleViewComponent } from './components/daily-schedule-view/daily-schedule-view.component';
 import { SessionOverrideDialogComponent } from './components/session-override-dialog/session-override-dialog.component';
 import { AttendanceMarkingComponent } from './components/attendance-marking/attendance-marking.component';
+import { TimeSlotDialogComponent } from './components/time-slot-dialog/time-slot-dialog.component';
 
 import { SmaSharedModule } from 'sma-shared-lib';
 
@@ -75,6 +76,7 @@ import { SmaSharedModule } from 'sma-shared-lib';
     RoutineBuilderComponent,
     RoutineEntryDialogComponent,
     TimeSlotManagementComponent,
+    TimeSlotDialogComponent,
     DailyScheduleViewComponent,
     SessionOverrideDialogComponent,
     AttendanceMarkingComponent
