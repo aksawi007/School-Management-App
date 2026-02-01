@@ -27,6 +27,41 @@ export class StudentService {
     );
   }
 
+  /**
+   * Search students with optional query params. If backend supports query parameters
+   * this will forward them; otherwise backend should ignore unknown params.
+   */
+  searchStudents(schoolId: number, params?: { [key: string]: any }): Observable<Student[]> {
+    const options = params ? { params } : {};
+    return this.http.get<any>(`${this.baseUrl}/${schoolId}/students`, options).pipe(
+      map(response => response.content || response)
+    );
+  }
+
+  /**
+   * Fetch students with pagination. Returns the raw paginated response from backend
+   * which includes `content`, `totalElements`, `totalPages`, etc.
+   */
+  getStudentsPage(schoolId: number, page = 0, size = 20, sortBy = 'admissionNo', sortDir = 'ASC') {
+    const params: any = { page: String(page), size: String(size), sortBy, sortDir };
+    return this.http.get<any>(`${this.baseUrl}/${schoolId}/students`, { params });
+  }
+
+  /**
+   * Search students with pagination. Accepts `params` (e.g. { search, status }) and pagination options.
+   */
+  searchStudentsPaged(schoolId: number, params?: { [key: string]: any }, page = 0, size = 20, sortBy = 'admissionNo', sortDir = 'ASC') {
+    const httpParams: any = { page: String(page), size: String(size), sortBy, sortDir };
+    if (params) {
+      Object.keys(params).forEach(k => {
+        if (params[k] !== undefined && params[k] !== null && params[k] !== '') {
+          httpParams[k] = params[k];
+        }
+      });
+    }
+    return this.http.get<any>(`${this.baseUrl}/${schoolId}/students`, { params: httpParams });
+  }
+
   updateStudent(schoolId: number, studentId: string, student: StudentRequest): Observable<Student> {
     return this.http.put<Student>(`${this.baseUrl}/${schoolId}/students/${studentId}`, student);
   }

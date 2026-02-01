@@ -59,7 +59,7 @@ public class StudentService {
         StudentProfile.setNationality(request.getNationality());
         StudentProfile.setMotherTongue(request.getMotherTongue());
         StudentProfile.setAadharNo(request.getAadharNo());
-        StudentProfile.setStatus("ACTIVE");
+        StudentProfile.setStatus(request.getStatus());
         StudentProfile.setAdmissionDate(request.getAdmissionDate());
         StudentProfile.setPhotoUrl(request.getPhotoUrl());
         StudentProfile.setRemarks(request.getRemarks());
@@ -157,6 +157,99 @@ public class StudentService {
         return StudentProfileRepository.save(StudentProfile);
     }
 
+    @Transactional
+    public StudentProfile updateStudent(Long schoolId, Long studentId, CreateStudentRequest request, String updatedBy) {
+        StudentProfile StudentProfile = StudentProfileRepository.findByIdAndSchoolIdAndIsDeletedFalse(studentId, schoolId)
+                .orElseThrow(() -> new RuntimeException("StudentProfile not found"));
+
+        // If admission number is provided and different, ensure uniqueness
+        if (request.getAdmissionNo() != null && !request.getAdmissionNo().equals(StudentProfile.getAdmissionNo())) {
+            StudentProfileRepository.findBySchoolIdAndAdmissionNo(request.getSchoolId(), request.getAdmissionNo())
+                    .ifPresent(s -> { throw new RuntimeException("Admission number already exists: " + request.getAdmissionNo()); });
+        }
+
+        // Update fields
+        StudentProfile.setAdmissionNo(request.getAdmissionNo() != null ? request.getAdmissionNo() : StudentProfile.getAdmissionNo());
+        StudentProfile.setFirstName(request.getFirstName());
+        StudentProfile.setMiddleName(request.getMiddleName());
+        StudentProfile.setLastName(request.getLastName());
+        StudentProfile.setGender(request.getGender());
+        StudentProfile.setDateOfBirth(request.getDateOfBirth());
+        StudentProfile.setPhone(request.getPhone());
+        StudentProfile.setEmail(request.getEmail());
+        StudentProfile.setBloodGroup(request.getBloodGroup());
+        StudentProfile.setReligion(request.getReligion());
+        StudentProfile.setCaste(request.getCaste());
+        StudentProfile.setNationality(request.getNationality());
+        StudentProfile.setMotherTongue(request.getMotherTongue());
+        StudentProfile.setAadharNo(request.getAadharNo());
+        StudentProfile.setStatus(request.getStatus());
+        StudentProfile.setAdmissionDate(request.getAdmissionDate());
+        StudentProfile.setPhotoUrl(request.getPhotoUrl());
+        StudentProfile.setRemarks(request.getRemarks());
+        StudentProfile.setMedicalConditions(request.getMedicalConditions());
+        StudentProfile.setAllergies(request.getAllergies());
+        StudentProfile.setUpdatedBy(updatedBy);
+
+        StudentProfile = StudentProfileRepository.save(StudentProfile);
+
+        // Replace guardians: remove existing and add provided
+        List<Guardian> existingGuardians = guardianRepository.findByStudentIdAndIsDeletedFalse(studentId);
+        if (existingGuardians != null) {
+            for (Guardian g : existingGuardians) {
+                guardianRepository.delete(g);
+            }
+        }
+
+        if (request.getGuardians() != null) {
+            for (GuardianDto guardianDto : request.getGuardians()) {
+                Guardian guardian = new Guardian();
+                guardian.setStudentId(StudentProfile.getId());
+                guardian.setRelation(guardianDto.getRelation());
+                guardian.setName(guardianDto.getName());
+                guardian.setPhone(guardianDto.getPhone());
+                guardian.setAlternatePhone(guardianDto.getAlternatePhone());
+                guardian.setEmail(guardianDto.getEmail());
+                guardian.setOccupation(guardianDto.getOccupation());
+                guardian.setAnnualIncome(guardianDto.getAnnualIncome());
+                guardian.setEducation(guardianDto.getEducation());
+                guardian.setIsPrimary(guardianDto.getIsPrimary() != null ? guardianDto.getIsPrimary() : false);
+                guardian.setAadharNo(guardianDto.getAadharNo());
+                guardian.setPanNo(guardianDto.getPanNo());
+                guardian.setPhotoUrl(guardianDto.getPhotoUrl());
+                guardian.setCreatedBy(updatedBy);
+                guardianRepository.save(guardian);
+            }
+        }
+
+        // Replace addresses
+        List<Address> existingAddresses = addressRepository.findByStudentIdAndIsDeletedFalse(studentId);
+        if (existingAddresses != null) {
+            for (Address a : existingAddresses) {
+                addressRepository.delete(a);
+            }
+        }
+
+        if (request.getAddresses() != null) {
+            for (AddressDto addressDto : request.getAddresses()) {
+                Address address = new Address();
+                address.setStudentId(StudentProfile.getId());
+                address.setAddressType(addressDto.getAddressType());
+                address.setLine1(addressDto.getLine1());
+                address.setLine2(addressDto.getLine2());
+                address.setCity(addressDto.getCity());
+                address.setState(addressDto.getState());
+                address.setPincode(addressDto.getPincode());
+                address.setCountry(addressDto.getCountry());
+                address.setLandmark(addressDto.getLandmark());
+                address.setCreatedBy(updatedBy);
+                addressRepository.save(address);
+            }
+        }
+
+        return StudentProfile;
+    }
+
     private String generateAdmissionNumber(Long schoolId) {
         // Simple implementation - can be enhanced with custom logic
         long count = StudentProfileRepository.count();
@@ -167,6 +260,7 @@ public class StudentService {
         StudentDetailsResponse response = new StudentDetailsResponse();
         response.setId(StudentProfile.getId());
         response.setSchoolId(StudentProfile.getSchoolId());
+        response.setStatus(StudentProfile.getStatus());
         response.setAdmissionNo(StudentProfile.getAdmissionNo());
         response.setFirstName(StudentProfile.getFirstName());
         response.setMiddleName(StudentProfile.getMiddleName());

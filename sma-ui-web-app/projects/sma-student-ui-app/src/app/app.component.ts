@@ -2,13 +2,10 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  template: `
-    <div class="container">
-      <router-outlet></router-outlet>
-    </div>
-  `,
+  template: `<app-student-dashboard></app-student-dashboard>`,
   styles: []
 })
 export class AppComponent {
   title = 'Student Management';
 }
+

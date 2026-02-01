@@ -11,9 +11,16 @@
         </mat-expansion-panel-header>
         
         <div class="form-row">
-          <mat-form-field appearance="outline" style="flex: 1;">
+          <mat-form-field appearance="outline" style="flex: 1; max-width: 360px; margin-right:12px;">
             <mat-label>Admission Number (Optional - Auto-generated)</mat-label>
             <input matInput formControlName="admissionNo">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" style="width:180px;">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let s of statuses" [value]="s">{{s}}</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
 

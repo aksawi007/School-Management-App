@@ -4,10 +4,60 @@
   </mat-card-header>
   <mat-card-content>
     <div style="margin-bottom: 20px;">
-      <button mat-raised-button color="primary" (click)="createStudent()">
-        <mat-icon>add</mat-icon>
-        Add Student
-      </button>
+      <form [formGroup]="searchForm" class="search-row" (ngSubmit)="search()">
+        <mat-form-field appearance="outline" style="width:220px; margin-right:12px;">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" placeholder="Enter first name">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width:160px; margin-right:12px;">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option value="">Any</mat-option>
+            <mat-option value="ACTIVE">Active</mat-option>
+            <mat-option value="INACTIVE">Inactive</mat-option>
+            <mat-option value="TRANSFERRED">Transferred</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width:180px; margin-right:12px;">
+          <mat-label>Sort By</mat-label>
+          <mat-select formControlName="sortBy">
+            <mat-option value="admissionNo">Admission No</mat-option>
+            <mat-option value="firstName">First Name</mat-option>
+            <mat-option value="lastName">Last Name</mat-option>
+            <mat-option value="admissionDate">Admission Date</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width:120px; margin-right:12px;">
+          <mat-label>Dir</mat-label>
+          <mat-select formControlName="sortDir">
+            <mat-option value="ASC">ASC</mat-option>
+            <mat-option value="DESC">DESC</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width:180px; margin-right:12px;">
+          <mat-label>Admission No</mat-label>
+          <input matInput formControlName="admissionNo" placeholder="Admission no">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="width:160px; margin-right:12px;">
+          <mat-label>Phone</mat-label>
+          <input matInput formControlName="phone" placeholder="Phone">
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="submit" style="margin-right:8px;">Search</button>
+        <button mat-stroked-button type="button" (click)="clearSearch()">Clear</button>
+
+        <span style="margin-left: 24px;"></span>
+
+        <button mat-raised-button color="primary" (click)="createStudent()" style="float:right; margin-left:12px;">
+          <mat-icon>add</mat-icon>
+          Add Student
+        </button>
+      </form>
     </div>
 
     <div *ngIf="loading" style="text-align: center;">
@@ -23,6 +73,11 @@
       <ng-container matColumnDef="fullName">
         <th mat-header-cell *matHeaderCellDef>Full Name</th>
         <td mat-cell *matCellDef="let student">{{student.fullName || (student.firstName + ' ' + student.lastName)}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="age">
+        <th mat-header-cell *matHeaderCellDef>Age</th>
+        <td mat-cell *matCellDef="let student">{{ getAge(student.dateOfBirth) }}</td>
       </ng-container>
 
       <ng-container matColumnDef="gender">
@@ -50,5 +105,9 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+
+    <div class="paginator-wrap">
+      <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)"></mat-paginator>
+    </div>
   </mat-card-content>
 </mat-card>

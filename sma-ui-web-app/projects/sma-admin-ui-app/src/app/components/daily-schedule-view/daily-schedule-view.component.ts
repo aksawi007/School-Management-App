@@ -165,8 +165,13 @@ export class DailyScheduleViewComponent implements OnInit {
             subject: session.subject,
             teacher: session.teacher,
             remarks: session.remarks,
-            sessionStatus: 'SCHEDULED', // Default status
-            routineMaster: {
+            sessionStatus: session.sessionStatus || 'SCHEDULED',
+            subjectOverride: session.subjectOverride,
+            teacherOverride: session.teacherOverride,
+            actualTeacher: session.actualTeacher,
+            effectiveTeacher: session.effectiveTeacher,
+            effectiveSubject: session.effectiveSubject,
+            routineMaster: session.routineMaster || {
               teacher: session.teacher,
               subject: session.subject
             },
@@ -221,17 +226,18 @@ export class DailyScheduleViewComponent implements OnInit {
   }
 
   getEffectiveTeacher(session: any): string {
-    const teacher = session.teacher || session.routineMaster?.teacher;
+    // Use effectiveTeacher from API response (includes overrides)
+    let teacher = session.effectiveTeacher || session.teacher || session.routineMaster?.teacher;
     if (!teacher) return 'Not Assigned';
     
-    return teacher.staffName || 
-           (teacher.firstName && teacher.lastName ? 
-            `${teacher.firstName} ${teacher.lastName}` : 
-            'Not Assigned');
+    return teacher.firstName && teacher.lastName ? 
+           `${teacher.firstName} ${teacher.lastName}` : 
+           teacher.staffName || 'Not Assigned';
   }
 
   getEffectiveSubject(session: any): string {
-    const subject = session.subject || session.routineMaster?.subject;
+    // Use effectiveSubject from API response (includes overrides)
+    const subject = session.effectiveSubject || session.subject || session.routineMaster?.subject;
     return subject?.subjectName || 'No Subject';
   }
 }

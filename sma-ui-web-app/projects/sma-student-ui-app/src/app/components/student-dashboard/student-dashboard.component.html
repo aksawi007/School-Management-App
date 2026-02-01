@@ -1,0 +1,41 @@
+<mat-sidenav-container class="sidenav-container">
+  <!-- Left Sidebar Navigation -->
+  <mat-sidenav #sidenav mode="side" [opened]="sidenavOpen" class="sidenav">
+    <div class="sidenav-header">
+      <h2>Student Portal</h2>
+    </div>
+    <mat-nav-list>
+      <mat-list-item *ngFor="let action of studentActions" (click)="navigateToAction(action)">
+        <mat-icon matListItemIcon [style.color]="action.color">{{ action.icon }}</mat-icon>
+        <span matListItemTitle>{{ action.title }}</span>
+      </mat-list-item>
+    </mat-nav-list>
+    <div class="sidenav-footer">
+      <button mat-stroked-button (click)="logout()" class="logout-btn">
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    </div>
+  </mat-sidenav>
+
+  <!-- Main Content Area -->
+  <mat-sidenav-content>
+    <!-- Top Toolbar -->
+    <!-- <mat-toolbar color="primary" class="toolbar">
+      <button mat-icon-button (click)="sidenav.toggle()" class="toggle-btn">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="spacer"></span>
+      <h1>Student Management</h1>
+      <span class="spacer"></span>
+      <button mat-icon-button>
+        <mat-icon>account_circle</mat-icon>
+      </button>
+    </mat-toolbar> -->
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

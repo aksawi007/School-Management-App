@@ -96,6 +96,7 @@ export class StudentFormComponent implements OnInit {
     return this.fb.group({
       // Basic Information
       admissionNo: [''], // Auto-generated if not provided
+      status: ['ACTIVE'],
       firstName: ['', Validators.required],
       middleName: [''],
       lastName: ['', Validators.required],
@@ -258,9 +259,10 @@ export class StudentFormComponent implements OnInit {
     }
 
     const formValue = this.studentForm.value;
-    const studentData: StudentRequest = {
+    const studentData: any = {
       schoolId: this.schoolId,
       admissionNo: formValue.admissionNo || undefined,
+      status: formValue.status,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
       lastName: formValue.lastName,

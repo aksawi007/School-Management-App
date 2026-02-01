@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 // Material imports
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -21,6 +22,10 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -29,6 +34,7 @@ import { StudentFormComponent } from './components/student-form/student-form.com
 import { StudentDetailComponent } from './components/student-detail/student-detail.component';
 import { GuardianFormComponent } from './components/guardian-form/guardian-form.component';
 import { EnrollmentFormComponent } from './components/enrollment-form/enrollment-form.component';
+import { StudentDashboardComponent } from './components/student-dashboard/student-dashboard.component';
 
 import { SmaSharedModule } from 'sma-shared-lib';
 
@@ -39,10 +45,12 @@ import { SmaSharedModule } from 'sma-shared-lib';
     StudentFormComponent,
     StudentDetailComponent,
     GuardianFormComponent,
-    EnrollmentFormComponent
+    EnrollmentFormComponent,
+    StudentDashboardComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
@@ -64,7 +72,11 @@ import { SmaSharedModule } from 'sma-shared-lib';
     MatTabsModule,
     MatProgressSpinnerModule,
     MatExpansionModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatSidenavModule,
+    MatListModule,
+    MatTooltipModule
+    ,MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -29,6 +29,9 @@ public class CreateStudentRequest {
     @NotNull(message = "Date of birth is required")
     private LocalDate dateOfBirth;
 
+    @NotNull(message = "Status is required")
+    private String status;
+
     private String phone;
 
     @Email(message = "Invalid email format")
@@ -228,5 +231,9 @@ public class CreateStudentRequest {
 
     public void setAddresses(List<AddressDto> addresses) {
         this.addresses = addresses;
+    }
+
+    public String getStatus() {
+        return this.status;
     }
 }

@@ -90,6 +90,25 @@ public class StudentController {
         
         return ResponseEntity.ok(response);
     }
+
+    @PutMapping("/{studentId}")
+    @ApiOperation(value = "Update StudentProfile", notes = "Update an existing StudentProfile with guardians and addresses")
+    public ResponseEntity<Map<String, Object>> updateStudent(
+            @PathVariable Long schoolId,
+            @PathVariable Long studentId,
+            @Valid @RequestBody CreateStudentRequest request) {
+
+        request.setSchoolId(schoolId);
+        StudentProfile updated = studentService.updateStudent(schoolId, studentId, request, "SYSTEM");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "StudentProfile updated successfully");
+        response.put("studentId", updated.getId());
+        response.put("admissionNo", updated.getAdmissionNo());
+
+        return ResponseEntity.ok(response);
+    }
 }
 
 

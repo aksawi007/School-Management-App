@@ -27,11 +27,11 @@
 
     <modules>
         <module>sma-common-datamodel</module>
-        <!----><module>sma-security-auth</module>
+<!--        <module>sma-security-auth</module>-->
         <module>sma-core-service</module>
-       <!----> <module>sma-api-platform-amqp-service</module>
+<!--        <module>sma-api-platform-amqp-service</module>-->
         <module>sma-jpa-postgresql</module>
-        <!----><module>sma-platform-grpc-protobuf</module>
+<!--        <module>sma-platform-grpc-protobuf</module>-->
     </modules>
 
     <dependencyManagement>

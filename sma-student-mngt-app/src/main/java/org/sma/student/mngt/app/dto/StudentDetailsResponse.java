@@ -9,6 +9,8 @@ import java.util.List;
 public class StudentDetailsResponse {
 
     private Long id;
+
+    private String status;
     private Long schoolId;
     private String admissionNo;
     private String firstName;
@@ -25,7 +27,6 @@ public class StudentDetailsResponse {
     private String nationality;
     private String motherTongue;
     private String aadharNo;
-    private String status;
     private LocalDate admissionDate;
     private String photoUrl;
     private String remarks;
