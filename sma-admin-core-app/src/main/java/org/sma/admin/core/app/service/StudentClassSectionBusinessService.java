@@ -92,20 +92,33 @@ public class StudentClassSectionBusinessService {
             throw new SmaException("Section capacity exceeded. Current: " + currentCount + ", Max: " + section.getCapacity());
         }
 
-        // Create new mapping
-        StudentClassSectionMapping mapping = new StudentClassSectionMapping();
-        mapping.setStudent(student);
-        mapping.setSchool(school);
-        mapping.setAcademicYear(academicYear);
-        mapping.setClassMaster(classMaster);
-        mapping.setSection(section);
-        mapping.setEnrollmentDate(request.getEnrollmentDate() != null ? request.getEnrollmentDate() : LocalDate.now());
-        mapping.setRollNumber(request.getRollNumber());
-        mapping.setIsActive(true);
-        mapping.setRemarks(request.getRemarks());
+        // Create and persist new mapping
+        StudentClassSectionMapping mapping = createMappingFromRequest(student, school, academicYear, classMaster, section, request);
 
         StudentClassSectionMapping savedMapping = mappingRepository.save(mapping);
         return convertToResponse(savedMapping);
+    }
+
+    /**
+     * Ensure a student is assigned to a class/section for the given academic year.
+     * If an active mapping exists, return it; otherwise create a new mapping.
+     */
+    @Transactional
+    public StudentClassSectionResponse ensureStudentAssigned(
+            ServiceRequestContext context,
+            StudentClassSectionRequest request) throws SmaException {
+
+        validateRequest(request);
+
+        Optional<StudentClassSectionMapping> existingMapping = mappingRepository
+                .findActiveByStudentAndAcademicYear(request.getStudentId(), request.getAcademicYearId());
+
+        if (existingMapping.isPresent()) {
+            return convertToResponse(existingMapping.get());
+        }
+
+        // No active mapping exists; reuse existing create flow
+        return assignStudentToClassSection(context, request);
     }
 
     /**
@@ -240,6 +253,25 @@ public class StudentClassSectionBusinessService {
         if (request.getSectionId() == null) {
             throw new SmaException("Section ID is mandatory");
         }
+    }
+
+    /**
+     * Helper to build a StudentClassSectionMapping entity from request and resolved entities.
+     */
+    private StudentClassSectionMapping createMappingFromRequest(StudentProfile student, SchoolProfile school,
+                                                                AcademicYear academicYear, ClassMaster classMaster,
+                                                                SectionMaster section, StudentClassSectionRequest request) {
+        StudentClassSectionMapping mapping = new StudentClassSectionMapping();
+        mapping.setStudent(student);
+        mapping.setSchool(school);
+        mapping.setAcademicYear(academicYear);
+        mapping.setClassMaster(classMaster);
+        mapping.setSection(section);
+        mapping.setEnrollmentDate(request.getEnrollmentDate() != null ? request.getEnrollmentDate() : LocalDate.now());
+        mapping.setRollNumber(request.getRollNumber());
+        mapping.setIsActive(true);
+        mapping.setRemarks(request.getRemarks());
+        return mapping;
     }
 
     /**

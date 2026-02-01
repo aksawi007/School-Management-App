@@ -4,12 +4,13 @@
   <form [formGroup]="assignForm">
     <div class="form-row" *ngIf="!isEdit">
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Select Student</mat-label>
-        <mat-select formControlName="studentId" [disabled]="loadingStudents">
-          <mat-option *ngFor="let student of students" [value]="student.id">
+        <mat-label>Search Student</mat-label>
+        <input type="text" matInput [formControl]="studentSearchControl" [matAutocomplete]="auto" [disabled]="loadingStudents">
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayStudentFn.bind(this)" (optionSelected)="onStudentSelected($event.option.value)">
+          <mat-option *ngFor="let student of filteredStudents$ | async" [value]="student">
             {{ student.admissionNo }} - {{ student.firstName }} {{ student.lastName }}
           </mat-option>
-        </mat-select>
+        </mat-autocomplete>
         <mat-error *ngIf="hasError('studentId', 'required')">Student is required</mat-error>
         <mat-hint *ngIf="loadingStudents">Loading students...</mat-hint>
       </mat-form-field>

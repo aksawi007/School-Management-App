@@ -23,6 +23,14 @@ export class StudentClassSectionService {
   }
 
   /**
+   * Ensure student is assigned to a class/section for the academic year.
+   * Returns existing active mapping if present, otherwise creates a new one.
+   */
+  ensureAssignStudentToClassSection(request: StudentClassSectionRequest): Observable<StudentClassSectionResponse> {
+    return this.http.post<StudentClassSectionResponse>(`${this.API_BASE}/assign/ensure`, request);
+  }
+
+  /**
    * Update student's class and section
    */
   updateStudentClassSection(mappingId: number, request: StudentClassSectionRequest): Observable<StudentClassSectionResponse> {

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
@@ -11,6 +11,8 @@ import {
   ClassMasterResponse,
   SectionMasterResponse
 } from 'sma-shared-lib';
+import { Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-student-class-assign-dialog',
@@ -23,6 +25,8 @@ export class StudentClassAssignDialogComponent implements OnInit {
   loadingStudents = false;
   saving = false;
   isEdit = false;
+  studentSearchControl: FormControl = new FormControl('');
+  filteredStudents$: Observable<Student[]> | undefined;
 
   constructor(
     private fb: FormBuilder,
@@ -67,7 +71,41 @@ export class StudentClassAssignDialogComponent implements OnInit {
   ngOnInit(): void {
     if (!this.isEdit) {
       this.loadUnassignedStudents();
+      // If section is selected, precompute next roll number based on existing students
+      if (this.assignForm.get('sectionId')?.value) {
+        this.prefillNextRollNumber(this.assignForm.get('classId')?.value, this.assignForm.get('sectionId')?.value);
+      }
     }
+  }
+
+  /**
+   * Load assigned students for the class/section and compute next roll number
+   */
+  private prefillNextRollNumber(classId: number, sectionId: number): void {
+    if (!this.data.academicYearId || !classId) return;
+
+    this.studentClassSectionService.getStudentsByClassAndSection(
+      this.data.academicYearId,
+      classId,
+      sectionId
+    ).subscribe({
+      next: (students) => {
+        const max = students
+          .map(s => s.rollNumber)
+          .filter((r): r is string => typeof r === 'string' && r.length > 0)
+          .map(r => {
+            const m = r.match(/\d+/g);
+            return m ? parseInt(m.join('')) : NaN;
+          })
+          .filter(n => !isNaN(n));
+
+        const next = (max.length > 0 ? Math.max(...max) : 0) + 1;
+        this.assignForm.patchValue({ rollNumber: next.toString() });
+      },
+      error: (err) => {
+        console.error('Error computing next roll number:', err);
+      }
+    });
   }
 
   loadUnassignedStudents(): void {
@@ -77,6 +115,7 @@ export class StudentClassAssignDialogComponent implements OnInit {
         // In a real scenario, you'd filter out already assigned students
         // For now, showing all students
         this.students = students.filter((s: Student) => s.status === 'ACTIVE');
+        this.initStudentFilter();
         this.loadingStudents = false;
       },
       error: (error: any) => {
@@ -85,6 +124,35 @@ export class StudentClassAssignDialogComponent implements OnInit {
         this.loadingStudents = false;
       }
     });
+  }
+
+  private initStudentFilter(): void {
+    this.filteredStudents$ = this.studentSearchControl.valueChanges.pipe(
+      startWith(this.studentSearchControl.value || ''),
+      map(value => typeof value === 'string' ? value : (value ? (value as any).studentName || '' : '')),
+      map(name => name ? this._filterStudents(name) : this.students.slice())
+    );
+  }
+
+  private _filterStudents(name: string): Student[] {
+    const filterValue = name.toLowerCase();
+    return this.students.filter(student => (
+      (student.firstName || '').toLowerCase().includes(filterValue) ||
+      (student.lastName || '').toLowerCase().includes(filterValue) ||
+      (student.admissionNo || '').toLowerCase().includes(filterValue)
+    ));
+  }
+
+  displayStudentFn(student?: Student): string {
+    return student ? `${student.admissionNo} - ${student.firstName} ${student.lastName}` : '';
+  }
+
+  onStudentSelected(student: Student | null): void {
+    if (student) {
+      this.assignForm.patchValue({ studentId: student.id });
+    } else {
+      this.assignForm.patchValue({ studentId: null });
+    }
   }
 
   onSubmit(): void {

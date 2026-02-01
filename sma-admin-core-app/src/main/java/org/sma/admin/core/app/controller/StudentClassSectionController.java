@@ -48,6 +48,24 @@ public class StudentClassSectionController extends ApiRestServiceBinding {
         }
     }
 
+    @PostMapping("/assign/ensure")
+    ResponseEntity<?> ensureStudentAssigned(
+            @RequestBody StudentClassSectionRequest request) throws IOException {
+        ServiceRequestContext context = createServiceRequestContext("EnsureStudentAssigned",
+                request.getStudentId().toString(), request.getStudentId().toString());
+
+        try {
+            StudentClassSectionResponse response = studentClassSectionBusinessService
+                    .ensureStudentAssigned(context, request);
+            return processResponse(context, response);
+        } catch (SmaException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            errorResponse.put("error", "Business Rule Violation");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
     @PutMapping("/update/{mappingId}")
     ResponseEntity<?> updateStudentClassSection(
             @PathVariable("mappingId") Long mappingId,

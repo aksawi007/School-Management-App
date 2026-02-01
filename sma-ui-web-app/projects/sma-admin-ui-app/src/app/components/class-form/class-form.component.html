@@ -21,13 +21,14 @@
         <div class="form-row">
           <mat-form-field appearance="outline">
             <mat-label>Class Code</mat-label>
-            <input matInput formControlName="classCode" placeholder="e.g., 1, 10, 11">
+            <input matInput formControlName="classCode" placeholder="e.g., 24-25_1" [disabled]="true">
+            <mat-hint>Auto-generated from Academic Year and Class Name</mat-hint>
             <mat-error *ngIf="classForm.get('classCode')?.hasError('required')">Class code is required</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Class Name</mat-label>
-            <input matInput formControlName="className" placeholder="e.g., Class 1, Grade 10">
+            <input matInput formControlName="className" placeholder="e.g., 1, 10, 11">
             <mat-error *ngIf="classForm.get('className')?.hasError('required')">Class name is required</mat-error>
           </mat-form-field>
         </div>

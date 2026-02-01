@@ -84,11 +84,32 @@ export class ClassFormComponent implements OnInit {
     this.classForm = this.fb.group({
       schoolId: [this.schoolId, Validators.required],
       academicYearId: ['', Validators.required],
-      classCode: ['', Validators.required],
+      classCode: [{ value: '', disabled: true }, Validators.required],
       className: ['', Validators.required],
       displayOrder: [''],
       description: ['']
     });
+
+    // Update classCode when academic year or class name changes
+    this.classForm.get('academicYearId')?.valueChanges.subscribe(() => this.computeClassCode());
+    this.classForm.get('className')?.valueChanges.subscribe(() => this.computeClassCode());
+  }
+
+  private computeClassCode(): void {
+    const ayId = this.classForm.get('academicYearId')?.value;
+    const classNameRaw = this.classForm.get('className')?.value;
+
+    if (!ayId || !classNameRaw) {
+      this.classForm.get('classCode')?.patchValue('');
+      return;
+    }
+
+    const ay = this.academicYears.find(y => y.yearId === ayId);
+    const yearPart = ay ? ay.yearName : '';
+    const classPart = ('' + classNameRaw).trim().replace(/\s+/g, '_');
+
+    const code = yearPart && classPart ? `${yearPart}_${classPart}` : '';
+    this.classForm.get('classCode')?.patchValue(code);
   }
 
   loadClass(): void {
@@ -116,13 +137,17 @@ export class ClassFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.classForm.invalid) {
+    // Use getRawValue to include disabled controls (classCode)
+    const raw = this.classForm.getRawValue();
+
+    // Basic validation
+    if (this.classForm.invalid || !raw.classCode) {
       this.snackBar.open('Please fill in all required fields', 'Close', { duration: 3000 });
       return;
     }
 
     this.loading = true;
-    const request: ClassMasterRequest = this.classForm.value;
+    const request: ClassMasterRequest = raw;
 
     if (this.isEditMode && this.classId) {
       this.classMasterService.updateClass(this.classId, request).subscribe({

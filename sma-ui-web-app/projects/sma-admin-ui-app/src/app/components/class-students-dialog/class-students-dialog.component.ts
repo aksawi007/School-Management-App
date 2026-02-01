@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { StudentClassSectionService, StudentClassSectionResponse } from 'sma-shared-lib';
+import { StudentClassAssignDialogComponent } from '../student-class-assign-dialog/student-class-assign-dialog.component';
 
 @Component({
   selector: 'app-class-students-dialog',
@@ -10,7 +12,7 @@ import { StudentClassSectionService, StudentClassSectionResponse } from 'sma-sha
 export class ClassStudentsDialogComponent implements OnInit {
   students: StudentClassSectionResponse[] = [];
   loading = true;
-  displayedColumns: string[] = ['admissionNumber', 'studentName', 'rollNumber', 'sectionName', 'enrollmentDate'];
+  displayedColumns: string[] = ['admissionNumber', 'studentName', 'rollNumber', 'sectionName', 'enrollmentDate', 'actions'];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: {
@@ -19,9 +21,12 @@ export class ClassStudentsDialogComponent implements OnInit {
       sectionId?: number;
       className: string;
       sectionName?: string;
+      schoolId?: number;
     },
     private dialogRef: MatDialogRef<ClassStudentsDialogComponent>,
-    private studentClassSectionService: StudentClassSectionService
+    private studentClassSectionService: StudentClassSectionService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -48,5 +53,47 @@ export class ClassStudentsDialogComponent implements OnInit {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  assignStudent(): void {
+    const dialogRef = this.dialog.open(StudentClassAssignDialogComponent, {
+      width: '600px',
+      data: {
+        schoolId: this.data.schoolId,
+        academicYearId: this.data.academicYearId,
+        classId: this.data.classId,
+        sectionId: this.data.sectionId,
+        classes: [],
+        sections: []
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadStudents();
+      }
+    });
+  }
+
+  editStudent(student: StudentClassSectionResponse): void {
+    const dialogRef = this.dialog.open(StudentClassAssignDialogComponent, {
+      width: '600px',
+      data: {
+        schoolId: this.data.schoolId,
+        academicYearId: this.data.academicYearId,
+        classId: this.data.classId,
+        sectionId: this.data.sectionId,
+        classes: [],
+        sections: [],
+        student: student,
+        isEdit: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadStudents();
+      }
+    });
   }
 }

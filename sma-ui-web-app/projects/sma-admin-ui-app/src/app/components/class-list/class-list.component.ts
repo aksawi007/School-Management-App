@@ -138,7 +138,8 @@ export class ClassListComponent implements OnInit {
       data: {
         academicYearId: this.selectedAcademicYearId,
         classId: classItem.id,
-        className: classItem.className
+        className: classItem.className,
+        schoolId: this.schoolId
       }
     });
   }
