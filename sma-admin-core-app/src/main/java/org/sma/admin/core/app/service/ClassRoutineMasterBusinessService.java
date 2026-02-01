@@ -140,12 +140,17 @@ public class ClassRoutineMasterBusinessService {
     }
 
     public Map<String, Object> checkTeacherAvailability(Long schoolId, Long teacherId, Long timeSlotId,
-                                                         Long academicYearId, Long classId, Long sectionId) {
+                                                         Long academicYearId, Long classId, Long sectionId, String dayOfWeek) {
         Map<String, Object> result = new HashMap<>();
         
         // Find all routine entries for this teacher in the same time slot across all classes
         List<ClassRoutineMaster> conflictingRoutines = classRoutineMasterRepository
                 .findConflictingRoutines(schoolId, teacherId, timeSlotId, academicYearId);
+        
+        // Filter by day of week if provided (day-specific check)
+        if (dayOfWeek != null && !dayOfWeek.isEmpty()) {
+            conflictingRoutines.removeIf(routine -> !routine.getDayOfWeek().equalsIgnoreCase(dayOfWeek));
+        }
         
         // Filter out the current class to allow updating existing entries
         conflictingRoutines.removeIf(routine -> 

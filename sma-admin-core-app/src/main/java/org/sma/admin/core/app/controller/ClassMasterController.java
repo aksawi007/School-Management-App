@@ -21,7 +21,6 @@ import java.util.UUID;
  * Handles class/grade master data management
  */
 @APIController
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/class")
 @Api(tags = "Class Master API")
 public class ClassMasterController extends ApiRestServiceBinding {

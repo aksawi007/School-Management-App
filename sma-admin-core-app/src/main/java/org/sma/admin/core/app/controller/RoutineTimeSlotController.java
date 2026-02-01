@@ -15,7 +15,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/schools/{schoolId}/routine/time-slots")
-@CrossOrigin
 public class RoutineTimeSlotController {
 
     @Autowired

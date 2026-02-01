@@ -100,14 +100,20 @@ export class ClassRoutineMasterService {
     timeSlotId: number,
     academicYearId: number,
     classId: number,
-    sectionId: number
+    sectionId: number,
+    dayOfWeek?: string
   ): Observable<{ available: boolean; conflictingRoutines: ClassRoutineMaster[] }> {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('teacherId', teacherId.toString())
       .set('timeSlotId', timeSlotId.toString())
       .set('academicYearId', academicYearId.toString())
       .set('classId', classId.toString())
       .set('sectionId', sectionId.toString());
+    
+    if (dayOfWeek) {
+      params = params.set('dayOfWeek', dayOfWeek);
+    }
+    
     return this.http.get<{ available: boolean; conflictingRoutines: ClassRoutineMaster[] }>(
       `${this.getBaseUrl(schoolId)}/check-availability`,
       { params }

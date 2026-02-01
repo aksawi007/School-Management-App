@@ -6,7 +6,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Academic Year</mat-label>
         <mat-select formControlName="academicYearId">
-          <mat-option *ngFor="let year of academicYears" [value]="year.id">
+          <mat-option *ngFor="let year of academicYears" [value]="year.yearId">
             {{ year.yearName }}
           </mat-option>
         </mat-select>
@@ -14,7 +14,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Class</mat-label>
-        <mat-select formControlName="classId">
+        <mat-select formControlName="classId" (selectionChange)="onClassChange()">
           <mat-option *ngFor="let class of classes" [value]="class.id">
             {{ class.className }}
           </mat-option>
@@ -32,7 +32,9 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Date</mat-label>
-        <input matInput type="date" formControlName="scheduleDate">
+        <input matInput [matDatepicker]="picker" formControlName="scheduleDate" placeholder="DD-MM-YYYY">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
 
       <button mat-raised-button color="primary" type="submit" [disabled]="!filterForm.valid || loading">
@@ -42,7 +44,7 @@
   </div>
 
   <div class="schedule-section" *ngIf="sessions.length > 0">
-    <h3>Schedule for {{ filterForm.value.scheduleDate | date }}</h3>
+    <h3>Schedule for {{ formatDateToDisplay(filterForm.value.scheduleDate) }}</h3>
     
     <div class="sessions-grid">
       <mat-card *ngFor="let session of sessions" class="session-card" [class]="getStatusClass(session.sessionStatus)">

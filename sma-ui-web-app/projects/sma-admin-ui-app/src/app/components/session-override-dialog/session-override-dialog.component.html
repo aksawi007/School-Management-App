@@ -24,7 +24,7 @@
       <mat-select formControlName="substituteTeacherId">
         <mat-option value="">Keep Current Teacher</mat-option>
         <mat-option *ngFor="let teacher of teachers" [value]="teacher.id">
-          {{ teacher.staffName }} ({{ teacher.staffCode }})
+          {{ teacher.firstName }} {{ teacher.lastName }} ({{ teacher.employeeCode }})
         </mat-option>
       </mat-select>
       <mat-hint>Leave empty to keep the scheduled teacher</mat-hint>

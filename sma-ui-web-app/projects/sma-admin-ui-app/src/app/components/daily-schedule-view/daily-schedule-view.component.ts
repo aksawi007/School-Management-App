@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DatePipe } from '@angular/common';
 import { 
   DailyClassSessionService, 
   ClassMasterService, 
   SectionMasterService, 
   AcademicYearService,
-  DailyClassSession 
+  ClassRoutineMaster 
 } from 'sma-shared-lib';
 import { SessionOverrideDialogComponent } from '../session-override-dialog/session-override-dialog.component';
 import { AdminCacheService } from '../../services/admin-cache.service';
@@ -19,7 +20,7 @@ import { AdminCacheService } from '../../services/admin-cache.service';
 })
 export class DailyScheduleViewComponent implements OnInit {
   filterForm: FormGroup;
-  sessions: DailyClassSession[] = [];
+  sessions: any[] = [];
   loading = false;
   schoolId: number;
   
@@ -34,7 +35,8 @@ export class DailyScheduleViewComponent implements OnInit {
     private sectionService: SectionMasterService,
     private academicYearService: AcademicYearService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private datePipe: DatePipe
   ) {
     this.schoolId = this.adminCache.getSchoolId();
     this.filterForm = this.fb.group({
@@ -51,9 +53,90 @@ export class DailyScheduleViewComponent implements OnInit {
 
   loadMasterData(): void {
     this.adminCache.getClasses().subscribe((data: any) => this.classes = data);
-    // TODO: API needs getAllSectionsBySchool method
-    this.sections = []; // Temporarily empty until API is added
-    this.academicYearService.getAllAcademicYears().subscribe((data: any) => this.academicYears = data);
+    
+    // Load academic years and auto-select current year
+    this.adminCache.getAcademicYears().subscribe((data: any) => {
+      this.academicYears = data;
+      // Auto-select current academic year
+      const currentYear = data.find((y: any) => y.currentYear === true);
+      if (currentYear) {
+        this.filterForm.patchValue({ academicYearId: currentYear.yearId });
+      }
+    });
+  }
+
+  loadSections(): void {
+    const classId = this.filterForm.get('classId')?.value;
+    console.log('loadSections called with classId:', classId);
+    
+    if (!classId) {
+      console.log('No classId, clearing sections');
+      this.sections = [];
+      return;
+    }
+    
+    console.log('Making API call to getSectionsByClass with schoolId:', this.schoolId, 'classId:', classId);
+    this.sectionService.getSectionsByClass(this.schoolId, classId.toString()).subscribe({
+      next: (data: any) => {
+        console.log('Sections loaded:', data);
+        this.sections = data;
+        this.filterForm.patchValue({ sectionId: '' });
+      },
+      error: (error: any) => {
+        console.error('Error loading sections:', error);
+        this.snackBar.open('Failed to load sections', 'Close', { duration: 3000 });
+        this.sections = [];
+      }
+    });
+  }
+
+  onClassChange(): void {
+    console.log('onClassChange called');
+    this.loadSections();
+  }
+
+  formatDateToBackend(date: any): string {
+    // Convert from Date object or string to YYYY-MM-DD format
+    if (!date) return '';
+    try {
+      let dateObj: Date;
+      
+      if (date instanceof Date) {
+        dateObj = date;
+      } else if (typeof date === 'string') {
+        dateObj = new Date(date);
+      } else {
+        return '';
+      }
+      
+      const formatted = this.datePipe.transform(dateObj, 'yyyy-MM-dd');
+      return formatted || '';
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '';
+    }
+  }
+
+  formatDateToDisplay(date: any): string {
+    // Convert from any format to DD-MM-YYYY
+    if (!date) return '';
+    try {
+      let dateObj: Date;
+      
+      if (date instanceof Date) {
+        dateObj = date;
+      } else if (typeof date === 'string') {
+        dateObj = new Date(date);
+      } else {
+        return '';
+      }
+      
+      const formatted = this.datePipe.transform(dateObj, 'dd-MM-yyyy');
+      return formatted || '';
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '';
+    }
   }
 
   loadSchedule(): void {
@@ -61,14 +144,46 @@ export class DailyScheduleViewComponent implements OnInit {
       this.loading = true;
       const { classId, sectionId, academicYearId, scheduleDate } = this.filterForm.value;
       
-      this.sessionService.getCompleteSchedule(this.schoolId, academicYearId, classId, sectionId, scheduleDate).subscribe({
+      // Ensure date is formatted to YYYY-MM-DD
+      const formattedDate = this.formatDateToBackend(scheduleDate);
+      
+      console.log('loadSchedule called with:', { 
+        classId, 
+        sectionId, 
+        academicYearId, 
+        originalDate: scheduleDate,
+        formattedDate: formattedDate
+      });
+      
+      this.sessionService.getCompleteSchedule(this.schoolId, academicYearId, classId, sectionId, formattedDate).subscribe({
         next: (sessions: any) => {
-          this.sessions = (sessions as DailyClassSession[]).sort((a, b) => 
+          console.log('Schedule response:', sessions);
+          // Map the API response to the expected format, preserving all necessary data
+          this.sessions = (sessions as any[]).map(session => ({
+            id: session.id,
+            timeSlot: session.timeSlot,
+            subject: session.subject,
+            teacher: session.teacher,
+            remarks: session.remarks,
+            sessionStatus: 'SCHEDULED', // Default status
+            routineMaster: {
+              teacher: session.teacher,
+              subject: session.subject
+            },
+            // Preserve original API response data for override dialog
+            academicYear: session.academicYear,
+            classMaster: session.classMaster,
+            section: session.section,
+            dayOfWeek: session.dayOfWeek,
+            scheduleDate: formattedDate
+          })).sort((a, b) => 
             (a.timeSlot?.displayOrder || 0) - (b.timeSlot?.displayOrder || 0)
           );
+          console.log('Sessions transformed:', this.sessions);
           this.loading = false;
         },
         error: (error: any) => {
+          console.error('Error loading schedule:', error);
           this.snackBar.open('Failed to load schedule', 'Close', { duration: 3000 });
           this.loading = false;
         }
@@ -76,7 +191,7 @@ export class DailyScheduleViewComponent implements OnInit {
     }
   }
 
-  overrideSession(session: DailyClassSession): void {
+  overrideSession(session: any): void {
     const dialogRef = this.dialog.open(SessionOverrideDialogComponent, {
       width: '600px',
       data: { session }
@@ -105,15 +220,18 @@ export class DailyScheduleViewComponent implements OnInit {
     return `status-${status.toLowerCase()}`;
   }
 
-  getEffectiveTeacher(session: DailyClassSession): string {
-    // For now, return routineMaster teacher or 'Not Assigned'
-    return session.routineMaster?.teacher?.staffName || 
-           (session.routineMaster?.teacher?.firstName && session.routineMaster?.teacher?.lastName ? 
-            `${session.routineMaster.teacher.firstName} ${session.routineMaster.teacher.lastName}` : 
+  getEffectiveTeacher(session: any): string {
+    const teacher = session.teacher || session.routineMaster?.teacher;
+    if (!teacher) return 'Not Assigned';
+    
+    return teacher.staffName || 
+           (teacher.firstName && teacher.lastName ? 
+            `${teacher.firstName} ${teacher.lastName}` : 
             'Not Assigned');
   }
 
-  getEffectiveSubject(session: DailyClassSession): string {
-    return session.routineMaster?.subject?.subjectName || 'No Subject';
+  getEffectiveSubject(session: any): string {
+    const subject = session.subject || session.routineMaster?.subject;
+    return subject?.subjectName || 'No Subject';
   }
 }

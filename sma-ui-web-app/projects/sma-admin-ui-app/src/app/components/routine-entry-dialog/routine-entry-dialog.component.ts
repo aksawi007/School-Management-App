@@ -198,20 +198,21 @@ export class RoutineEntryDialogComponent implements OnInit {
     this.loading = true;
     const formValue = this.routineForm.value;
 
-    // Check teacher availability before saving
+    // Check teacher availability before saving (day-specific)
     this.routineService.checkTeacherAvailability(
       this.data.schoolId,
       formValue.teacherId,
       this.data.timeSlotId,
       this.data.academicYearId,
       this.data.classId,
-      this.data.sectionId
+      this.data.sectionId,
+      this.data.dayOfWeek  // Pass day of week for day-specific availability check
     ).subscribe({
       next: (result: { available: boolean; conflictingRoutines: any[] }) => {
         if (!result.available) {
           this.loading = false;
           const conflictClass = result.conflictingRoutines?.[0]?.class?.className || 'another class';
-          this.errorMessage = `This teacher is already allocated to ${conflictClass} in the same time slot`;
+          this.errorMessage = `This teacher is already allocated to ${conflictClass} in the same time slot on ${this.data.dayOfWeek}`;
           this.snackBar.open(this.errorMessage, 'Close', { duration: 5000 });
           return;
         }

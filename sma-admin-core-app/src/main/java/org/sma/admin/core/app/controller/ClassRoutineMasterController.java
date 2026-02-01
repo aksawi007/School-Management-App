@@ -1,8 +1,10 @@
 package org.sma.admin.core.app.controller;
 
+import io.swagger.annotations.Api;
 import org.sma.admin.core.app.model.request.ClassRoutineMasterRequest;
 import org.sma.admin.core.app.service.ClassRoutineMasterBusinessService;
 import org.sma.jpa.model.routine.ClassRoutineMaster;
+import org.sma.platform.core.annotation.APIController;
 import org.sma.platform.core.exception.SmaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,9 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@APIController
+@Api(tags = "Class Routine Master Controller")
 @RequestMapping("/schools/{schoolId}/routine/master")
-@CrossOrigin
 public class ClassRoutineMasterController {
 
     @Autowired
@@ -107,9 +109,10 @@ public class ClassRoutineMasterController {
             @RequestParam Long timeSlotId,
             @RequestParam Long academicYearId,
             @RequestParam Long classId,
-            @RequestParam Long sectionId) {
+            @RequestParam Long sectionId,
+            @RequestParam(required = false) String dayOfWeek) {
         Map<String, Object> result = classRoutineMasterService.checkTeacherAvailability(
-                schoolId, teacherId, timeSlotId, academicYearId, classId, sectionId);
+                schoolId, teacherId, timeSlotId, academicYearId, classId, sectionId, dayOfWeek);
         return ResponseEntity.ok(result);
     }
 }

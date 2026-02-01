@@ -1,8 +1,10 @@
 package org.sma.admin.core.app.controller;
 
+import io.swagger.annotations.Api;
 import org.sma.admin.core.app.model.request.DailyClassSessionRequest;
 import org.sma.admin.core.app.service.DailyClassSessionBusinessService;
 import org.sma.jpa.model.routine.DailyClassSession;
+import org.sma.platform.core.annotation.APIController;
 import org.sma.platform.core.exception.SmaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,9 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@APIController
+@Api(tags = "Daily Class Session Controller")
 @RequestMapping("/schools/{schoolId}/routine/sessions")
-@CrossOrigin
 public class DailyClassSessionController {
 
     @Autowired
