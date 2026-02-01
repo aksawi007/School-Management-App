@@ -32,6 +32,7 @@ export class DailyScheduleViewComponent implements OnInit {
     private fb: FormBuilder,
     private sessionService: DailyClassSessionService,
     private adminCache: AdminCacheService,
+    private classMasterService: ClassMasterService,
     private sectionService: SectionMasterService,
     private academicYearService: AcademicYearService,
     private dialog: MatDialog,
@@ -52,8 +53,6 @@ export class DailyScheduleViewComponent implements OnInit {
   }
 
   loadMasterData(): void {
-    this.adminCache.getClasses().subscribe((data: any) => this.classes = data);
-    
     // Load academic years and auto-select current year
     this.adminCache.getAcademicYears().subscribe((data: any) => {
       this.academicYears = data;
@@ -61,6 +60,34 @@ export class DailyScheduleViewComponent implements OnInit {
       const currentYear = data.find((y: any) => y.currentYear === true);
       if (currentYear) {
         this.filterForm.patchValue({ academicYearId: currentYear.yearId });
+        this.loadClasses();
+      }
+    });
+  }
+
+  onAcademicYearChange(): void {
+    this.classes = [];
+    this.sections = [];
+    this.filterForm.patchValue({ classId: '', sectionId: '' });
+    
+    const academicYearId = this.filterForm.get('academicYearId')?.value;
+    if (academicYearId) {
+      this.loadClasses();
+    }
+  }
+
+  loadClasses(): void {
+    const academicYearId = this.filterForm.get('academicYearId')?.value;
+    if (!academicYearId) return;
+    
+    this.classMasterService.getAllClassesByAcademicYear(academicYearId).subscribe({
+      next: (data: any) => {
+        this.classes = data.sort((a: any, b: any) => (a.displayOrder || 0) - (b.displayOrder || 0));
+      },
+      error: (error: any) => {
+        console.error('Error loading classes:', error);
+        this.snackBar.open('Failed to load classes', 'Close', { duration: 3000 });
+        this.classes = [];
       }
     });
   }

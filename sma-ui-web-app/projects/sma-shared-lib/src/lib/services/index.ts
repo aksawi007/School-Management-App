@@ -13,6 +13,9 @@ export * from './master';
 // Routine Management Services
 export * from './routine';
 
+// Attendance Services (device webhook placeholder)
+export * from './attendance';
+
 // Common Services
 export * from './app-context.service';
 export { SchoolContextService } from './school-context.service';

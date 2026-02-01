@@ -24,8 +24,8 @@
     <button mat-raised-button (click)="markAllAs('ABSENT')" [disabled]="saving">
       Mark All Absent
     </button>
-    <button mat-raised-button (click)="toggleSelectAll()" [disabled]="saving">
-      {{ selectAll ? 'Clear All' : 'Select All Present' }}
+    <button mat-stroked-button color="accent" (click)="sendTestDeviceWebhook()" [disabled]="saving">
+      Simulate Device Webhook
     </button>
   </div>
 
