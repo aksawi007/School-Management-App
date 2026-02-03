@@ -59,4 +59,9 @@ public interface DailyClassSessionRepository extends JpaRepository<DailyClassSes
            "WHERE dcs.sessionDate = :sessionDate " +
            "AND dcs.actualTeacher.id = :teacherId")
     long countTeacherSessionsForDate(@Param("teacherId") Long teacherId, @Param("sessionDate") LocalDate sessionDate);
+
+    @Query("SELECT dcs FROM DailyClassSession dcs " +
+           "WHERE dcs.id = :sessionId " +
+           "AND dcs.school.id = :schoolId")
+    Optional<DailyClassSession> findByIdAndSchool(@Param("sessionId") Long sessionId, @Param("schoolId") Long schoolId);
 }

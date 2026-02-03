@@ -7,6 +7,7 @@ import {
   RoutineTimeSlotService, 
   RoutineTimeSlot,
   ClassMasterResponse,
+  ClassMasterService,
   SectionMasterService,
   SectionMasterResponse,
   SubjectMasterService,
@@ -49,6 +50,7 @@ export class RoutineBuilderComponent implements OnInit {
     private routineService: ClassRoutineMasterService,
     private timeSlotService: RoutineTimeSlotService,
     private adminCache: AdminCacheService,
+    private classMasterService: ClassMasterService,
     private sectionService: SectionMasterService,
     private subjectService: SubjectMasterService,
     private academicYearService: AcademicYearService,
@@ -73,7 +75,6 @@ export class RoutineBuilderComponent implements OnInit {
         if (school) {
           this.schoolId = school.schoolId;
           this.loadAcademicYears();
-          this.loadClasses();
           this.loadTimeSlots();
         }
       }
@@ -95,6 +96,7 @@ export class RoutineBuilderComponent implements OnInit {
         if (currentYear && !this.selectedAcademicYearId) {
           this.selectedAcademicYearId = currentYear.yearId;
           console.log('Auto-selected current academic year:', currentYear.yearName);
+          this.loadClasses();
         }
       },
       error: (error) => {
@@ -104,10 +106,31 @@ export class RoutineBuilderComponent implements OnInit {
     });
   }
 
+  onAcademicYearChange(): void {
+    this.classes = [];
+    this.sections = [];
+    this.selectedClassId = undefined;
+    this.selectedSectionId = undefined;
+    this.routineData = [];
+    this.buildGrid();
+    
+    if (this.selectedAcademicYearId) {
+      this.loadClasses();
+    }
+  }
+
   loadClasses(): void {
-    this.adminCache.getClasses().subscribe({
-      next: (data: ClassMasterResponse[]) => this.classes = data,
-      error: (error: any) => this.showError('Failed to load classes')
+    if (!this.selectedAcademicYearId) return;
+    
+    this.classMasterService.getAllClassesByAcademicYear(this.selectedAcademicYearId).subscribe({
+      next: (data: ClassMasterResponse[]) => {
+        this.classes = data.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+      },
+      error: (error: any) => {
+        console.error('Error loading classes:', error);
+        this.snackBar.open('Failed to load classes', 'Close', { duration: 3000 });
+        this.classes = [];
+      }
     });
   }
 

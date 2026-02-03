@@ -33,7 +33,7 @@ public class StudentAttendanceController {
     public ResponseEntity<?> markBulkAttendance(@PathVariable Long schoolId,
                                                @RequestBody BulkAttendanceRequest request) {
         try {
-            List<StudentAttendance> attendance = studentAttendanceService.markBulkAttendance(request);
+            List<StudentAttendance> attendance = studentAttendanceService.markBulkAttendance(schoolId, request);
             return ResponseEntity.ok(attendance);
         } catch (SmaException e) {
             Map<String, String> error = new HashMap<>();
@@ -91,7 +91,7 @@ public class StudentAttendanceController {
         try {
             if (!studentItems.isEmpty()) {
                 // markedBy is not provided by device; leave null or populate from mapping if required
-                java.util.List<?> out = studentAttendanceService.markBulkAttendance(studentReq);
+                java.util.List<?> out = studentAttendanceService.markBulkAttendance(schoolId, studentReq);
                 processed.addAll(out);
             }
 

@@ -9,7 +9,7 @@
       <div class="filters-row">
         <mat-form-field appearance="outline">
           <mat-label>Select Academic Year</mat-label>
-          <mat-select [(ngModel)]="selectedAcademicYearId" (selectionChange)="loadRoutine()">
+          <mat-select [(ngModel)]="selectedAcademicYearId" (selectionChange)="onAcademicYearChange()">
             <mat-option *ngFor="let year of academicYears" [value]="year.yearId">
               {{ year.yearName }}
             </mat-option>

@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StudentAttendanceBusinessService {
@@ -38,10 +39,24 @@ public class StudentAttendanceBusinessService {
     private DailyClassSessionBusinessService dailyClassSessionBusinessService;
 
     @Transactional
-    public List<StudentAttendance> markBulkAttendance(BulkAttendanceRequest request) throws SmaException {
-        // Validate session
-        DailyClassSession session = dailyClassSessionRepository.findById(request.getSessionId())
-                .orElseThrow(() -> new SmaException("Session not found"));
+    public List<StudentAttendance> markBulkAttendance(Long schoolId, BulkAttendanceRequest request) throws SmaException {
+        // First check if session exists at all
+        Optional<DailyClassSession> sessionOpt = dailyClassSessionRepository.findById(request.getSessionId());
+        if (!sessionOpt.isPresent()) {
+            throw new SmaException("Session ID " + request.getSessionId() + " does not exist in the database");
+        }
+        
+        DailyClassSession tempSession = sessionOpt.get();
+        Long actualSchoolId = tempSession.getSchool().getId();
+        
+        if (!actualSchoolId.equals(schoolId)) {
+            throw new SmaException("Session ID " + request.getSessionId() + 
+                " belongs to school " + actualSchoolId + ", but request is for school " + schoolId);
+        }
+        
+        // Validate session belongs to the specified school
+        DailyClassSession session = dailyClassSessionRepository.findByIdAndSchool(request.getSessionId(), schoolId)
+                .orElseThrow(() -> new SmaException("Session not found or does not belong to the specified school"));
 
         // Validate staff
         Staff markedBy = staffRepository.findById(request.getMarkedBy())
