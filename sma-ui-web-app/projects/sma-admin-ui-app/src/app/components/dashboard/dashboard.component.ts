@@ -101,31 +101,6 @@ export class DashboardComponent implements OnInit {
       color: '#7b1fa2',
       category: 'academic'
     },
-    // User Management
-    {
-      title: 'Student Management',
-      description: 'View and manage student records',
-      icon: 'school',
-      route: '/students',
-      color: '#2e7d32',
-      category: 'users'
-    },
-    {
-      title: 'Staff Management',
-      description: 'Manage teachers and staff members',
-      icon: 'people',
-      route: '/staff',
-      color: '#2e7d32',
-      category: 'users'
-    },
-    {
-      title: 'User Roles',
-      description: 'Configure user roles and permissions',
-      icon: 'admin_panel_settings',
-      route: '/roles',
-      color: '#2e7d32',
-      category: 'users'
-    },
     // Financial
     {
       title: 'Fee Structure',
@@ -179,7 +154,6 @@ export class DashboardComponent implements OnInit {
     const titles: { [key: string]: string } = {
       'core': 'Core Setup',
       'academic': 'Academic Management',
-      'users': 'User Management',
       'financial': 'Financial Management',
       'settings': 'System Settings'
     };
@@ -195,6 +169,6 @@ export class DashboardComponent implements OnInit {
   }
 
   get categories(): string[] {
-    return ['core', 'academic', 'users', 'financial', 'settings'];
+    return ['core', 'academic', 'financial', 'settings'];
   }
 }

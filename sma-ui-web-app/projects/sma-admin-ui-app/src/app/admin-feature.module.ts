@@ -29,8 +29,6 @@ import { AdminRootComponent } from './admin-root.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { SchoolProfileComponent } from './components/school-profile/school-profile.component';
 import { AcademicYearComponent } from './components/academic-year/academic-year.component';
-import { StaffManagementComponent } from './components/staff-management/staff-management.component';
-import { StudentManagementComponent } from './components/student-management/student-management.component';
 
 import { SmaSharedModule } from 'sma-shared-lib';
 
@@ -39,9 +37,7 @@ import { SmaSharedModule } from 'sma-shared-lib';
     AdminRootComponent,
     DashboardComponent,
     SchoolProfileComponent,
-    AcademicYearComponent,
-    StaffManagementComponent,
-    StudentManagementComponent
+    AcademicYearComponent
   ],
   imports: [
     CommonModule,

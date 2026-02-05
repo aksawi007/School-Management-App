@@ -33,8 +33,6 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { StaffManagementComponent } from './components/staff-management/staff-management.component';
-import { StudentManagementComponent } from './components/student-management/student-management.component';
 import { SchoolProfileComponent } from './components/school-profile/school-profile.component';
 import { AcademicYearComponent } from './components/academic-year/academic-year.component';
 import { ClassListComponent } from './components/class-list/class-list.component';
