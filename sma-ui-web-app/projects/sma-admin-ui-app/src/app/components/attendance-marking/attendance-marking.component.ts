@@ -111,6 +111,15 @@ export class AttendanceMarkingComponent implements OnInit {
 
   loadExistingAttendance(): void {
     this.loading = true;
+    
+    // First verify session exists
+    if (!this.sessionId) {
+      this.snackBar.open('Session ID is missing', 'Close', { duration: 500 });
+      this.loading = false;
+      this.router.navigate(['/daily-schedule-view']);
+      return;
+    }
+    
     this.attendanceService.getSessionAttendance(this.schoolId, this.sessionId!).subscribe({
       next: (records: StudentAttendance[]) => {
         console.log('Attendance records:', records);
@@ -136,7 +145,15 @@ export class AttendanceMarkingComponent implements OnInit {
         this.loading = false;
       },
       error: (error: any) => {
-        this.snackBar.open('Failed to load attendance data', 'Close', { duration: 3000 });
+        const errorMsg = error.error?.message || error.error?.error || 'Failed to load attendance data';
+        
+        // Check if it's a session not found error
+        if (errorMsg.includes('does not exist') || errorMsg.includes('not found')) {
+          this.snackBar.open(`Session not found. It may have been deleted or doesn't exist.`, 'Close', { duration: 5000 });
+          this.router.navigate(['/daily-schedule-view']);
+        } else {
+          this.snackBar.open(errorMsg, 'Close', { duration: 3000 });
+        }
         this.loading = false;
       }
     });
@@ -181,6 +198,12 @@ export class AttendanceMarkingComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // Validate session ID exists
+    if (!this.sessionId) {
+      this.snackBar.open('Session ID is missing', 'Close', { duration: 3000 });
+      return;
+    }
+    
     // Validate all students have status
     const incomplete = this.attendanceRecords.filter(r => !r.status);
     if (incomplete.length > 0) {
@@ -205,7 +228,15 @@ export class AttendanceMarkingComponent implements OnInit {
         this.router.navigate(['/daily-schedule-view']);
       },
       error: (error: any) => {
-        this.snackBar.open(error.error?.message || 'Failed to mark attendance', 'Close', { duration: 3000 });
+        const errorMsg = error.error?.message || error.error?.error || 'Failed to mark attendance';
+        
+        // Check if it's a session not found error
+        if (errorMsg.includes('does not exist') || errorMsg.includes('not found')) {
+          this.snackBar.open(`Session does not exist. It may have been deleted.`, 'Close', { duration: 5000 });
+          this.router.navigate(['/daily-schedule-view']);
+        } else {
+          this.snackBar.open(errorMsg, 'Close', { duration: 5000 });
+        }
         this.saving = false;
       }
     });

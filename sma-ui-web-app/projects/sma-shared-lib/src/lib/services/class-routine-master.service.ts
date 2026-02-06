@@ -44,16 +44,42 @@ export class ClassRoutineMasterService {
     timeSlotId: number,
     academicYearId: number,
     classId: number,
-    sectionId: number
+    sectionId: number,
+    dayOfWeek?: string
   ): Observable<{ available: boolean; conflictingRoutines: ClassRoutineMaster[] }> {
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set('teacherId', teacherId.toString())
       .set('timeSlotId', timeSlotId.toString())
       .set('academicYearId', academicYearId.toString())
       .set('classId', classId.toString())
       .set('sectionId', sectionId.toString());
+    
+    if (dayOfWeek) {
+      params = params.set('dayOfWeek', dayOfWeek);
+    }
+    
     return this.http.get<{ available: boolean; conflictingRoutines: ClassRoutineMaster[] }>(
       `/api/schools/${schoolId}/routine/master/check-availability`,
+      { params }
+    );
+  }
+
+  getAvailableTeachers(
+    schoolId: number,
+    timeSlotId: number,
+    academicYearId: number,
+    dayOfWeek?: string
+  ): Observable<any[]> {
+    let params = new HttpParams()
+      .set('timeSlotId', timeSlotId.toString())
+      .set('academicYearId', academicYearId.toString());
+    
+    if (dayOfWeek) {
+      params = params.set('dayOfWeek', dayOfWeek);
+    }
+    
+    return this.http.get<any[]>(
+      `/api/schools/${schoolId}/routine/master/available-teachers`,
       { params }
     );
   }

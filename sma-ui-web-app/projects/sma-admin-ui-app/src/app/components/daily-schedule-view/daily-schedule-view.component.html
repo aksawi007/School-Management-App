@@ -107,11 +107,21 @@
             <button mat-menu-item (click)="updateSessionStatus(session.id!, 'CANCELLED')">Cancelled</button>
           </mat-menu>
 
-          <a mat-button [routerLink]="['/attendance-marking', session.id]" 
+          <a mat-button 
+             *ngIf="session.id"
+             [routerLink]="['/attendance-marking', session.id]" 
              [queryParams]="{academicYearId: filterForm.value.academicYearId, classId: filterForm.value.classId, sectionId: filterForm.value.sectionId}">
             <mat-icon>fact_check</mat-icon>
             Mark Attendance
           </a>
+          
+          <button mat-button 
+                  *ngIf="!session.id" 
+                  disabled
+                  matTooltip="Session not created yet">
+            <mat-icon>fact_check</mat-icon>
+            Mark Attendance
+          </button>
         </mat-card-actions>
       </mat-card>
     </div>

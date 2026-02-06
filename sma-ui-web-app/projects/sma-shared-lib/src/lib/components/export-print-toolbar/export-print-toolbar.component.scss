@@ -1,0 +1,17 @@
+.export-print-toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  .export-container,
+  .print-container {
+    display: flex;
+    align-items: center;
+  }
+
+  button {
+    mat-icon {
+      margin-right: 4px;
+    }
+  }
+}

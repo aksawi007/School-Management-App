@@ -33,6 +33,15 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
+
+        <button mat-raised-button 
+                color="primary" 
+                (click)="showWeekSummary()"
+                [disabled]="!selectedAcademicYearId || !selectedClassId || !selectedSectionId || routineData.length === 0"
+                class="summary-button">
+          <mat-icon>summarize</mat-icon>
+          Show Week Summary
+        </button>
       </div>
 
       <!-- Routine Grid -->

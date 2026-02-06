@@ -119,6 +119,55 @@ export class ClassRoutineMasterService {
       { params }
     );
   }
+
+  getAvailableTeachers(
+    schoolId: number,
+    timeSlotId: number,
+    academicYearId: number,
+    dayOfWeek?: string
+  ): Observable<any[]> {
+    let params = new HttpParams()
+      .set('timeSlotId', timeSlotId.toString())
+      .set('academicYearId', academicYearId.toString());
+
+    if (dayOfWeek) {
+      params = params.set('dayOfWeek', dayOfWeek);
+    }
+
+    return this.http.get<any[]>(
+      `${this.getBaseUrl(schoolId)}/available-teachers`,
+      { params }
+    );
+  }
+
+  /**
+   * Get available teachers and filter by staff type on client-side
+   * This analyzes the response and returns only teachers matching the specified type
+   */
+  getAvailableTeachersByType(
+    schoolId: number,
+    timeSlotId: number,
+    academicYearId: number,
+    staffType: string,
+    dayOfWeek?: string
+  ): Observable<any[]> {
+    return new Observable(observer => {
+      this.getAvailableTeachers(schoolId, timeSlotId, academicYearId, dayOfWeek)
+        .subscribe({
+          next: (teachers) => {
+            // Client-side filtering based on staffType
+            const filteredTeachers = teachers.filter(teacher => 
+              teacher.staffType && teacher.staffType.toUpperCase() === staffType.toUpperCase()
+            );
+            observer.next(filteredTeachers);
+            observer.complete();
+          },
+          error: (error) => {
+            observer.error(error);
+          }
+        });
+    });
+  }
 }
 
 @Injectable({

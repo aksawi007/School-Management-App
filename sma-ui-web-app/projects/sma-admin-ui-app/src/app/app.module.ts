@@ -29,6 +29,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -49,6 +50,7 @@ import { StudentClassAssignDialogComponent } from './components/student-class-as
 import { ClassStudentsDialogComponent } from './components/class-students-dialog/class-students-dialog.component';
 import { RoutineBuilderComponent } from './components/routine-builder/routine-builder.component';
 import { RoutineEntryDialogComponent } from './components/routine-entry-dialog/routine-entry-dialog.component';
+import { RoutineSummaryDialogComponent } from './components/routine-summary-dialog/routine-summary-dialog.component';
 import { TimeSlotManagementComponent } from './components/time-slot-management/time-slot-management.component';
 import { DailyScheduleViewComponent } from './components/daily-schedule-view/daily-schedule-view.component';
 import { SessionOverrideDialogComponent } from './components/session-override-dialog/session-override-dialog.component';
@@ -74,6 +76,7 @@ import { SmaSharedModule } from 'sma-shared-lib';
     ClassStudentsDialogComponent,
     RoutineBuilderComponent,
     RoutineEntryDialogComponent,
+    RoutineSummaryDialogComponent,
     TimeSlotManagementComponent,
     TimeSlotDialogComponent,
     DailyScheduleViewComponent,
@@ -111,7 +114,8 @@ import { SmaSharedModule } from 'sma-shared-lib';
     MatMenuModule,
     MatChipsModule,
     MatCheckboxModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatProgressBarModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

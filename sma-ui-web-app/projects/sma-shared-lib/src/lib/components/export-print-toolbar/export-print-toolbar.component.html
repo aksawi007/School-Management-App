@@ -1,0 +1,68 @@
+<div class="export-print-toolbar">
+  <!-- Export Button -->
+  <div class="export-container" *ngIf="showExport">
+    <button 
+      *ngIf="buttonStyle === 'icon'"
+      mat-icon-button 
+      [matMenuTriggerFor]="exportMenu"
+      matTooltip="Export">
+      <mat-icon>download</mat-icon>
+    </button>
+    
+    <button 
+      *ngIf="buttonStyle === 'raised'"
+      mat-raised-button 
+      [matMenuTriggerFor]="exportMenu"
+      color="primary">
+      <mat-icon>download</mat-icon>
+      Export
+    </button>
+    
+    <button 
+      *ngIf="buttonStyle === 'flat'"
+      mat-button 
+      [matMenuTriggerFor]="exportMenu">
+      <mat-icon>download</mat-icon>
+      Export
+    </button>
+
+    <mat-menu #exportMenu="matMenu">
+      <button mat-menu-item (click)="onExport('csv')">
+        <mat-icon>description</mat-icon>
+        <span>Export to CSV</span>
+      </button>
+      <button mat-menu-item (click)="onExport('excel')">
+        <mat-icon>table_chart</mat-icon>
+        <span>Export to Excel</span>
+      </button>
+    </mat-menu>
+  </div>
+
+  <!-- Print Button -->
+  <div class="print-container" *ngIf="showPrint">
+    <button 
+      *ngIf="buttonStyle === 'icon'"
+      mat-icon-button 
+      (click)="onPrint()"
+      matTooltip="Print">
+      <mat-icon>print</mat-icon>
+    </button>
+    
+    <button 
+      *ngIf="buttonStyle === 'raised'"
+      mat-raised-button 
+      (click)="onPrint()"
+      color="primary">
+      <mat-icon>print</mat-icon>
+      Print
+    </button>
+    
+    <button 
+      *ngIf="buttonStyle === 'flat'"
+      mat-button 
+      (click)="onPrint()">
+      <mat-icon>print</mat-icon>
+      Print
+    </button>
+  </div>
+</div>

@@ -15,3 +15,6 @@ export * from './lib/utils';
 
 // Export services
 export * from './lib/services';
+
+// Export components
+export * from './lib/components/export-print-toolbar/export-print-toolbar.component';

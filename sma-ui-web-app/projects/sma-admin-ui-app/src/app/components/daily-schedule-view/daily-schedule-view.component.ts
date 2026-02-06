@@ -187,7 +187,10 @@ export class DailyScheduleViewComponent implements OnInit {
           console.log('Schedule response:', sessions);
           // Map the API response to the expected format, preserving all necessary data
           this.sessions = (sessions as any[]).map(session => ({
-            id: session.id,
+            // IMPORTANT: sessionId is null if no daily session exists (just master routine)
+            id: session.sessionId, // Will be null for master routines without sessions
+            routineMasterId: session.routineMasterId,
+            hasSession: session.hasSession, // Flag indicating if session exists
             timeSlot: session.timeSlot,
             subject: session.subject,
             teacher: session.teacher,

@@ -15,6 +15,7 @@ import {
   AcademicYearService
 } from 'sma-shared-lib';
 import { RoutineEntryDialogComponent } from '../routine-entry-dialog/routine-entry-dialog.component';
+import { RoutineSummaryDialogComponent } from '../routine-summary-dialog/routine-summary-dialog.component';
 import { AdminCacheService } from '../../services/admin-cache.service';
 
 interface RoutineCell {
@@ -321,6 +322,54 @@ export class RoutineBuilderComponent implements OnInit {
 
   onSectionChange(): void {
     this.loadRoutine();
+  }
+
+  showWeekSummary(): void {
+    if (!this.selectedAcademicYearId || !this.selectedClassId || !this.selectedSectionId) {
+      this.snackBar.open('Please select Academic Year, Class, and Section first', 'Close', { duration: 3000 });
+      return;
+    }
+
+    if (!this.routineData || this.routineData.length === 0) {
+      this.snackBar.open('No routine data available to summarize', 'Close', { duration: 3000 });
+      return;
+    }
+
+    // Get academic year name
+    const selectedYear = this.academicYears.find(y => y.yearId === this.selectedAcademicYearId);
+    const academicYearName = selectedYear?.yearName || 'N/A';
+
+    // Get class and section names from routine data or from the dropdowns
+    let className = 'N/A';
+    let sectionName = 'N/A';
+    
+    if (this.routineData && this.routineData.length > 0) {
+      // Get from first routine entry - use the string properties that are populated
+      const firstRoutine = this.routineData[0];
+      className = firstRoutine.className || firstRoutine.classMaster?.className || 'N/A';
+      sectionName = firstRoutine.sectionName || firstRoutine.section?.sectionName || 'N/A';
+    }
+    
+    // Fallback to selected dropdowns if not found in routine data
+    if (className === 'N/A') {
+      const selectedClass = this.classes.find(c => Number(c.id) === this.selectedClassId);
+      className = selectedClass?.className || 'N/A';
+    }
+    if (sectionName === 'N/A') {
+      const selectedSection = this.sections.find(s => Number(s.id) === this.selectedSectionId);
+      sectionName = selectedSection?.sectionName || 'N/A';
+    }
+
+    this.dialog.open(RoutineSummaryDialogComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      data: {
+        routineData: this.routineData,
+        academicYearName: academicYearName,
+        className: className,
+        sectionName: sectionName
+      }
+    });
   }
 
   showSuccess(message: string): void {

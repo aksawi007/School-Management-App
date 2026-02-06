@@ -19,3 +19,7 @@ export * from './attendance';
 // Common Services
 export * from './app-context.service';
 export { SchoolContextService } from './school-context.service';
+
+// Utility Services
+export * from './export/export.service';
+export * from './print/print.service';

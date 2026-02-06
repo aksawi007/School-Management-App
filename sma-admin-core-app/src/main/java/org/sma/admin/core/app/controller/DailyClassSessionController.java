@@ -2,6 +2,7 @@ package org.sma.admin.core.app.controller;
 
 import io.swagger.annotations.Api;
 import org.sma.admin.core.app.model.request.DailyClassSessionRequest;
+import org.sma.admin.core.app.model.response.CompleteScheduleResponse;
 import org.sma.admin.core.app.service.DailyClassSessionBusinessService;
 import org.sma.jpa.model.routine.DailyClassSession;
 import org.sma.platform.core.annotation.APIController;
@@ -41,13 +42,13 @@ public class DailyClassSessionController {
     }
 
     @GetMapping("/complete-schedule")
-    public ResponseEntity<List<Object>> getCompleteSchedule(
+    public ResponseEntity<List<CompleteScheduleResponse>> getCompleteSchedule(
             @PathVariable Long schoolId,
             @RequestParam Long academicYearId,
             @RequestParam Long classId,
             @RequestParam Long sectionId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        List<Object> schedule = dailyClassSessionService.getDayCompleteSchedule(
+        List<CompleteScheduleResponse> schedule = dailyClassSessionService.getDayCompleteSchedule(
                 schoolId, academicYearId, classId, sectionId, date);
         return ResponseEntity.ok(schedule);
     }

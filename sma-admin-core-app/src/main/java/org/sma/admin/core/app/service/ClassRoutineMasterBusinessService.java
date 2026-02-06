@@ -164,4 +164,34 @@ public class ClassRoutineMasterBusinessService {
         
         return result;
     }
+
+    public List<Staff> getAvailableTeachers(Long schoolId, Long timeSlotId, Long academicYearId, String dayOfWeek, String staffType) {
+        // Get all active teachers for this school with specified staff type
+        List<Staff> allTeachers = staffType != null && !staffType.isEmpty()
+                ? staffRepository.findBySchoolIdAndStaffTypeAndIsActiveTrue(schoolId, staffType)
+                : staffRepository.findBySchoolIdAndIsActiveTrue(schoolId);
+        
+        // Get all routine entries for the given time slot and academic year
+        List<ClassRoutineMaster> scheduledRoutines = classRoutineMasterRepository
+                .findBySchoolIdAndTimeSlotIdAndAcademicYearId(schoolId, timeSlotId, academicYearId);
+        
+        // Filter by day of week if provided
+        if (dayOfWeek != null && !dayOfWeek.isEmpty()) {
+            final String day = dayOfWeek.toUpperCase();
+            scheduledRoutines.removeIf(routine -> !routine.getDayOfWeek().equalsIgnoreCase(day));
+        }
+        
+        // Extract teacher IDs who are already scheduled
+        List<Long> scheduledTeacherIds = scheduledRoutines.stream()
+                .map(routine -> routine.getTeacher().getId())
+                .distinct()
+                .collect(java.util.stream.Collectors.toList());
+        
+        // Filter out scheduled teachers from all teachers
+        List<Staff> availableTeachers = allTeachers.stream()
+                .filter(teacher -> !scheduledTeacherIds.contains(teacher.getId()))
+                .collect(java.util.stream.Collectors.toList());
+        
+        return availableTeachers;
+    }
 }

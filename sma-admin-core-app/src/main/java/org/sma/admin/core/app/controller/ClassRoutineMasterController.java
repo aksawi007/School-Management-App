@@ -115,4 +115,16 @@ public class ClassRoutineMasterController {
                 schoolId, teacherId, timeSlotId, academicYearId, classId, sectionId, dayOfWeek);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/available-teachers")
+    public ResponseEntity<?> getAvailableTeachers(
+            @PathVariable Long schoolId,
+            @RequestParam Long timeSlotId,
+            @RequestParam Long academicYearId,
+            @RequestParam(required = false) String dayOfWeek,
+            @RequestParam(required = false) String staffType) {
+        List<?> availableTeachers = classRoutineMasterService.getAvailableTeachers(
+                schoolId, timeSlotId, academicYearId, dayOfWeek, staffType);
+        return ResponseEntity.ok(availableTeachers);
+    }
 }

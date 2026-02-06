@@ -76,4 +76,14 @@ public interface ClassRoutineMasterRepository extends JpaRepository<ClassRoutine
             @Param("teacherId") Long teacherId,
             @Param("timeSlotId") Long timeSlotId,
             @Param("academicYearId") Long academicYearId);
+
+    @Query("SELECT crm FROM ClassRoutineMaster crm " +
+           "WHERE crm.school.id = :schoolId " +
+           "AND crm.academicYear.id = :academicYearId " +
+           "AND crm.timeSlot.id = :timeSlotId " +
+           "AND crm.isActive = true")
+    List<ClassRoutineMaster> findBySchoolIdAndTimeSlotIdAndAcademicYearId(
+            @Param("schoolId") Long schoolId,
+            @Param("timeSlotId") Long timeSlotId,
+            @Param("academicYearId") Long academicYearId);
 }

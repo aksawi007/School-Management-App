@@ -1,6 +1,7 @@
 package org.sma.admin.core.app.service;
 
 import org.sma.admin.core.app.model.request.DailyClassSessionRequest;
+import org.sma.admin.core.app.model.response.CompleteScheduleResponse;
 import org.sma.jpa.model.master.ClassMaster;
 import org.sma.jpa.model.master.SectionMaster;
 import org.sma.jpa.model.master.SubjectMaster;
@@ -64,9 +65,9 @@ public class DailyClassSessionBusinessService {
 
     /**
      * Get complete day schedule by merging master routine with daily overrides
-     * This is the core space-efficient logic
+     * Returns CompleteScheduleResponse DTOs with clear indication of session existence
      */
-    public List<Object> getDayCompleteSchedule(Long schoolId, Long academicYearId, 
+    public List<CompleteScheduleResponse> getDayCompleteSchedule(Long schoolId, Long academicYearId, 
                                                Long classId, Long sectionId, LocalDate date) {
         // Get day of week
         DayOfWeek dayOfWeek = date.getDayOfWeek();
@@ -80,22 +81,70 @@ public class DailyClassSessionBusinessService {
         List<DailyClassSession> dailySessions = dailyClassSessionRepository.findDaySchedule(
                 schoolId, classId, sectionId, date);
 
-        // Merge logic: For each master entry, check if daily override exists
-        List<Object> completeSchedule = new ArrayList<>();
+        // Merge logic: For each master entry, create response DTO
+        List<CompleteScheduleResponse> completeSchedule = new ArrayList<>();
         
         for (ClassRoutineMaster master : masterRoutine) {
+            CompleteScheduleResponse response = new CompleteScheduleResponse();
+            
             // Find matching daily session
             Optional<DailyClassSession> dailyOpt = dailySessions.stream()
                     .filter(ds -> ds.getRoutineMaster().getId().equals(master.getId()))
                     .findFirst();
 
+            // Always set routine master ID
+            response.setRoutineMasterId(master.getId());
+            response.setRoutineMaster(master);
+            response.setTimeSlot(master.getTimeSlot());
+            response.setDayOfWeek(dayName);
+            response.setSessionDate(date);
+            response.setAcademicYear(master.getAcademicYear());
+            response.setClassMaster(master.getClassMaster());
+            response.setSection(master.getSection());
+
             if (dailyOpt.isPresent()) {
-                // Use daily session (has overrides or attendance)
-                completeSchedule.add(dailyOpt.get());
+                // Daily session exists - use its data
+                DailyClassSession session = dailyOpt.get();
+                response.setSessionId(session.getId()); // ACTUAL SESSION ID
+                response.setHasSession(true);
+                response.setSessionStatus(session.getSessionStatus());
+                response.setIsAttendanceMarked(session.getIsAttendanceMarked());
+                response.setRemarks(session.getRemarks());
+                
+                // Subject: use override if present, otherwise master
+                response.setSubject(master.getSubject());
+                response.setSubjectOverride(session.getSubjectOverride());
+                response.setEffectiveSubject(session.getSubjectOverride() != null ? 
+                        session.getSubjectOverride() : master.getSubject());
+                
+                // Teacher: use override/actual if present, otherwise master
+                response.setTeacher(master.getTeacher());
+                response.setTeacherOverride(session.getTeacherOverride());
+                response.setActualTeacher(session.getActualTeacher());
+                
+                // Effective teacher priority: actual > override > master
+                if (session.getActualTeacher() != null) {
+                    response.setEffectiveTeacher(session.getActualTeacher());
+                } else if (session.getTeacherOverride() != null) {
+                    response.setEffectiveTeacher(session.getTeacherOverride());
+                } else {
+                    response.setEffectiveTeacher(master.getTeacher());
+                }
             } else {
-                // Use master routine (no changes for this day)
-                completeSchedule.add(master);
+                // No daily session - use master routine only
+                response.setSessionId(null); // IMPORTANT: No session ID
+                response.setHasSession(false);
+                response.setSessionStatus("SCHEDULED"); // Default status
+                response.setIsAttendanceMarked(false);
+                
+                // Use master data
+                response.setSubject(master.getSubject());
+                response.setEffectiveSubject(master.getSubject());
+                response.setTeacher(master.getTeacher());
+                response.setEffectiveTeacher(master.getTeacher());
             }
+            
+            completeSchedule.add(response);
         }
 
         return completeSchedule;

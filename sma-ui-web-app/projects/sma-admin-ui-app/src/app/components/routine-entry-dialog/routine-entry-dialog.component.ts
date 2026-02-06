@@ -30,6 +30,8 @@ interface TeacherResponse {
 export class RoutineEntryDialogComponent implements OnInit {
   routineForm: FormGroup;
   teachers: TeacherResponse[] = [];
+  availableTeachers: any[] = [];
+  showingAvailableTeachers = false;
   loading = false;
   isEdit = false;
   errorMessage = '';
@@ -188,6 +190,39 @@ export class RoutineEntryDialogComponent implements OnInit {
         this.teachers = [];
       }
     });
+  }
+
+  loadAvailableTeachers(): void {
+    this.loading = true;
+    this.routineService.getAvailableTeachersByType(
+      this.data.schoolId,
+      this.data.timeSlotId,
+      this.data.academicYearId,
+      'ACADEMIC',
+      this.data.dayOfWeek
+    ).subscribe({
+      next: (data: any[]) => {
+        this.availableTeachers = data;
+        this.loading = false;
+        
+        if (this.availableTeachers.length === 0) {
+          this.snackBar.open('No available academic staff for this time slot', 'Close', { duration: 3000 });
+        }
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.snackBar.open('Failed to load available teachers', 'Close', { duration: 3000 });
+        this.availableTeachers = [];
+      }
+    });
+  }
+
+  toggleAvailableTeachers(): void {
+    this.showingAvailableTeachers = !this.showingAvailableTeachers;
+    
+    if (this.showingAvailableTeachers && this.availableTeachers.length === 0) {
+      this.loadAvailableTeachers();
+    }
   }
 
   onSubmit(): void {
