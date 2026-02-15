@@ -9,10 +9,11 @@ import {
   StudentService,
   Student,
   ClassMasterResponse,
-  SectionMasterResponse
+  SectionMasterResponse,
+  SectionMasterService
 } from 'sma-shared-lib';
-import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { startWith, map, debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-student-class-assign-dialog',
@@ -27,6 +28,7 @@ export class StudentClassAssignDialogComponent implements OnInit {
   isEdit = false;
   studentSearchControl: FormControl = new FormControl('');
   filteredStudents$: Observable<Student[]> | undefined;
+  availableSections: SectionMasterResponse[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -35,42 +37,62 @@ export class StudentClassAssignDialogComponent implements OnInit {
       academicYearId: number;
       classId: number;
       sectionId?: number;
+      className?: string;
+      sectionName?: string;
       classes: ClassMasterResponse[];
       sections: SectionMasterResponse[];
       student?: StudentClassSectionResponse;
       isEdit?: boolean;
+      preselectedClassSection?: boolean;
     },
     private dialogRef: MatDialogRef<StudentClassAssignDialogComponent>,
     private studentClassSectionService: StudentClassSectionService,
     private studentService: StudentService,
+    private sectionService: SectionMasterService,
     private snackBar: MatSnackBar
   ) {
     this.isEdit = data.isEdit || false;
+    this.availableSections = data.sections || [];
+    
+    // Initialize form with student data if editing, otherwise use passed classId/sectionId
+    // Ensure IDs are numbers for proper comparison in mat-select
+    const initialClassId = (this.isEdit && data.student) ? Number(data.student.classId) : Number(data.classId);
+    const initialSectionId = (this.isEdit && data.student) ? Number(data.student.sectionId) : (data.sectionId ? Number(data.sectionId) : null);
     
     this.assignForm = this.fb.group({
-      studentId: [null, Validators.required],
-      classId: [data.classId, Validators.required],
-      sectionId: [data.sectionId, Validators.required],
-      rollNumber: [''],
-      enrollmentDate: [new Date()],
-      remarks: ['']
+      studentId: [(this.isEdit && data.student) ? data.student.studentId : null, Validators.required],
+      classId: [initialClassId, Validators.required],
+      sectionId: [initialSectionId, Validators.required],
+      rollNumber: [(this.isEdit && data.student) ? data.student.rollNumber : ''],
+      enrollmentDate: [(this.isEdit && data.student && data.student.enrollmentDate) ? 
+        new Date(data.student.enrollmentDate) : new Date()],
+      remarks: [(this.isEdit && data.student) ? data.student.remarks : '']
     });
-
-    if (this.isEdit && data.student) {
-      this.assignForm.patchValue({
-        studentId: data.student.studentId,
-        classId: data.student.classId,
-        sectionId: data.student.sectionId,
-        rollNumber: data.student.rollNumber,
-        enrollmentDate: data.student.enrollmentDate ? new Date(data.student.enrollmentDate) : new Date(),
-        remarks: data.student.remarks
-      });
-    }
   }
 
   ngOnInit(): void {
+    console.log('Dialog initialized with data:', {
+      isEdit: this.isEdit,
+      preselectedClassSection: this.data.preselectedClassSection,
+      classId: this.assignForm.get('classId')?.value,
+      sectionId: this.assignForm.get('sectionId')?.value,
+      availableSections: this.availableSections,
+      classes: this.data.classes
+    });
+    
+    // Check types
+    console.log('Form classId type:', typeof this.assignForm.get('classId')?.value);
+    console.log('Form sectionId type:', typeof this.assignForm.get('sectionId')?.value);
+    if (this.data.classes && this.data.classes.length > 0) {
+      console.log('First class.id type:', typeof this.data.classes[0].id, 'value:', this.data.classes[0].id);
+    }
+    if (this.availableSections && this.availableSections.length > 0) {
+      console.log('First section.id type:', typeof this.availableSections[0].id, 'value:', this.availableSections[0].id);
+    }
+    
     if (!this.isEdit) {
-      this.loadUnassignedStudents();
+      // Initialize server-side search
+      this.initStudentSearch();
       // If section is selected, precompute next roll number based on existing students
       if (this.assignForm.get('sectionId')?.value) {
         this.prefillNextRollNumber(this.assignForm.get('classId')?.value, this.assignForm.get('sectionId')?.value);
@@ -108,39 +130,35 @@ export class StudentClassAssignDialogComponent implements OnInit {
     });
   }
 
-  loadUnassignedStudents(): void {
-    this.loadingStudents = true;
-    this.studentService.getAllStudents(this.data.schoolId).subscribe({
-      next: (students: Student[]) => {
-        // In a real scenario, you'd filter out already assigned students
-        // For now, showing all students
-        this.students = students.filter((s: Student) => s.status === 'ACTIVE');
-        this.initStudentFilter();
-        this.loadingStudents = false;
-      },
-      error: (error: any) => {
-        console.error('Error loading students:', error);
-        this.snackBar.open('Error loading students', 'Close', { duration: 3000 });
-        this.loadingStudents = false;
-      }
-    });
-  }
-
-  private initStudentFilter(): void {
+  /**
+   * Initialize server-side student search with debouncing
+   */
+  private initStudentSearch(): void {
     this.filteredStudents$ = this.studentSearchControl.valueChanges.pipe(
-      startWith(this.studentSearchControl.value || ''),
-      map(value => typeof value === 'string' ? value : (value ? (value as any).studentName || '' : '')),
-      map(name => name ? this._filterStudents(name) : this.students.slice())
+      startWith(''),
+      debounceTime(300),
+      distinctUntilChanged(),
+      map(value => typeof value === 'string' ? value : ''),
+      switchMap(searchTerm => {
+        if (!searchTerm || searchTerm.length < 3) {
+          // Don't search if less than 3 characters
+          return of([]);
+        }
+        this.loadingStudents = true;
+        return this.studentService.searchStudents(this.data.schoolId, { search: searchTerm }).pipe(
+          map(students => {
+            this.loadingStudents = false;
+            // Filter only active students
+            return students.filter((s: Student) => s.status === 'ACTIVE');
+          }),
+          catchError(error => {
+            console.error('Error searching students:', error);
+            this.loadingStudents = false;
+            return of([]);
+          })
+        );
+      })
     );
-  }
-
-  private _filterStudents(name: string): Student[] {
-    const filterValue = name.toLowerCase();
-    return this.students.filter(student => (
-      (student.firstName || '').toLowerCase().includes(filterValue) ||
-      (student.lastName || '').toLowerCase().includes(filterValue) ||
-      (student.admissionNo || '').toLowerCase().includes(filterValue)
-    ));
   }
 
   displayStudentFn(student?: Student): string {
@@ -152,6 +170,30 @@ export class StudentClassAssignDialogComponent implements OnInit {
       this.assignForm.patchValue({ studentId: student.id });
     } else {
       this.assignForm.patchValue({ studentId: null });
+    }
+  }
+
+  onClassChange(): void {
+    const classId = this.assignForm.get('classId')?.value;
+    if (classId) {
+      // Clear section selection
+      this.assignForm.patchValue({ sectionId: null });
+      
+      // Load sections for the selected class
+      this.sectionService.getSectionsByClass(this.data.schoolId, classId.toString()).subscribe({
+        next: (sections: SectionMasterResponse[]) => {
+          this.availableSections = sections.sort((a: SectionMasterResponse, b: SectionMasterResponse) => 
+            (a.sectionCode || '').localeCompare(b.sectionCode || ''));
+        },
+        error: (error: any) => {
+          console.error('Error loading sections:', error);
+          this.snackBar.open('Error loading sections', 'Close', { duration: 3000 });
+          this.availableSections = [];
+        }
+      });
+    } else {
+      this.availableSections = [];
+      this.assignForm.patchValue({ sectionId: null });
     }
   }
 

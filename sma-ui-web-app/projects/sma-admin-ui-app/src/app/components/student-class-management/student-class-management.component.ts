@@ -102,7 +102,6 @@ export class StudentClassManagementComponent implements OnInit {
     
     if (this.selectedClassId) {
       this.loadSections();
-      this.loadStudents();
     }
   }
 
@@ -126,7 +125,7 @@ export class StudentClassManagementComponent implements OnInit {
   }
 
   loadStudents(): void {
-    if (!this.selectedAcademicYearId || !this.selectedClassId) return;
+    if (!this.selectedAcademicYearId || !this.selectedClassId || !this.selectedSectionId) return;
     
     this.loading = true;
     this.studentClassSectionService.getStudentsByClassAndSection(
@@ -172,23 +171,32 @@ export class StudentClassManagementComponent implements OnInit {
   }
 
   updateStudent(student: StudentClassSectionResponse): void {
-    const dialogRef = this.dialog.open(StudentClassAssignDialogComponent, {
-      width: '600px',
-      data: {
-        schoolId: this.schoolId,
-        academicYearId: this.selectedAcademicYearId,
-        classId: this.selectedClassId,
-        sectionId: this.selectedSectionId,
-        classes: this.classes,
-        sections: this.sections,
-        student: student,
-        isEdit: true
-      }
-    });
+    // Load sections for the student's current class
+    this.sectionService.getSectionsByClass(this.schoolId, student.classId.toString()).subscribe({
+      next: (sections: SectionMasterResponse[]) => {
+        const dialogRef = this.dialog.open(StudentClassAssignDialogComponent, {
+          width: '600px',
+          data: {
+            schoolId: this.schoolId,
+            academicYearId: this.selectedAcademicYearId,
+            classId: student.classId,
+            sectionId: student.sectionId,
+            classes: this.classes,
+            sections: sections,
+            student: student,
+            isEdit: true
+          }
+        });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadStudents();
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.loadStudents();
+          }
+        });
+      },
+      error: (error: any) => {
+        console.error('Error loading sections:', error);
+        this.snackBar.open('Error loading sections', 'Close', { duration: 3000 });
       }
     });
   }

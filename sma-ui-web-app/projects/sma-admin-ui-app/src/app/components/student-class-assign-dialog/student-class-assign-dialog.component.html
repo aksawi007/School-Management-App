@@ -12,7 +12,8 @@
           </mat-option>
         </mat-autocomplete>
         <mat-error *ngIf="hasError('studentId', 'required')">Student is required</mat-error>
-        <mat-hint *ngIf="loadingStudents">Loading students...</mat-hint>
+        <mat-hint *ngIf="loadingStudents">Searching...</mat-hint>
+        <mat-hint *ngIf="!loadingStudents">Type at least 3 characters to search</mat-hint>
       </mat-form-field>
     </div>
 
@@ -22,10 +23,17 @@
       </div>
     </div>
 
-    <div class="form-row">
+    <div class="form-row" *ngIf="data.preselectedClassSection">
+      <div class="class-section-info">
+        <strong>Class:</strong> {{ data.className }}
+        <span *ngIf="data.sectionName" style="margin-left: 20px;"><strong>Section:</strong> {{ data.sectionName }}</span>
+      </div>
+    </div>
+
+    <div class="form-row" *ngIf="!data.preselectedClassSection">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Class</mat-label>
-        <mat-select formControlName="classId">
+        <mat-select formControlName="classId" (selectionChange)="onClassChange()">
           <mat-option *ngFor="let class of data.classes" [value]="class.id">
             {{ class.className }}
           </mat-option>
@@ -34,11 +42,11 @@
       </mat-form-field>
     </div>
 
-    <div class="form-row">
+    <div class="form-row" *ngIf="!data.preselectedClassSection">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Section</mat-label>
         <mat-select formControlName="sectionId">
-          <mat-option *ngFor="let section of data.sections" [value]="section.id">
+          <mat-option *ngFor="let section of availableSections" [value]="section.id">
             {{ section.sectionName }}
           </mat-option>
         </mat-select>

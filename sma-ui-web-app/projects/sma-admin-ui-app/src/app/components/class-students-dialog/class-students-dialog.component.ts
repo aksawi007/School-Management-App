@@ -22,6 +22,7 @@ export class ClassStudentsDialogComponent implements OnInit {
       className: string;
       sectionName?: string;
       schoolId?: number;
+      openedFromClass?: boolean;
     },
     private dialogRef: MatDialogRef<ClassStudentsDialogComponent>,
     private studentClassSectionService: StudentClassSectionService,
@@ -63,8 +64,11 @@ export class ClassStudentsDialogComponent implements OnInit {
         academicYearId: this.data.academicYearId,
         classId: this.data.classId,
         sectionId: this.data.sectionId,
+        className: this.data.className,
+        sectionName: this.data.sectionName,
         classes: [],
-        sections: []
+        sections: [],
+        preselectedClassSection: !!this.data.sectionId
       }
     });
 
@@ -83,10 +87,13 @@ export class ClassStudentsDialogComponent implements OnInit {
         academicYearId: this.data.academicYearId,
         classId: this.data.classId,
         sectionId: this.data.sectionId,
+        className: this.data.className,
+        sectionName: this.data.sectionName,
         classes: [],
         sections: [],
         student: student,
-        isEdit: true
+        isEdit: true,
+        preselectedClassSection: !!this.data.sectionId
       }
     });
 

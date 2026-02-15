@@ -25,16 +25,15 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Section (Optional)</mat-label>
+          <mat-label>Section</mat-label>
           <mat-select [(ngModel)]="selectedSectionId" (selectionChange)="onSectionChange()" [disabled]="!selectedClassId">
-            <mat-option [value]="undefined">All Sections</mat-option>
             <mat-option *ngFor="let section of sections" [value]="section.id">
               {{ section.sectionName }}
             </mat-option>
           </mat-select>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" (click)="assignStudent()" [disabled]="!selectedClassId">
+        <button mat-raised-button color="primary" (click)="assignStudent()" [disabled]="!selectedClassId || !selectedSectionId">
           <mat-icon>person_add</mat-icon>
           Assign Student
         </button>

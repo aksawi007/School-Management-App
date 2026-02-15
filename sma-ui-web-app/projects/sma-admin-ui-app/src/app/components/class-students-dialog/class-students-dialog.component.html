@@ -59,7 +59,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions >
-   <div class="dialog-actions" style="margin-top:12px">
+   <div class="dialog-actions" style="margin-top:12px" *ngIf="!data.openedFromClass">
     <button mat-raised-button color="primary" (click)="assignStudent()">
       <mat-icon>person_add</mat-icon>
       Assign Student

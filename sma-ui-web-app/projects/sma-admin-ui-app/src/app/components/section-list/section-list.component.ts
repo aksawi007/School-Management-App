@@ -202,7 +202,8 @@ export class SectionListComponent implements OnInit {
         classId: this.selectedClassId,
         sectionId: section.id,
         className: section.className,
-        sectionName: section.sectionName
+        sectionName: section.sectionName,
+        schoolId: this.schoolId
       }
     });
   }
