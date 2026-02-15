@@ -39,7 +39,7 @@ export class DailyScheduleViewComponent implements OnInit {
     private snackBar: MatSnackBar,
     private datePipe: DatePipe
   ) {
-    this.schoolId = this.adminCache.getSchoolId();
+    this.schoolId = 0; // Initialize to 0, will be set in ngOnInit
     this.filterForm = this.fb.group({
       classId: ['', Validators.required],
       sectionId: ['', Validators.required],
@@ -49,7 +49,13 @@ export class DailyScheduleViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadMasterData();
+    // Wait for school context to load
+    this.adminCache.getSchoolDetails().subscribe(details => {
+      if (details) {
+        this.schoolId = details.schoolId;
+        this.loadMasterData();
+      }
+    });
   }
 
   loadMasterData(): void {
@@ -239,16 +245,71 @@ export class DailyScheduleViewComponent implements OnInit {
     });
   }
 
-  updateSessionStatus(sessionId: number, status: string): void {
-    this.sessionService.updateSessionStatus(this.schoolId, sessionId, status).subscribe({
-      next: () => {
-        this.snackBar.open('Session status updated', 'Close', { duration: 3000 });
-        this.loadSchedule();
-      },
-      error: (error) => {
-        this.snackBar.open('Failed to update status', 'Close', { duration: 3000 });
-      }
-    });
+  updateSessionStatus(session: any, status: string): void {
+    const formattedDate = this.formatDateToBackend(this.filterForm.value.scheduleDate);
+    
+    if (session.hasSession && session.id) {
+      // Session exists, update status directly
+      this.sessionService.updateSessionStatus(this.schoolId, session.id, status).subscribe({
+        next: () => {
+          this.snackBar.open('Session status updated', 'Close', { duration: 3000 });
+          this.loadSchedule();
+        },
+        error: (error: any) => {
+          this.snackBar.open('Failed to update status', 'Close', { duration: 3000 });
+        }
+      });
+    } else {
+      // No session exists, create it first then update status
+      this.sessionService.createOrUpdateSessionStatus(
+        this.schoolId,
+        null,
+        session.routineMasterId,
+        formattedDate,
+        status
+      ).subscribe({
+        next: () => {
+          this.snackBar.open('Session created and status updated', 'Close', { duration: 3000 });
+          this.loadSchedule();
+        },
+        error: (error: any) => {
+          this.snackBar.open('Failed to create session and update status', 'Close', { duration: 3000 });
+        }
+      });
+    }
+  }
+
+  markAttendance(session: any): void {
+    const formattedDate = this.formatDateToBackend(this.filterForm.value.scheduleDate);
+    
+    if (session.hasSession && session.id) {
+      // Session exists, navigate directly
+      this.navigateToAttendance(session.id);
+    } else {
+      // No session, create it first
+      this.sessionService.createSessionFromRoutine(
+        this.schoolId,
+        session.routineMasterId,
+        formattedDate
+      ).subscribe({
+        next: (createdSession: any) => {
+          this.snackBar.open('Session created', 'Close', { duration: 2000 });
+          this.navigateToAttendance(createdSession.id!);
+        },
+        error: (error: any) => {
+          this.snackBar.open('Failed to create session', 'Close', { duration: 3000 });
+        }
+      });
+    }
+  }
+
+  private navigateToAttendance(sessionId: number): void {
+    const academicYearId = this.filterForm.value.academicYearId;
+    const classId = this.filterForm.value.classId;
+    const sectionId = this.filterForm.value.sectionId;
+    
+    // Use router to navigate (inject Router in constructor if not already)
+    window.location.href = `/attendance-marking/${sessionId}?academicYearId=${academicYearId}&classId=${classId}&sectionId=${sectionId}`;
   }
 
   getStatusClass(status: string): string {

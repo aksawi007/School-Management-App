@@ -93,6 +93,54 @@ public class DailyClassSessionController {
         }
     }
 
+    /**
+     * Create session from routine master and update status
+     * Used for status changes when session doesn't exist yet
+     */
+    @PostMapping("/create-and-update-status")
+    public ResponseEntity<?> createAndUpdateStatus(@PathVariable Long schoolId,
+                                                    @RequestBody Map<String, Object> request) {
+        try {
+            Long sessionId = request.get("sessionId") != null ? 
+                    Long.valueOf(request.get("sessionId").toString()) : null;
+            Long routineMasterId = Long.valueOf(request.get("routineMasterId").toString());
+            String dateStr = request.get("sessionDate").toString();
+            LocalDate sessionDate = LocalDate.parse(dateStr);
+            String status = request.get("status").toString();
+            
+            DailyClassSession session = dailyClassSessionService.updateOrCreateSessionStatus(
+                    sessionId, routineMasterId, sessionDate, status);
+            return ResponseEntity.ok(session);
+        } catch (SmaException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("message", e.getMessage());
+            error.put("error", "Business Rule Violation");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+    }
+
+    /**
+     * Create session from routine master (for attendance marking)
+     */
+    @PostMapping("/create-from-routine")
+    public ResponseEntity<?> createSessionFromRoutine(@PathVariable Long schoolId,
+                                                       @RequestBody Map<String, Object> request) {
+        try {
+            Long routineMasterId = Long.valueOf(request.get("routineMasterId").toString());
+            String dateStr = request.get("sessionDate").toString();
+            LocalDate sessionDate = LocalDate.parse(dateStr);
+            
+            DailyClassSession session = dailyClassSessionService.createSessionFromRoutineMaster(
+                    routineMasterId, sessionDate);
+            return ResponseEntity.ok(session);
+        } catch (SmaException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("message", e.getMessage());
+            error.put("error", "Business Rule Violation");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+    }
+
     @GetMapping("/{sessionId}")
     public ResponseEntity<?> getSessionById(@PathVariable Long schoolId, 
                                            @PathVariable Long sessionId) {

@@ -44,6 +44,29 @@ export class DailyClassSessionService {
     return this.http.patch<DailyClassSession>(`/api/schools/${schoolId}/routine/sessions/${sessionId}/status`, { status });
   }
 
+  /**
+   * Create or update session status
+   * If sessionId is null, creates session from routine master first
+   */
+  createOrUpdateSessionStatus(schoolId: number, sessionId: number | null, routineMasterId: number, sessionDate: string, status: string): Observable<DailyClassSession> {
+    return this.http.post<DailyClassSession>(`/api/schools/${schoolId}/routine/sessions/create-and-update-status`, {
+      sessionId,
+      routineMasterId,
+      sessionDate,
+      status
+    });
+  }
+
+  /**
+   * Create session from routine master for attendance marking
+   */
+  createSessionFromRoutine(schoolId: number, routineMasterId: number, sessionDate: string): Observable<DailyClassSession> {
+    return this.http.post<DailyClassSession>(`/api/schools/${schoolId}/routine/sessions/create-from-routine`, {
+      routineMasterId,
+      sessionDate
+    });
+  }
+
   getSessionById(schoolId: number, sessionId: number): Observable<DailyClassSession> {
     return this.http.get<DailyClassSession>(`/api/schools/${schoolId}/routine/sessions/${sessionId}`);
   }

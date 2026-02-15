@@ -240,6 +240,63 @@ public class DailyClassSessionBusinessService {
         return dailyClassSessionRepository.save(session);
     }
 
+    /**
+     * Create session from routine master for a specific date
+     * Used when marking attendance or changing status for the first time
+     */
+    @Transactional
+    public DailyClassSession createSessionFromRoutineMaster(Long routineMasterId, LocalDate sessionDate) throws SmaException {
+        ClassRoutineMaster routineMaster = classRoutineMasterRepository.findById(routineMasterId)
+                .orElseThrow(() -> new SmaException("Routine master not found"));
+
+        // Check if session already exists
+        Optional<DailyClassSession> existingOpt = dailyClassSessionRepository.findByClassDateAndSlot(
+                routineMaster.getClassMaster().getId(),
+                routineMaster.getSection().getId(),
+                sessionDate,
+                routineMaster.getTimeSlot().getId());
+
+        if (existingOpt.isPresent()) {
+            return existingOpt.get(); // Return existing session
+        }
+
+        // Create new session
+        DailyClassSession session = new DailyClassSession();
+        session.setSchool(routineMaster.getSchool());
+        session.setAcademicYear(routineMaster.getAcademicYear());
+        session.setClassMaster(routineMaster.getClassMaster());
+        session.setSection(routineMaster.getSection());
+        session.setSessionDate(sessionDate);
+        session.setTimeSlot(routineMaster.getTimeSlot());
+        session.setRoutineMaster(routineMaster);
+        session.setSessionStatus("SCHEDULED"); // Default status
+        session.setIsAttendanceMarked(false);
+
+        return dailyClassSessionRepository.save(session);
+    }
+
+    /**
+     * Update session status or create session if it doesn't exist
+     * This is for status changes that should auto-create sessions
+     */
+    @Transactional
+    public DailyClassSession updateOrCreateSessionStatus(Long sessionId, Long routineMasterId, 
+                                                         LocalDate sessionDate, String status) throws SmaException {
+        DailyClassSession session;
+        
+        if (sessionId == null) {
+            // No session exists, create it first
+            session = createSessionFromRoutineMaster(routineMasterId, sessionDate);
+        } else {
+            // Session exists, update it
+            session = dailyClassSessionRepository.findById(sessionId)
+                    .orElseThrow(() -> new SmaException("Session not found"));
+        }
+        
+        session.setSessionStatus(status);
+        return dailyClassSessionRepository.save(session);
+    }
+
     @Transactional
     public DailyClassSession markAttendanceCompleted(Long sessionId) throws SmaException {
         DailyClassSession session = dailyClassSessionRepository.findById(sessionId)
