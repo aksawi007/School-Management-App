@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -9,7 +9,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
+import { SmaSharedModule, EnvironmentService } from 'sma-shared-lib';
+import { environment } from '../environments/environment';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -43,9 +46,19 @@ import { SafePipe } from './safe.pipe';
     MatCardModule,
     MatMenuModule,
     MatProgressSpinnerModule,
-    MatDividerModule
+    MatDividerModule,
+    MatSnackBarModule,
+    SmaSharedModule
   ],
-  providers: [AppContextService],
+  providers: [
+    AppContextService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (envService: EnvironmentService) => () => envService.setConfig(environment),
+      deps: [EnvironmentService],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

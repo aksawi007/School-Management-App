@@ -23,3 +23,7 @@ export { SchoolContextService } from './school-context.service';
 // Utility Services
 export * from './export/export.service';
 export * from './print/print.service';
+
+// Voice Command Services
+export * from './voice';
+export * from './environment.service';

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AppContextService } from '../../services/app-context.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin-wrapper',
@@ -31,13 +32,13 @@ export class AdminWrapperComponent implements OnInit, AfterViewInit {
     private sanitizer: DomSanitizer,
     private appContext: AppContextService
   ) {
-    this.adminUrl = this.sanitizer.bypassSecurityTrustResourceUrl('http://localhost:4202');
+    this.adminUrl = this.sanitizer.bypassSecurityTrustResourceUrl(environment.microFrontends.admin.url);
   }
 
   ngOnInit(): void {
     // Listen for context requests from child iframe
     window.addEventListener('message', (event) => {
-      if (event.origin !== 'http://localhost:4202') {
+      if (event.origin !== environment.microFrontends.admin.url) {
         return;
       }
       
@@ -69,7 +70,7 @@ export class AdminWrapperComponent implements OnInit, AfterViewInit {
       };
       
       console.log('Sending context to admin iframe:', message);
-      this.iframe.nativeElement.contentWindow.postMessage(message, 'http://localhost:4202');
+      this.iframe.nativeElement.contentWindow.postMessage(message, environment.microFrontends.admin.url);
     }
   }
 }

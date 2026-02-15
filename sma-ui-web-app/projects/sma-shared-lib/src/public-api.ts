@@ -18,3 +18,4 @@ export * from './lib/services';
 
 // Export components
 export * from './lib/components/export-print-toolbar/export-print-toolbar.component';
+export * from './lib/components/voice-button/voice-button.component';
