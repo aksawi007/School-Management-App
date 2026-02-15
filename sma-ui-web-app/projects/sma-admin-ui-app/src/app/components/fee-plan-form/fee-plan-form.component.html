@@ -1,0 +1,137 @@
+<h2 mat-dialog-title>{{ viewMode ? 'View Fee Plan Details' : (isEditMode ? 'Edit Fee Plan' : 'Create Fee Plan') }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="planForm">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Academic Year</mat-label>
+        <mat-select formControlName="academicYearId" [disabled]="isEditMode || viewMode">
+          <mat-option *ngFor="let year of academicYears" [value]="year.yearId">
+            {{ year.yearName }} <span *ngIf="year.currentYear">(Current)</span>
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="planForm.get('academicYearId')?.hasError('required')">
+          Academic year is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Fee Category</mat-label>
+        <mat-select formControlName="categoryId" [disabled]="isEditMode || viewMode">
+          <mat-option *ngFor="let category of feeCategories" [value]="category.id">
+            {{ category.categoryName }} ({{ category.categoryCode }})
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="planForm.get('categoryId')?.hasError('required')">
+          Fee category is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row two-columns">
+      <mat-form-field appearance="outline">
+        <mat-label>Total Amount (₹)</mat-label>
+        <input matInput type="number" formControlName="totalAmount" min="0" step="0.01" [readonly]="viewMode">
+        <mat-error *ngIf="planForm.get('totalAmount')?.hasError('required')">
+          Total amount is required
+        </mat-error>
+        <mat-error *ngIf="planForm.get('totalAmount')?.hasError('min')">
+          Amount must be positive
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Frequency</mat-label>
+        <mat-select formControlName="frequency" [disabled]="viewMode">
+          <mat-option *ngFor="let freq of frequencies" [value]="freq">
+            {{ freq }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="planForm.get('frequency')?.hasError('required')">
+          Frequency is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Number of Installments</mat-label>
+        <input matInput type="number" formControlName="installmentsCount" min="1" max="12" [readonly]="viewMode">
+        <mat-hint>Enter number of installments (1-12)</mat-hint>
+        <mat-error *ngIf="planForm.get('installmentsCount')?.hasError('required')">
+          Number of installments is required
+        </mat-error>
+        <mat-error *ngIf="planForm.get('installmentsCount')?.hasError('min') || planForm.get('installmentsCount')?.hasError('max')">
+          Must be between 1 and 12
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="installments-section" *ngIf="installments.length > 0">
+      <h3>Installment Details</h3>
+      
+      <div formArrayName="installments">
+        <mat-expansion-panel *ngFor="let installment of installments.controls; let i = index" [formGroupName]="i">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Installment {{ installment.get('installmentNo')?.value }} - {{ installment.get('installmentName')?.value }}
+            </mat-panel-title>
+            <mat-panel-description>
+              Amount: ₹{{ installment.get('amountDue')?.value | number:'1.2-2' }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="installment-form">
+            <input type="hidden" formControlName="installmentNo">
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Installment Name</mat-label>
+              <input matInput formControlName="installmentName" [readonly]="viewMode">
+              <mat-error>Name is required</mat-error>
+            </mat-form-field>
+
+            <div class="form-row two-columns">
+              <mat-form-field appearance="outline">
+                <mat-label>Period Start Date</mat-label>
+                <input matInput type="date" formControlName="periodStartDate" [readonly]="viewMode">
+                <mat-error>Start date is required</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Period End Date</mat-label>
+                <input matInput type="date" formControlName="periodEndDate" [readonly]="viewMode">
+                <mat-error>End date is required</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row two-columns">
+              <mat-form-field appearance="outline">
+                <mat-label>Amount Due (₹)</mat-label>
+                <input matInput type="number" formControlName="amountDue" min="0" step="0.01" [readonly]="viewMode">
+                <mat-error>Amount is required</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Due Date</mat-label>
+                <input matInput type="date" formControlName="dueDate" [readonly]="viewMode">
+                <mat-error>Due date is required</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">{{ viewMode ? 'Close' : 'Cancel' }}</button>
+  <button *ngIf="!viewMode" mat-raised-button color="primary" (click)="onSubmit()" [disabled]="loading || planForm.invalid">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }}</span>
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,158 @@
+package org.sma.admin.core.app.service;
+
+import org.sma.admin.core.app.exception.SmaAdminException;
+import org.sma.admin.core.app.model.request.StudentFeePaymentRequest;
+import org.sma.admin.core.app.model.response.StudentFeePaymentResponse;
+import org.sma.jpa.model.fee.FeeInstallment;
+import org.sma.jpa.model.fee.StudentFeePayment;
+import org.sma.jpa.model.school.SchoolProfile;
+import org.sma.jpa.model.studentmgmt.StudentProfile;
+import org.sma.jpa.repository.fee.FeeInstallmentRepository;
+import org.sma.jpa.repository.fee.StudentFeePaymentRepository;
+import org.sma.jpa.repository.school.SchoolProfileRepository;
+import org.sma.jpa.repository.studentmgmt.StudentProfileRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Business Service for Student Fee Payment Management
+ */
+@Service
+@Transactional
+public class StudentFeePaymentBusinessService {
+
+    private static final Logger logger = LoggerFactory.getLogger(StudentFeePaymentBusinessService.class);
+
+    @Autowired
+    private StudentFeePaymentRepository studentFeePaymentRepository;
+
+    @Autowired
+    private FeeInstallmentRepository feeInstallmentRepository;
+
+    @Autowired
+    private SchoolProfileRepository schoolProfileRepository;
+
+    @Autowired
+    private StudentProfileRepository studentProfileRepository;
+
+    /**
+     * Record student fee payment
+     */
+    public StudentFeePaymentResponse recordPayment(Long schoolId, StudentFeePaymentRequest request) {
+        logger.info("Recording payment for student: {}, installment: {}", 
+            request.getStudentId(), request.getFeeInstallmentId());
+
+        SchoolProfile school = schoolProfileRepository.findById(schoolId)
+            .orElseThrow(() -> new SmaAdminException("School not found with ID: " + schoolId));
+
+        StudentProfile student = studentProfileRepository.findById(request.getStudentId())
+            .orElseThrow(() -> new SmaAdminException("Student not found with ID: " + request.getStudentId()));
+
+        FeeInstallment installment = feeInstallmentRepository.findById(request.getFeeInstallmentId())
+            .orElseThrow(() -> new SmaAdminException("Fee installment not found with ID: " + request.getFeeInstallmentId()));
+
+        StudentFeePayment payment = new StudentFeePayment();
+        payment.setSchool(school);
+        payment.setStudent(student);
+        payment.setFeeInstallment(installment);
+        payment.setAmountPaid(request.getAmountPaid());
+        payment.setDiscountAmount(request.getDiscountAmount() != null ? request.getDiscountAmount() : BigDecimal.ZERO);
+        payment.setPaidOn(request.getPaidOn());
+        payment.setPaymentRef(request.getPaymentRef());
+        payment.setRemarks(request.getRemarks());
+
+        StudentFeePayment saved = studentFeePaymentRepository.save(payment);
+        logger.info("Payment recorded successfully with ID: {}", saved.getId());
+
+        return mapToResponse(saved);
+    }
+
+    /**
+     * Get payment by ID
+     */
+    @Transactional(readOnly = true)
+    public StudentFeePaymentResponse getPaymentById(Long paymentId) {
+        StudentFeePayment payment = studentFeePaymentRepository.findById(paymentId)
+            .orElseThrow(() -> new SmaAdminException("Payment not found with ID: " + paymentId));
+
+        return mapToResponse(payment);
+    }
+
+    /**
+     * List payments with filters
+     * @param schoolId School ID
+     * @param studentId Student ID (optional)
+     * @param installmentId Installment ID (optional)
+     */
+    @Transactional(readOnly = true)
+    public List<StudentFeePaymentResponse> listPayments(Long schoolId, Long studentId, Long installmentId) {
+        logger.info("Fetching payments for school: {}, student: {}, installment: {}", 
+            schoolId, studentId, installmentId);
+
+        SchoolProfile school = schoolProfileRepository.findById(schoolId)
+            .orElseThrow(() -> new SmaAdminException("School not found with ID: " + schoolId));
+
+        List<StudentFeePayment> payments;
+
+        if (studentId != null && installmentId != null) {
+            // Both filters
+            payments = studentFeePaymentRepository.findByStudentIdAndInstallmentId(studentId, installmentId);
+        } else if (studentId != null) {
+            // Student filter only
+            StudentProfile student = studentProfileRepository.findById(studentId)
+                .orElseThrow(() -> new SmaAdminException("Student not found with ID: " + studentId));
+            payments = studentFeePaymentRepository.findBySchoolAndStudent(school, student);
+        } else if (installmentId != null) {
+            // Installment filter only
+            payments = studentFeePaymentRepository.findByFeeInstallmentId(installmentId);
+        } else {
+            // No specific filter, get all for school
+            payments = studentFeePaymentRepository.findAll().stream()
+                .filter(p -> p.getSchool().getId().equals(schoolId))
+                .collect(Collectors.toList());
+        }
+
+        return payments.stream()
+            .map(this::mapToResponse)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Delete payment
+     */
+    public void deletePayment(Long paymentId) {
+        logger.info("Deleting payment: {}", paymentId);
+
+        StudentFeePayment payment = studentFeePaymentRepository.findById(paymentId)
+            .orElseThrow(() -> new SmaAdminException("Payment not found with ID: " + paymentId));
+
+        studentFeePaymentRepository.delete(payment);
+        logger.info("Payment deleted successfully: {}", paymentId);
+    }
+
+    /**
+     * Map entity to response DTO
+     */
+    private StudentFeePaymentResponse mapToResponse(StudentFeePayment payment) {
+        StudentFeePaymentResponse response = new StudentFeePaymentResponse();
+        response.setId(payment.getId());
+        response.setSchoolId(payment.getSchool().getId());
+        response.setStudentId(payment.getStudent().getId());
+        response.setStudentName(payment.getStudent().getFirstName() + " " + payment.getStudent().getLastName());
+        response.setFeeInstallmentId(payment.getFeeInstallment().getId());
+        response.setInstallmentName(payment.getFeeInstallment().getInstallmentName());
+        response.setAmountPaid(payment.getAmountPaid());
+        response.setDiscountAmount(payment.getDiscountAmount());
+        response.setPaidOn(payment.getPaidOn());
+        response.setPaymentRef(payment.getPaymentRef());
+        response.setRemarks(payment.getRemarks());
+        return response;
+    }
+}

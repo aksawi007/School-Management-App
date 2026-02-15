@@ -44,6 +44,51 @@ export interface StudentFeeAllocationRequest {
   remarks?: string;
 }
 
+// Fee Plan Models
+export interface InstallmentDetail {
+  installmentNo: number;
+  installmentName: string;
+  periodStartDate: string;
+  periodEndDate: string;
+  amountDue: number;
+  dueDate: string;
+}
+
+export interface FeePlanRequest {
+  academicYearId: number;
+  categoryId: number;
+  totalAmount: number;
+  frequency: string;
+  installmentsCount: number;
+  status?: string;
+  installments: InstallmentDetail[];
+}
+
+export interface InstallmentResponse {
+  installmentId: number;
+  installmentNo: number;
+  installmentName: string;
+  periodStartDate: string;
+  periodEndDate: string;
+  amountDue: number;
+  dueDate: string;
+  status: string;
+}
+
+export interface FeePlanResponse {
+  id: number;
+  academicYearId: number;
+  academicYearName: string;
+  categoryId: number;
+  categoryName: string;
+  totalAmount: number;
+  frequency: string;
+  installmentsCount: number;
+  status: string;
+  createdDate: string;
+  installments?: InstallmentResponse[];
+}
+
 export interface StudentFeeAllocationResponse {
   id: string;
   allocationCode: string;

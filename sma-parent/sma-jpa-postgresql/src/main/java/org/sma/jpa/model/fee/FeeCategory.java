@@ -44,7 +44,7 @@ public class FeeCategory extends BaseEntity {
     @Column(name = "payment_frequency", length = 20)
     private String paymentFrequency; // ONCE, MONTHLY, QUARTERLY, HALF_YEARLY
 
-    @Column(name = "status", length = 20)
+    @Column(name = "status", length = 20, nullable = false)
     private String status = "ACTIVE"; // ACTIVE, INACTIVE
 
     // Getters and Setters

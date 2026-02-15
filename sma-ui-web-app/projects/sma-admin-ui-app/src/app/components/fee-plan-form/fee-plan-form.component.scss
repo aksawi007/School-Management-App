@@ -1,0 +1,105 @@
+mat-dialog-content {
+  padding: 20px;
+  min-width: 800px;
+  max-height: 70vh;
+  overflow-y: auto;
+
+  form {
+    .form-row {
+      margin-bottom: 16px;
+
+      &.two-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .full-width {
+        width: 100%;
+      }
+    }
+
+    mat-divider {
+      margin: 24px 0;
+    }
+
+    .installments-section {
+      margin-top: 24px;
+
+      h3 {
+        margin-bottom: 16px;
+        color: rgba(0, 0, 0, 0.87);
+        font-size: 18px;
+        font-weight: 500;
+      }
+
+      mat-expansion-panel {
+        margin-bottom: 12px;
+
+        mat-panel-title {
+          font-weight: 500;
+        }
+
+        mat-panel-description {
+          color: #1976d2;
+          font-weight: 500;
+        }
+
+        .installment-form {
+          padding: 16px 0;
+
+          .form-row {
+            margin-bottom: 16px;
+
+            &.two-columns {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 16px;
+            }
+
+            .full-width {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0;
+
+  button {
+    margin-left: 8px;
+
+    mat-spinner {
+      display: inline-block;
+      margin-right: 8px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  mat-dialog-content {
+    min-width: auto;
+    padding: 16px;
+
+    form {
+      .form-row.two-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .installments-section {
+        mat-expansion-panel {
+          .installment-form {
+            .form-row.two-columns {
+              grid-template-columns: 1fr;
+            }
+          }
+        }
+      }
+    }
+  }
+}

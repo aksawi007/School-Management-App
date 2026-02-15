@@ -30,6 +30,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -60,6 +61,8 @@ import { FeeCategoryListComponent } from './components/fee-category-list/fee-cat
 import { FeeCategoryFormComponent } from './components/fee-category-form/fee-category-form.component';
 import { FeeAllocationListComponent } from './components/fee-allocation-list/fee-allocation-list.component';
 import { FeeAllocationFormComponent } from './components/fee-allocation-form/fee-allocation-form.component';
+import { FeePlanListComponent } from './components/fee-plan-list/fee-plan-list.component';
+import { FeePlanFormComponent } from './components/fee-plan-form/fee-plan-form.component';
 
 import { SmaSharedModule } from 'sma-shared-lib';
 
@@ -89,7 +92,9 @@ import { SmaSharedModule } from 'sma-shared-lib';
     FeeCategoryListComponent,
     FeeCategoryFormComponent,
     FeeAllocationListComponent,
-    FeeAllocationFormComponent
+    FeeAllocationFormComponent,
+    FeePlanListComponent,
+    FeePlanFormComponent
   ],
   imports: [
     BrowserModule,
@@ -123,7 +128,8 @@ import { SmaSharedModule } from 'sma-shared-lib';
     MatChipsModule,
     MatCheckboxModule,
     MatTooltipModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatExpansionModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

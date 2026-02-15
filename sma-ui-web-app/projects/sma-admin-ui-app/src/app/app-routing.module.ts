@@ -20,6 +20,7 @@ import { FeeCategoryListComponent } from './components/fee-category-list/fee-cat
 import { FeeCategoryFormComponent } from './components/fee-category-form/fee-category-form.component';
 import { FeeAllocationListComponent } from './components/fee-allocation-list/fee-allocation-list.component';
 import { FeeAllocationFormComponent } from './components/fee-allocation-form/fee-allocation-form.component';
+import { FeePlanListComponent } from './components/fee-plan-list/fee-plan-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -66,6 +67,11 @@ const routes: Routes = [
   { path: 'admin/fee-allocation', component: FeeAllocationListComponent },
   { path: 'admin/fee-allocation/new', component: FeeAllocationFormComponent },
   { path: 'admin/fee-allocation/:id/edit', component: FeeAllocationFormComponent },
+  
+  // Fee Plan Management Routes
+  { path: 'fee-plans', component: FeePlanListComponent },
+  { path: 'admin/fee-plan', component: FeePlanListComponent },
+  { path: 'admin/fee-plans', component: FeePlanListComponent },
   
   // Routine Management
   { path: 'time-slot-management', component: TimeSlotManagementComponent },
