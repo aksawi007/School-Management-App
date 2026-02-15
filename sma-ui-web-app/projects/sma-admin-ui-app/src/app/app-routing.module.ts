@@ -18,8 +18,6 @@ import { DailyScheduleViewComponent } from './components/daily-schedule-view/dai
 import { AttendanceMarkingComponent } from './components/attendance-marking/attendance-marking.component';
 import { FeeCategoryListComponent } from './components/fee-category-list/fee-category-list.component';
 import { FeeCategoryFormComponent } from './components/fee-category-form/fee-category-form.component';
-import { FeeAllocationListComponent } from './components/fee-allocation-list/fee-allocation-list.component';
-import { FeeAllocationFormComponent } from './components/fee-allocation-form/fee-allocation-form.component';
 import { FeePlanListComponent } from './components/fee-plan-list/fee-plan-list.component';
 
 const routes: Routes = [
@@ -59,14 +57,6 @@ const routes: Routes = [
   { path: 'admin/fee-categories', component: FeeCategoryListComponent },
   { path: 'admin/fee-categories/new', component: FeeCategoryFormComponent },
   { path: 'admin/fee-categories/:id/edit', component: FeeCategoryFormComponent },
-  
-  { path: 'fee-allocations', component: FeeAllocationListComponent },
-  { path: 'fee-allocations/new', component: FeeAllocationFormComponent },
-  { path: 'fee-allocations/:id/edit', component: FeeAllocationFormComponent },
-  
-  { path: 'admin/fee-allocation', component: FeeAllocationListComponent },
-  { path: 'admin/fee-allocation/new', component: FeeAllocationFormComponent },
-  { path: 'admin/fee-allocation/:id/edit', component: FeeAllocationFormComponent },
   
   // Fee Plan Management Routes
   { path: 'fee-plans', component: FeePlanListComponent },

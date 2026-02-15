@@ -59,8 +59,6 @@ import { AttendanceMarkingComponent } from './components/attendance-marking/atte
 import { TimeSlotDialogComponent } from './components/time-slot-dialog/time-slot-dialog.component';
 import { FeeCategoryListComponent } from './components/fee-category-list/fee-category-list.component';
 import { FeeCategoryFormComponent } from './components/fee-category-form/fee-category-form.component';
-import { FeeAllocationListComponent } from './components/fee-allocation-list/fee-allocation-list.component';
-import { FeeAllocationFormComponent } from './components/fee-allocation-form/fee-allocation-form.component';
 import { FeePlanListComponent } from './components/fee-plan-list/fee-plan-list.component';
 import { FeePlanFormComponent } from './components/fee-plan-form/fee-plan-form.component';
 
@@ -91,8 +89,6 @@ import { SmaSharedModule } from 'sma-shared-lib';
     AttendanceMarkingComponent,
     FeeCategoryListComponent,
     FeeCategoryFormComponent,
-    FeeAllocationListComponent,
-    FeeAllocationFormComponent,
     FeePlanListComponent,
     FeePlanFormComponent
   ],

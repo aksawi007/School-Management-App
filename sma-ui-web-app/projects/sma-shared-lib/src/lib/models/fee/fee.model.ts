@@ -27,23 +27,6 @@ export interface FeeCategoryResponse {
   paymentFrequency?: string;
 }
 
-// Student Fee Allocation Models
-export interface StudentFeeAllocationRequest {
-  studentId: number;
-  feeCategoryId: string;
-  feeStructureId?: string;
-  feeAmount: number;
-  durationType: string;
-  applicableMonth?: string;
-  quarter?: string;
-  dueDate: string;
-  paymentDeadline?: string;
-  isMandatory: boolean;
-  discountAmount?: number;
-  discountReason?: string;
-  remarks?: string;
-}
-
 // Fee Plan Models
 export interface InstallmentDetail {
   installmentNo: number;
