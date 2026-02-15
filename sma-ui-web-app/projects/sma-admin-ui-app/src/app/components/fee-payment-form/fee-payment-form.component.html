@@ -1,0 +1,192 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<mat-dialog-content>
+  <!-- View Mode: Display Payment Data -->
+  <div *ngIf="viewMode && paymentData" class="view-mode">
+    <div class="detail-row">
+      <span class="label">Payment ID:</span>
+      <span class="value">{{ paymentData.id }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Student:</span>
+      <span class="value">{{ paymentData.studentName }} (ID: {{ paymentData.studentId }})</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Installment:</span>
+      <span class="value">{{ paymentData.installmentName }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Amount Paid:</span>
+      <span class="value">{{ paymentData.amountPaid | currency:'INR':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Discount Amount:</span>
+      <span class="value">{{ paymentData.discountAmount | currency:'INR':'symbol':'1.2-2' }}</span>
+    </div>
+    <div class="detail-row">
+      <span class="label">Payment Date:</span>
+      <span class="value">{{ paymentData.paidOn | date:'medium' }}</span>
+    </div>
+    <div class="detail-row" *ngIf="paymentData.paymentRef">
+      <span class="label">Payment Reference:</span>
+      <span class="value">{{ paymentData.paymentRef }}</span>
+    </div>
+    <div class="detail-row" *ngIf="paymentData.remarks">
+      <span class="label">Remarks:</span>
+      <span class="value">{{ paymentData.remarks }}</span>
+    </div>
+  </div>
+
+  <!-- Form Mode: Payment Registration Form -->
+  <form *ngIf="!viewMode" [formGroup]="paymentForm" class="payment-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Academic Year</mat-label>
+        <mat-select formControlName="academicYearId" (selectionChange)="onAcademicYearChange()" required>
+          <mat-option *ngFor="let year of academicYears" [value]="year.yearId">
+            {{ year.yearName }}
+            <span *ngIf="year.currentYear" class="current-badge">(Current)</span>
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="paymentForm.get('academicYearId')?.hasError('required')">
+          Academic year is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Student</mat-label>
+        <input 
+          matInput 
+          [formControl]="studentSearchControl"
+          [matAutocomplete]="studentAuto"
+          placeholder="Type to search by admission number or name..."
+          required>
+        <mat-autocomplete 
+          #studentAuto="matAutocomplete" 
+          [displayWith]="displayStudentFn.bind(this)"
+          (optionSelected)="onStudentSelected($event.option.value)">
+          <mat-option *ngIf="loadingStudents">
+            <mat-spinner diameter="20"></mat-spinner> Searching...
+          </mat-option>
+          <mat-option 
+            *ngFor="let student of filteredStudents$ | async" 
+            [value]="student">
+            {{ student.admissionNo }} - {{ student.firstName }} {{ student.lastName }}
+          </mat-option>
+          <mat-option *ngIf="(filteredStudents$ | async)?.length === 0 && !loadingStudents && studentSearchControl.value && studentSearchControl.value.length >= 2" disabled>
+            No students found
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint>Type at least 2 characters to search</mat-hint>
+        <mat-error *ngIf="paymentForm.get('studentId')?.hasError('required')">
+          Student is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row two-columns">
+      <mat-form-field appearance="outline">
+        <mat-label>Fee Plan</mat-label>
+        <mat-select formControlName="feePlanId" (selectionChange)="onFeePlanChange()" required>
+          <mat-option *ngFor="let plan of feePlans" [value]="plan.id">
+            {{ plan.categoryName }} - {{ plan.frequency }} 
+          </mat-option>
+        </mat-select>
+        <mat-hint *ngIf="feePlans.length === 0 && paymentForm.get('academicYearId')?.value">
+          No active plans for selected year
+        </mat-hint>
+        <mat-error *ngIf="paymentForm.get('feePlanId')?.hasError('required')">
+          Fee plan is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Installment</mat-label>
+        <mat-select formControlName="feeInstallmentId" (selectionChange)="onInstallmentChange()" required>
+          <mat-option *ngFor="let installment of installments" [value]="installment.id">
+            {{ installment.installmentName }} - Due: {{ installment.dueDate | date:'shortDate' }}
+          </mat-option>
+        </mat-select>
+        <mat-hint *ngIf="installments.length === 0 && paymentForm.get('feePlanId')?.value">
+          No installments available
+        </mat-hint>
+        <mat-error *ngIf="paymentForm.get('feeInstallmentId')?.hasError('required')">
+          Installment is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row two-columns">
+      <mat-form-field appearance="outline">
+        <mat-label>Amount Paid</mat-label>
+        <input matInput type="number" formControlName="amountPaid" required min="0" step="0.01">
+        <span matPrefix>₹&nbsp;</span>
+        <mat-error *ngIf="paymentForm.get('amountPaid')?.hasError('required')">
+          Amount is required
+        </mat-error>
+        <mat-error *ngIf="paymentForm.get('amountPaid')?.hasError('min')">
+          Amount must be positive
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Discount Amount</mat-label>
+        <input matInput type="number" formControlName="discountAmount" min="0" step="0.01">
+        <span matPrefix>₹&nbsp;</span>
+        <mat-error *ngIf="paymentForm.get('discountAmount')?.hasError('min')">
+          Discount must be non-negative
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Payment Date</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="paidOn" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="paymentForm.get('paidOn')?.hasError('required')">
+          Payment date is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Payment Reference</mat-label>
+        <input matInput formControlName="paymentRef" maxlength="100" placeholder="e.g., Check #12345, Transaction ID">
+        <mat-hint align="end">{{ paymentForm.get('paymentRef')?.value?.length || 0 }}/100</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Remarks</mat-label>
+        <textarea matInput formControlName="remarks" rows="3" maxlength="300"></textarea>
+        <mat-hint align="end">{{ paymentForm.get('remarks')?.value?.length || 0 }}/300</mat-hint>
+      </mat-form-field>
+    </div>
+  </form>
+
+  <div *ngIf="isLoadingData" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading payment data...</p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">
+    {{ viewMode ? 'Close' : 'Cancel' }}
+  </button>
+  <button 
+    *ngIf="!viewMode"
+    mat-raised-button 
+    color="primary" 
+    (click)="onSubmit()"
+    [disabled]="paymentForm.invalid || isLoading">
+    <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+    <span *ngIf="!isLoading">{{ isEditMode ? 'Update' : 'Register Payment' }}</span>
+  </button>
+</mat-dialog-actions>

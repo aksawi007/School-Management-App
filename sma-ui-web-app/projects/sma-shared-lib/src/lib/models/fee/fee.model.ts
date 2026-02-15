@@ -48,7 +48,7 @@ export interface FeePlanRequest {
 }
 
 export interface InstallmentResponse {
-  installmentId: number;
+  id: number;
   installmentNo: number;
   installmentName: string;
   periodStartDate: string;
@@ -102,4 +102,29 @@ export interface StudentFeeAllocationResponse {
   remarks?: string;
   academicYear: string;
   createdDate: string;
+}
+
+// Student Fee Payment Models
+export interface StudentFeePaymentRequest {
+  studentId: number;
+  feeInstallmentId: number;
+  amountPaid: number;
+  discountAmount?: number;
+  paidOn: string; // ISO date string
+  paymentRef?: string;
+  remarks?: string;
+}
+
+export interface StudentFeePaymentResponse {
+  id: number;
+  schoolId: number;
+  studentId: number;
+  studentName: string;
+  feeInstallmentId: number;
+  installmentName: string;
+  amountPaid: number;
+  discountAmount: number;
+  paidOn: string;
+  paymentRef?: string;
+  remarks?: string;
 }

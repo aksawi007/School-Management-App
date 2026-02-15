@@ -1,0 +1,137 @@
+<div class="fee-payment-container">
+  <div class="header-section">
+    <h2>Student Fee Payment Management</h2>
+    <button mat-raised-button color="primary" (click)="openPaymentDialog()">
+      <mat-icon>add</mat-icon>
+      Register Payment
+    </button>
+  </div>
+
+  <!-- Search Filters -->
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <div class="filter-row">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Academic Year</mat-label>
+          <mat-select [(ngModel)]="selectedAcademicYear">
+            <mat-option *ngFor="let year of academicYears" [value]="year.id">
+              {{ year.yearName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Student ID</mat-label>
+          <input matInput type="number" [(ngModel)]="selectedStudentId" placeholder="Enter student ID">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Installment ID</mat-label>
+          <input matInput type="number" [(ngModel)]="selectedInstallmentId" placeholder="Enter installment ID">
+        </mat-form-field>
+
+        <div class="filter-actions">
+          <button mat-raised-button color="primary" (click)="onSearch()">
+            <mat-icon>search</mat-icon>
+            Search
+          </button>
+          <button mat-stroked-button (click)="onReset()">
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Quick Search</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Search in results...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Payment History Table -->
+  <mat-card class="table-card">
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="dataSource" matSort class="payment-table">
+
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment ID</th>
+            <td mat-cell *matCellDef="let payment">{{ payment.id }}</td>
+          </ng-container>
+
+          <!-- Student Name Column -->
+          <ng-container matColumnDef="studentName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Student Name</th>
+            <td mat-cell *matCellDef="let payment">{{ payment.studentName }}</td>
+          </ng-container>
+
+          <!-- Installment Name Column -->
+          <ng-container matColumnDef="installmentName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Installment</th>
+            <td mat-cell *matCellDef="let payment">{{ payment.installmentName }}</td>
+          </ng-container>
+
+          <!-- Amount Paid Column -->
+          <ng-container matColumnDef="amountPaid">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount Paid</th>
+            <td mat-cell *matCellDef="let payment">{{ payment.amountPaid | currency:'INR':'symbol':'1.2-2' }}</td>
+          </ng-container>
+
+          <!-- Discount Amount Column -->
+          <ng-container matColumnDef="discountAmount">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Discount</th>
+            <td mat-cell *matCellDef="let payment">{{ payment.discountAmount | currency:'INR':'symbol':'1.2-2' }}</td>
+          </ng-container>
+
+          <!-- Paid On Column -->
+          <ng-container matColumnDef="paidOn">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment Date</th>
+            <td mat-cell *matCellDef="let payment">{{ payment.paidOn | date:'short' }}</td>
+          </ng-container>
+
+          <!-- Payment Ref Column -->
+          <ng-container matColumnDef="paymentRef">
+            <th mat-header-cell *matHeaderCellDef>Payment Ref</th>
+            <td mat-cell *matCellDef="let payment">{{ payment.paymentRef || '-' }}</td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let payment">
+              <button mat-icon-button color="primary" (click)="viewPayment(payment)" matTooltip="View Details">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deletePayment(payment)" matTooltip="Delete Payment">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <!-- No Data Row -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+              <div class="no-data">
+                <mat-icon>payment</mat-icon>
+                <p>No payment records found</p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading Spinner -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>

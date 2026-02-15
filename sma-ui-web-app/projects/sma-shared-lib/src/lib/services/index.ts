@@ -31,4 +31,5 @@ export * from './environment.service';
 // Fee Management Services
 export * from './fee-category.service';
 export * from './fee-plan.service';
-export * from './student-fee-allocation.service';
+export * from './fee-payment.service';
+

@@ -1,0 +1,81 @@
+.payment-form {
+  min-width: 600px;
+  padding: 20px 0;
+
+  .form-row {
+    margin-bottom: 15px;
+
+    &.two-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .full-width {
+      width: 100%;
+    }
+  }
+
+  .current-badge {
+    color: #4caf50;
+    font-weight: 500;
+    font-size: 0.9em;
+  }
+}
+
+.view-mode {
+  padding: 20px 0;
+  min-width: 600px;
+
+  .detail-row {
+    display: flex;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .label {
+      font-weight: 600;
+      color: #666;
+      min-width: 180px;
+    }
+
+    .value {
+      flex: 1;
+      color: #333;
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+
+  mat-spinner {
+    margin-bottom: 15px;
+  }
+
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 0;
+  margin: 0;
+
+  button {
+    margin-left: 8px;
+
+    mat-spinner {
+      display: inline-block;
+      margin-right: 8px;
+    }
+  }
+}

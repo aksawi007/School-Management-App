@@ -19,6 +19,7 @@ import { AttendanceMarkingComponent } from './components/attendance-marking/atte
 import { FeeCategoryListComponent } from './components/fee-category-list/fee-category-list.component';
 import { FeeCategoryFormComponent } from './components/fee-category-form/fee-category-form.component';
 import { FeePlanListComponent } from './components/fee-plan-list/fee-plan-list.component';
+import { FeePaymentListComponent } from './components/fee-payment-list/fee-payment-list.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -62,6 +63,11 @@ const routes: Routes = [
   { path: 'fee-plans', component: FeePlanListComponent },
   { path: 'admin/fee-plan', component: FeePlanListComponent },
   { path: 'admin/fee-plans', component: FeePlanListComponent },
+  
+  // Fee Payment Management Routes
+  { path: 'fee-payments', component: FeePaymentListComponent },
+  { path: 'admin/fee-payment', component: FeePaymentListComponent },
+  { path: 'admin/fee-payments', component: FeePaymentListComponent },
   
   // Routine Management
   { path: 'time-slot-management', component: TimeSlotManagementComponent },

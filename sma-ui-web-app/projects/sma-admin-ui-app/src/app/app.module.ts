@@ -31,6 +31,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -61,6 +63,8 @@ import { FeeCategoryListComponent } from './components/fee-category-list/fee-cat
 import { FeeCategoryFormComponent } from './components/fee-category-form/fee-category-form.component';
 import { FeePlanListComponent } from './components/fee-plan-list/fee-plan-list.component';
 import { FeePlanFormComponent } from './components/fee-plan-form/fee-plan-form.component';
+import { FeePaymentListComponent } from './components/fee-payment-list/fee-payment-list.component';
+import { FeePaymentFormComponent } from './components/fee-payment-form/fee-payment-form.component';
 
 import { SmaSharedModule } from 'sma-shared-lib';
 
@@ -90,7 +94,9 @@ import { SmaSharedModule } from 'sma-shared-lib';
     FeeCategoryListComponent,
     FeeCategoryFormComponent,
     FeePlanListComponent,
-    FeePlanFormComponent
+    FeePlanFormComponent,
+    FeePaymentListComponent,
+    FeePaymentFormComponent
   ],
   imports: [
     BrowserModule,
@@ -125,7 +131,9 @@ import { SmaSharedModule } from 'sma-shared-lib';
     MatCheckboxModule,
     MatTooltipModule,
     MatProgressBarModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]
