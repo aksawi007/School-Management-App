@@ -128,3 +128,19 @@ export interface StudentFeePaymentResponse {
   paymentRef?: string;
   remarks?: string;
 }
+
+// Pending Payment Models
+export interface PendingPaymentResponse {
+  studentId: number;
+  studentName: string;
+  admissionNo: string;
+  rollNumber: string;
+  className: string;
+  sectionName: string;
+  feeInstallmentId: number;
+  installmentName: string;
+  feeCategoryName: string;
+  amountDue: number;
+  dueDate: string;
+  daysPastDue: number;
+}

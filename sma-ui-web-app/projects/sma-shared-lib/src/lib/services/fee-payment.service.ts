@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { StudentFeePaymentRequest, StudentFeePaymentResponse } from '../models/fee/fee.model';
+import { StudentFeePaymentRequest, StudentFeePaymentResponse, PendingPaymentResponse } from '../models/fee/fee.model';
 
 @Injectable({
   providedIn: 'root'
@@ -48,5 +48,21 @@ export class FeePaymentService {
    */
   deletePayment(paymentId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/delete/${paymentId}`);
+  }
+
+  /**
+   * Get pending payments for class/section
+   */
+  getPendingPayments(schoolId: number, academicYearId: number, classId: number, sectionId?: number): Observable<PendingPaymentResponse[]> {
+    let params = new HttpParams()
+      .set('schoolId', schoolId.toString())
+      .set('academicYearId', academicYearId.toString())
+      .set('classId', classId.toString());
+    
+    if (sectionId !== undefined && sectionId !== null) {
+      params = params.set('sectionId', sectionId.toString());
+    }
+    
+    return this.http.get<PendingPaymentResponse[]>(`${this.apiUrl}/pending`, { params });
   }
 }

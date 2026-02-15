@@ -3,6 +3,8 @@ package org.sma.student.mngt.app.service;
 import org.sma.student.mngt.app.dto.*;
 import org.sma.jpa.model.studentmgmt.*;
 import org.sma.jpa.repository.studentmgmt.*;
+import org.sma.jpa.model.student.StudentClassSectionMapping;
+import org.sma.jpa.repository.student.StudentClassSectionMappingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +29,7 @@ public class StudentService {
     private AddressRepository addressRepository;
 
     @Autowired
-    private EnrollmentRepository enrollmentRepository;
+    private StudentClassSectionMappingRepository studentClassSectionMappingRepository;
 
     @Transactional
     public StudentProfile createStudent(CreateStudentRequest request, String createdBy) {
@@ -124,15 +126,20 @@ public class StudentService {
 
         // Load addresses
         List<Address> addresses = addressRepository.findByStudentIdAndIsDeletedFalse(studentId);
-        response.setAddresses(addresses.stream().map(this::mapToAddressDto).collect(Collectors.toList()));
+        response.setAddresses(addresses.stream().map(this:: mapToAddressDto).collect(Collectors.toList()));
 
-        // Load current enrollment
-        enrollmentRepository.findByStudentIdAndStatusAndIsDeletedFalse(studentId, "ACTIVE")
-                .ifPresent(enrollment -> response.setCurrentEnrollment(mapToEnrollmentDto(enrollment)));
+        // Load current enrollment from StudentClassSectionMapping
+        List<StudentClassSectionMapping> activeMappings = studentClassSectionMappingRepository.findStudentHistory(studentId)
+                .stream()
+                .filter(mapping -> mapping.getIsActive() != null && mapping.getIsActive())
+                .collect(Collectors.toList());
+        if (!activeMappings.isEmpty()) {
+            response.setCurrentEnrollment(mapMappingToEnrollmentDto(activeMappings.get(0)));
+        }
 
         // Load enrollment history
-        List<Enrollment> enrollments = enrollmentRepository.findByStudentIdOrderByStartDateDesc(studentId);
-        response.setEnrollmentHistory(enrollments.stream().map(this::mapToEnrollmentDto).collect(Collectors.toList()));
+        List<StudentClassSectionMapping> allMappings = studentClassSectionMappingRepository.findStudentHistory(studentId);
+        response.setEnrollmentHistory(allMappings.stream().map(this::mapMappingToEnrollmentDto).collect(Collectors.toList()));
 
         return response;
     }
@@ -333,6 +340,23 @@ public class StudentService {
         dto.setStatus(enrollment.getStatus());
         dto.setEndReason(enrollment.getEndReason());
         dto.setRemarks(enrollment.getRemarks());
+        return dto;
+    }
+
+    private EnrollmentDto mapMappingToEnrollmentDto(StudentClassSectionMapping mapping) {
+        EnrollmentDto dto = new EnrollmentDto();
+        dto.setId(mapping.getId());
+        dto.setStudentId(mapping.getStudent() != null ? mapping.getStudent().getId() : null);
+        dto.setSchoolId(mapping.getSchool() != null ? mapping.getSchool().getId() : null);
+        dto.setAcademicYearId(mapping.getAcademicYear() != null ? mapping.getAcademicYear().getId() : null);
+        dto.setClassId(mapping.getClassMaster() != null ? mapping.getClassMaster().getId() : null);
+        dto.setSectionId(mapping.getSection() != null ? mapping.getSection().getId() : null);
+        dto.setRollNo(mapping.getRollNumber());
+        dto.setStartDate(mapping.getEnrollmentDate());
+        dto.setEndDate(null); // Not tracked in mapping
+        dto.setStatus(mapping.getIsActive() != null && mapping.getIsActive() ? "ACTIVE" : "INACTIVE");
+        dto.setEndReason(null); // Not tracked in mapping
+        dto.setRemarks(mapping.getRemarks());
         return dto;
     }
 }

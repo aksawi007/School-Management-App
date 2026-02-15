@@ -108,3 +108,12 @@
   align-items: center;
   z-index: 1000;
 }
+
+.overdue {
+  color: #f44336;
+  font-weight: 600;
+}
+
+mat-tab-group {
+  margin-top: 20px;
+}

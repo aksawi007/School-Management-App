@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.sma.admin.core.app.model.request.StudentFeePaymentRequest;
 import org.sma.admin.core.app.model.response.StudentFeePaymentResponse;
+import org.sma.admin.core.app.model.response.PendingPaymentResponse;
 import org.sma.admin.core.app.service.StudentFeePaymentBusinessService;
 import org.sma.platform.core.annotation.APIController;
 import org.sma.platform.core.exception.SmaException;
@@ -94,6 +95,27 @@ public class StudentFeePaymentController extends ApiRestServiceBinding {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (SmaException e) {
             throw new RuntimeException("Unable to delete payment: " + e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/pending")
+    @ApiOperation(value = "Get pending payments for class/section", 
+                  notes = "Returns students with overdue installments. Class is required, section is optional.")
+    ResponseEntity<List<PendingPaymentResponse>> getPendingPayments(
+            @RequestParam("schoolId") Long schoolId,
+            @RequestParam("academicYearId") Long academicYearId,
+            @RequestParam("classId") Long classId,
+            @RequestParam(value = "sectionId", required = false) Long sectionId) throws IOException {
+        
+        ServiceRequestContext context = createServiceRequestContext("GetPendingPayments", 
+            schoolId.toString(), schoolId.toString());
+
+        try {
+            List<PendingPaymentResponse> response = studentFeePaymentBusinessService.getPendingPayments(
+                schoolId, academicYearId, classId, sectionId);
+            return processResponse(context, response);
+        } catch (SmaException e) {
+            throw new RuntimeException("Unable to fetch pending payments: " + e.getMessage(), e);
         }
     }
 }
