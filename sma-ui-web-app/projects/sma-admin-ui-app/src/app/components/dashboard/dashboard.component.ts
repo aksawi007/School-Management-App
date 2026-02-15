@@ -103,9 +103,25 @@ export class DashboardComponent implements OnInit {
     },
     // Financial
     {
+      title: 'Fee Categories',
+      description: 'Manage core fee structure',
+      icon: 'category',
+      route: '/fee-categories',
+      color: '#ed6c02',
+      category: 'financial'
+    },
+    {
+      title: 'Fee Allocation',
+      description: 'Allocate fees to students',
+      icon: 'payments',
+      route: '/fee-allocations',
+      color: '#ed6c02',
+      category: 'financial'
+    },
+    {
       title: 'Fee Structure',
       description: 'Setup fee categories and amounts',
-      icon: 'payments',
+      icon: 'attach_money',
       route: '/fee-structure',
       color: '#ed6c02',
       category: 'financial'

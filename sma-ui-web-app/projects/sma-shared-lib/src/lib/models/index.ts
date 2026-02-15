@@ -12,3 +12,6 @@ export * from './master';
 
 // Routine Management Models
 export * from './routine';
+
+// Fee Management Models
+export * from './fee/fee.model';

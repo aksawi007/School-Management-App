@@ -1,58 +1,43 @@
-package org.sma.jpa.model.fee;
+package org.sma.admin.core.app.model.request;
 
-import org.sma.jpa.model.BaseEntity;
-import org.sma.jpa.model.school.SchoolProfile;
-
-import javax.persistence.*;
+import javax.validation.constraints.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.UUID;
 
 /**
- * Entity for Fee Category - Types of fees (Tuition, Transport, Library, etc.)
+ * Request DTO for creating a fee category
  */
-@Entity
-@Table(name = "fee_category", schema = "sma_admin",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"school_id", "category_code"}))
-public class FeeCategory extends BaseEntity {
+public class FeeCategoryRequest {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_id", nullable = false)
-    private SchoolProfile school;
-
-    @Column(name = "category_code", nullable = false, length = 50)
+    @NotBlank(message = "Category code is required")
+    @Size(max = 50, message = "Category code must not exceed 50 characters")
     private String categoryCode;
 
-    @Column(name = "category_name", nullable = false, length = 150)
+    @NotBlank(message = "Category name is required")
+    @Size(max = 150, message = "Category name must not exceed 150 characters")
     private String categoryName;
 
-    @Column(name = "category_type", length = 30)
+    @Size(max = 30, message = "Category type must not exceed 30 characters")
     private String categoryType; // TUITION, TRANSPORT, LIBRARY, EXAM, MISCELLANEOUS
 
-    @Column(name = "is_mandatory", nullable = false)
+    @NotNull(message = "Mandatory flag is required")
     private Boolean isMandatory = true;
 
-    @Column(name = "is_refundable")
     private Boolean isRefundable = false;
 
-    @Column(name = "display_order")
     private Integer displayOrder;
 
-    @Column(name = "description", length = 500)
+    @Size(max = 500, message = "Description must not exceed 500 characters")
     private String description;
 
-    @Column(name = "fee_applicability", length = 20)
+    @Size(max = 20, message = "Fee applicability must not exceed 20 characters")
     private String feeApplicability; // ANNUAL, MONTHLY
 
-    @Column(name = "payment_frequency", length = 20)
+    @Size(max = 20, message = "Payment frequency must not exceed 20 characters")
     private String paymentFrequency; // ONCE, MONTHLY, QUARTERLY, HALF_YEARLY
 
     // Getters and Setters
-    public SchoolProfile getSchool() {
-        return school;
-    }
-
-    public void setSchool(SchoolProfile school) {
-        this.school = school;
-    }
-
     public String getCategoryCode() {
         return categoryCode;
     }

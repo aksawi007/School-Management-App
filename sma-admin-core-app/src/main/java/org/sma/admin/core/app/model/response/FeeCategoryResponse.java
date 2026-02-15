@@ -1,56 +1,33 @@
-package org.sma.jpa.model.fee;
+package org.sma.admin.core.app.model.response;
 
-import org.sma.jpa.model.BaseEntity;
-import org.sma.jpa.model.school.SchoolProfile;
-
-import javax.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
- * Entity for Fee Category - Types of fees (Tuition, Transport, Library, etc.)
+ * Response DTO for Fee Category
  */
-@Entity
-@Table(name = "fee_category", schema = "sma_admin",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"school_id", "category_code"}))
-public class FeeCategory extends BaseEntity {
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_id", nullable = false)
-    private SchoolProfile school;
-
-    @Column(name = "category_code", nullable = false, length = 50)
+public class FeeCategoryResponse {
+    
+    private Long id;
     private String categoryCode;
-
-    @Column(name = "category_name", nullable = false, length = 150)
     private String categoryName;
-
-    @Column(name = "category_type", length = 30)
-    private String categoryType; // TUITION, TRANSPORT, LIBRARY, EXAM, MISCELLANEOUS
-
-    @Column(name = "is_mandatory", nullable = false)
-    private Boolean isMandatory = true;
-
-    @Column(name = "is_refundable")
-    private Boolean isRefundable = false;
-
-    @Column(name = "display_order")
+    private String categoryType;
+    private Boolean isMandatory;
+    private Boolean isRefundable;
     private Integer displayOrder;
-
-    @Column(name = "description", length = 500)
     private String description;
-
-    @Column(name = "fee_applicability", length = 20)
-    private String feeApplicability; // ANNUAL, MONTHLY
-
-    @Column(name = "payment_frequency", length = 20)
-    private String paymentFrequency; // ONCE, MONTHLY, QUARTERLY, HALF_YEARLY
+    private Boolean isActive;
+    private LocalDate createdDate;
+    private String feeApplicability;
+    private String paymentFrequency;
 
     // Getters and Setters
-    public SchoolProfile getSchool() {
-        return school;
+    public Long getId() {
+        return id;
     }
 
-    public void setSchool(SchoolProfile school) {
-        this.school = school;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCategoryCode() {
@@ -107,6 +84,22 @@ public class FeeCategory extends BaseEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
     }
 
     public String getFeeApplicability() {

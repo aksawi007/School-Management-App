@@ -27,3 +27,7 @@ export * from './print/print.service';
 // Voice Command Services
 export * from './voice';
 export * from './environment.service';
+
+// Fee Management Services
+export * from './fee-category.service';
+export * from './student-fee-allocation.service';

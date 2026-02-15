@@ -56,6 +56,10 @@ import { DailyScheduleViewComponent } from './components/daily-schedule-view/dai
 import { SessionOverrideDialogComponent } from './components/session-override-dialog/session-override-dialog.component';
 import { AttendanceMarkingComponent } from './components/attendance-marking/attendance-marking.component';
 import { TimeSlotDialogComponent } from './components/time-slot-dialog/time-slot-dialog.component';
+import { FeeCategoryListComponent } from './components/fee-category-list/fee-category-list.component';
+import { FeeCategoryFormComponent } from './components/fee-category-form/fee-category-form.component';
+import { FeeAllocationListComponent } from './components/fee-allocation-list/fee-allocation-list.component';
+import { FeeAllocationFormComponent } from './components/fee-allocation-form/fee-allocation-form.component';
 
 import { SmaSharedModule } from 'sma-shared-lib';
 
@@ -81,7 +85,11 @@ import { SmaSharedModule } from 'sma-shared-lib';
     TimeSlotDialogComponent,
     DailyScheduleViewComponent,
     SessionOverrideDialogComponent,
-    AttendanceMarkingComponent
+    AttendanceMarkingComponent,
+    FeeCategoryListComponent,
+    FeeCategoryFormComponent,
+    FeeAllocationListComponent,
+    FeeAllocationFormComponent
   ],
   imports: [
     BrowserModule,

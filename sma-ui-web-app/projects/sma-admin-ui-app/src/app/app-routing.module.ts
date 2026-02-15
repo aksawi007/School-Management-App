@@ -16,6 +16,10 @@ import { RoutineBuilderComponent } from './components/routine-builder/routine-bu
 import { TimeSlotManagementComponent } from './components/time-slot-management/time-slot-management.component';
 import { DailyScheduleViewComponent } from './components/daily-schedule-view/daily-schedule-view.component';
 import { AttendanceMarkingComponent } from './components/attendance-marking/attendance-marking.component';
+import { FeeCategoryListComponent } from './components/fee-category-list/fee-category-list.component';
+import { FeeCategoryFormComponent } from './components/fee-category-form/fee-category-form.component';
+import { FeeAllocationListComponent } from './components/fee-allocation-list/fee-allocation-list.component';
+import { FeeAllocationFormComponent } from './components/fee-allocation-form/fee-allocation-form.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -41,6 +45,27 @@ const routes: Routes = [
   { path: 'departments/:id/edit', component: DepartmentFormComponent },
   
   { path: 'student-class-management', component: StudentClassManagementComponent },
+  
+  // Fee Management Routes (multiple path patterns for compatibility)
+  { path: 'fee-categories', component: FeeCategoryListComponent },
+  { path: 'fee-categories/new', component: FeeCategoryFormComponent },
+  { path: 'fee-categories/:id/edit', component: FeeCategoryFormComponent },
+  
+  { path: 'admin/fee-category', component: FeeCategoryListComponent },
+  { path: 'admin/fee-category/new', component: FeeCategoryFormComponent },
+  { path: 'admin/fee-category/:id/edit', component: FeeCategoryFormComponent },
+  
+  { path: 'admin/fee-categories', component: FeeCategoryListComponent },
+  { path: 'admin/fee-categories/new', component: FeeCategoryFormComponent },
+  { path: 'admin/fee-categories/:id/edit', component: FeeCategoryFormComponent },
+  
+  { path: 'fee-allocations', component: FeeAllocationListComponent },
+  { path: 'fee-allocations/new', component: FeeAllocationFormComponent },
+  { path: 'fee-allocations/:id/edit', component: FeeAllocationFormComponent },
+  
+  { path: 'admin/fee-allocation', component: FeeAllocationListComponent },
+  { path: 'admin/fee-allocation/new', component: FeeAllocationFormComponent },
+  { path: 'admin/fee-allocation/:id/edit', component: FeeAllocationFormComponent },
   
   // Routine Management
   { path: 'time-slot-management', component: TimeSlotManagementComponent },
