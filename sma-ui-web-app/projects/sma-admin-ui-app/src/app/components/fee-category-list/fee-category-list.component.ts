@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { FeeCategoryService } from 'sma-shared-lib';
 import { FeeCategoryResponse } from 'sma-shared-lib';
+import { FeeCategoryFormComponent } from '../fee-category-form/fee-category-form.component';
 
 @Component({
   selector: 'app-fee-category-list',
@@ -15,7 +16,7 @@ export class FeeCategoryListComponent implements OnInit {
   filteredCategories: FeeCategoryResponse[] = [];
   selectedType = 'ALL';
   categoryTypes = ['ALL', 'TUITION', 'TRANSPORT', 'LIBRARY', 'EXAM', 'MISCELLANEOUS'];
-  displayedColumns: string[] = ['categoryCode', 'categoryName', 'categoryType', 'feeApplicability', 'paymentFrequency', 'isMandatory', 'isRefundable', 'displayOrder', 'isActive', 'actions'];
+  displayedColumns: string[] = ['categoryCode', 'categoryName', 'categoryType', 'feeApplicability', 'paymentFrequency', 'isMandatory', 'isRefundable', 'displayOrder', 'status', 'actions'];
   loading = true;
   schoolId: number = 0;
 
@@ -52,7 +53,7 @@ export class FeeCategoryListComponent implements OnInit {
 
   loadCategories(): void {
     this.loading = true;
-    this.feeCategoryService.getAllActiveFeeCategories(this.schoolId).subscribe({
+    this.feeCategoryService.listFeeCategories(this.schoolId, 'ALL').subscribe({
       next: (categories: any[]) => {
         this.categories = categories.sort((a: any, b: any) => (a.displayOrder || 0) - (b.displayOrder || 0));
         this.applyFilter();
@@ -79,25 +80,54 @@ export class FeeCategoryListComponent implements OnInit {
   }
 
   addCategory(): void {
-    this.router.navigate(['/admin/fee-category/new']);
+    const dialogRef = this.dialog.open(FeeCategoryFormComponent, {
+      width: '800px',
+      data: { schoolId: this.schoolId }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadCategories();
+      }
+    });
   }
 
   editCategory(category: FeeCategoryResponse): void {
-    this.router.navigate(['/admin/fee-category/edit', category.id]);
+    const dialogRef = this.dialog.open(FeeCategoryFormComponent, {
+      width: '800px',
+      data: { schoolId: this.schoolId, categoryId: category.id }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadCategories();
+      }
+    });
   }
 
   toggleStatus(category: FeeCategoryResponse): void {
-    const action = category.isActive ? 'deactivate' : 'activate';
-    const message = category.isActive 
+    const isActive = category.status === 'ACTIVE';
+    const newStatus = isActive ? 'INACTIVE' : 'ACTIVE';
+    const action = isActive ? 'deactivate' : 'activate';
+    const message = isActive 
       ? `Are you sure you want to deactivate "${category.categoryName}"?`
       : `Are you sure you want to activate "${category.categoryName}"?`;
 
     if (confirm(message)) {
-      const serviceCall = category.isActive 
-        ? this.feeCategoryService.deactivateFeeCategory(category.id)
-        : this.feeCategoryService.activateFeeCategory(category.id);
-
-      serviceCall.subscribe({
+      const updatedCategory = {
+        categoryCode: category.categoryCode,
+        categoryName: category.categoryName,
+        categoryType: category.categoryType,
+        isMandatory: category.isMandatory,
+        isRefundable: category.isRefundable,
+        displayOrder: category.displayOrder,
+        description: category.description,
+        feeApplicability: category.feeApplicability || '',
+        paymentFrequency: category.paymentFrequency || '',
+        status: newStatus
+      };
+      
+      this.feeCategoryService.updateFeeCategory(category.id.toString(), updatedCategory).subscribe({
         next: () => {
           this.snackBar.open(`Category ${action}d successfully`, 'Close', { duration: 3000 });
           this.loadCategories();
@@ -110,11 +140,11 @@ export class FeeCategoryListComponent implements OnInit {
     }
   }
 
-  getStatusColor(isActive: boolean): string {
-    return isActive ? 'primary' : 'warn';
+  getStatusColor(status: string): string {
+    return status === 'ACTIVE' ? 'primary' : 'warn';
   }
 
-  getStatusText(isActive: boolean): string {
-    return isActive ? 'Active' : 'Inactive';
+  getStatusText(status: string): string {
+    return status === 'ACTIVE' ? 'Active' : 'Inactive';
   }
 }

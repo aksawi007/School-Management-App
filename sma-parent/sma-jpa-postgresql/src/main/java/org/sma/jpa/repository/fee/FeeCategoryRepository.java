@@ -14,7 +14,9 @@ import java.util.Optional;
 @Repository
 public interface FeeCategoryRepository extends JpaRepository<FeeCategory, Long> {
     
-    List<FeeCategory> findBySchoolAndIsActiveTrue(SchoolProfile school);
+    List<FeeCategory> findBySchool(SchoolProfile school);
+    
+    List<FeeCategory> findBySchoolAndStatus(SchoolProfile school, String status);
     
     Optional<FeeCategory> findBySchoolAndCategoryCode(SchoolProfile school, String categoryCode);
     

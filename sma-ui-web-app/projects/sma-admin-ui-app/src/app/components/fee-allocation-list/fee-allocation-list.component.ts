@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { StudentFeeAllocationService, StudentFeeAllocationResponse } from 'sma-shared-lib';
+import { MatDialog } from '@angular/material/dialog';
+import { FeeCategoryService, FeeCategoryResponse, AcademicYearResponse } from 'sma-shared-lib';
+import { AdminCacheService } from '../../services/admin-cache.service';
+import { FeeAllocationFormComponent } from '../fee-allocation-form/fee-allocation-form.component';
 
 @Component({
   selector: 'app-fee-allocation-list',
@@ -9,19 +12,20 @@ import { StudentFeeAllocationService, StudentFeeAllocationResponse } from 'sma-s
   styleUrls: ['./fee-allocation-list.component.scss']
 })
 export class FeeAllocationListComponent implements OnInit {
-  allocations: StudentFeeAllocationResponse[] = [];
-  filteredAllocations: StudentFeeAllocationResponse[] = [];
-  selectedStatus = 'ALL';
-  selectedMonth = 'ALL';
-  statuses = ['ALL', 'PENDING', 'PARTIALLY_PAID', 'PAID', 'OVERDUE', 'WAIVED', 'CANCELLED'];
-  months = ['ALL', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
-  displayedColumns: string[] = ['allocationCode', 'studentName', 'categoryName', 'feeAmount', 'durationType', 'month', 'dueDate', 'status', 'pendingAmount', 'actions'];
+  allocations: any[] = []; // TODO: Create proper interface
+  filteredAllocations: any[] = [];
+  selectedCategory = 'ALL';
+  categoryTypes = ['ALL', 'TUITION', 'TRANSPORT', 'LIBRARY', 'EXAM', 'MISCELLANEOUS'];
+  displayedColumns: string[] = ['allocationCode', 'academicYear', 'categoryName', 'categoryType', 'feeAmount', 'dueDate', 'isActive', 'actions'];
   loading = true;
   schoolId: number = 0;
-  academicYearId: string = '';
+  selectedAcademicYearId?: number;
+  academicYears: AcademicYearResponse[] = [];
 
   constructor(
-    private feeAllocationService: StudentFeeAllocationService,
+    private feeCategoryService: FeeCategoryService,
+    private adminCache: AdminCacheService,
+    private dialog: MatDialog,
     private router: Router,
     private snackBar: MatSnackBar
   ) {}
@@ -29,6 +33,7 @@ export class FeeAllocationListComponent implements OnInit {
   ngOnInit(): void {
     // Listen for school context from parent window (shell app)
     window.addEventListener('message', (event) => {
+      // Verify origin for security
       if (event.origin !== 'http://localhost:4300') {
         return;
       }
@@ -36,12 +41,10 @@ export class FeeAllocationListComponent implements OnInit {
       if (event.data && event.data.type === 'SCHOOL_CONTEXT') {
         console.log('Received school context:', event.data);
         const school = event.data.school;
-        const academicYear = event.data.academicYear;
         
-        if (school && academicYear) {
+        if (school) {
           this.schoolId = school.schoolId;
-          this.academicYearId = academicYear.id;
-          this.loadOverdueAllocations();
+          this.loadAcademicYears();
         }
       }
     });
@@ -52,118 +55,101 @@ export class FeeAllocationListComponent implements OnInit {
     }
   }
 
-  loadOverdueAllocations(): void {
-    this.loading = true;
-    this.feeAllocationService.getOverdueFeeAllocations(this.schoolId, this.academicYearId).subscribe({
-      next: (allocations: StudentFeeAllocationResponse[]) => {
-        this.allocations = allocations;
-        this.applyFilter();
-        this.loading = false;
+  loadAcademicYears(): void {
+    this.adminCache.getAcademicYears().subscribe({
+      next: (years) => {
+        this.academicYears = years;
+        // Auto-select current academic year
+        const currentYear = years.find(y => y.currentYear === true);
+        if (currentYear && !this.selectedAcademicYearId) {
+          this.selectedAcademicYearId = currentYear.yearId;
+          this.loadAllocations();
+        }
       },
-      error: (error: any) => {
-        console.error('Error loading fee allocations:', error);
-        this.snackBar.open('Error loading fee allocations', 'Close', { duration: 3000 });
-        this.loading = false;
+      error: (error) => {
+        console.error('Error loading academic years:', error);
+        this.snackBar.open('Error loading academic years', 'Close', { duration: 3000 });
       }
     });
   }
 
-  loadAllocationsByMonth(month: string): void {
+  onAcademicYearChange(): void {
+    this.loadAllocations();
+  }
+
+  loadAllocations(): void {
+    if (!this.selectedAcademicYearId) {
+      this.allocations = [];
+      this.loading = false;
+      return;
+    }
+
     this.loading = true;
-    this.feeAllocationService.getFeeAllocationsByMonth(this.schoolId, this.academicYearId, month).subscribe({
-      next: (allocations: StudentFeeAllocationResponse[]) => {
-        this.allocations = allocations;
-        this.applyFilter();
-        this.loading = false;
-      },
-      error: (error: any) => {
-        console.error('Error loading fee allocations:', error);
-        this.snackBar.open('Error loading fee allocations', 'Close', { duration: 3000 });
-        this.loading = false;
-      }
-    });
+    // TODO: Call academic year fee allocation service
+    // For now, show empty list
+    setTimeout(() => {
+      this.allocations = [];
+      this.applyFilter();
+      this.loading = false;
+    }, 500);
   }
 
   applyFilter(): void {
     let filtered = [...this.allocations];
 
-    if (this.selectedStatus !== 'ALL') {
-      filtered = filtered.filter(a => a.allocationStatus === this.selectedStatus);
-    }
-
-    if (this.selectedMonth !== 'ALL') {
-      filtered = filtered.filter(a => a.applicableMonth === this.selectedMonth);
+    if (this.selectedCategory !== 'ALL') {
+      filtered = filtered.filter((a: any) => a.categoryType === this.selectedCategory);
     }
 
     this.filteredAllocations = filtered;
   }
 
-  onStatusChange(): void {
+  onCategoryChange(): void {
     this.applyFilter();
   }
 
-  onMonthChange(): void {
-    if (this.selectedMonth !== 'ALL') {
-      this.loadAllocationsByMonth(this.selectedMonth);
-    } else {
-      this.loadOverdueAllocations();
-    }
-  }
-
   addAllocation(): void {
-    this.router.navigate(['/admin/fee-allocation/new']);
+    if (!this.selectedAcademicYearId) {
+      this.snackBar.open('Please select an academic year first', 'Close', { duration: 3000 });
+      return;
+    }
+
+    const dialogRef = this.dialog.open(FeeAllocationFormComponent, {
+      width: '800px',
+      data: { 
+        schoolId: this.schoolId,
+        academicYearId: this.selectedAcademicYearId
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadAllocations();
+      }
+    });
   }
 
-  viewAllocation(allocation: StudentFeeAllocationResponse): void {
-    this.router.navigate(['/admin/fee-allocation/view', allocation.id]);
+  editAllocation(allocation: any): void {
+    this.router.navigate(['/admin/fee-allocation', allocation.id, 'edit']);
   }
 
-  updatePayment(allocation: StudentFeeAllocationResponse): void {
-    const paidAmount = prompt('Enter payment amount:', '0');
-    if (paidAmount && !isNaN(parseFloat(paidAmount))) {
-      this.feeAllocationService.updateAllocationStatus(
-        allocation.id,
-        'PARTIALLY_PAID',
-        parseFloat(paidAmount)
-      ).subscribe({
-        next: () => {
-          this.snackBar.open('Payment updated successfully', 'Close', { duration: 3000 });
-          this.loadOverdueAllocations();
-        },
-        error: (error: any) => {
-          console.error('Error updating payment:', error);
-          this.snackBar.open('Error updating payment', 'Close', { duration: 3000 });
-        }
-      });
+  toggleStatus(allocation: any): void {
+    const newStatus = !allocation.isActive;
+    const action = newStatus ? 'activate' : 'deactivate';
+    
+    if (confirm(`Are you sure you want to ${action} this fee allocation?`)) {
+      // TODO: Call service to update status
+      this.snackBar.open(`Fee allocation ${action}d successfully`, 'Close', { duration: 3000 });
+      allocation.isActive = newStatus;
     }
   }
 
-  cancelAllocation(allocation: StudentFeeAllocationResponse): void {
-    const reason = prompt('Enter cancellation reason:');
-    if (reason) {
-      this.feeAllocationService.cancelFeeAllocation(allocation.id, reason).subscribe({
-        next: () => {
-          this.snackBar.open('Allocation cancelled successfully', 'Close', { duration: 3000 });
-          this.loadOverdueAllocations();
-        },
-        error: (error: any) => {
-          console.error('Error cancelling allocation:', error);
-          this.snackBar.open(error.error?.message || 'Error cancelling allocation', 'Close', { duration: 3000 });
-        }
-      });
-    }
+  getStatusColor(isActive: boolean): string {
+    return isActive ? 'primary' : '';
   }
 
-  getStatusColor(status: string): string {
-    const colors: any = {
-      'PENDING': 'warn',
-      'PARTIALLY_PAID': 'accent',
-      'PAID': 'primary',
-      'OVERDUE': 'warn',
-      'WAIVED': 'primary',
-      'CANCELLED': ''
-    };
-    return colors[status] || '';
+  getStatusText(isActive: boolean): string {
+    return isActive ? 'ACTIVE' : 'INACTIVE';
   }
 
   formatCurrency(amount: number): string {

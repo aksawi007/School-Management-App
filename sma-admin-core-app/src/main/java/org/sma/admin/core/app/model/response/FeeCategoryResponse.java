@@ -16,7 +16,7 @@ public class FeeCategoryResponse {
     private Boolean isRefundable;
     private Integer displayOrder;
     private String description;
-    private Boolean isActive;
+    private String status;
     private LocalDate createdDate;
     private String feeApplicability;
     private String paymentFrequency;
@@ -86,12 +86,12 @@ public class FeeCategoryResponse {
         this.description = description;
     }
 
-    public Boolean getIsActive() {
-        return isActive;
+    public String getStatus() {
+        return status;
     }
 
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public LocalDate getCreatedDate() {

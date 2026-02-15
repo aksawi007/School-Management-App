@@ -58,7 +58,7 @@ public class FeeCategoryBusinessService {
         feeCategory.setDescription(request.getDescription());
         feeCategory.setFeeApplicability(request.getFeeApplicability());
         feeCategory.setPaymentFrequency(request.getPaymentFrequency());
-        feeCategory.setIsActive(true);
+        feeCategory.setStatus("ACTIVE");
 
         FeeCategory saved = feeCategoryRepository.save(feeCategory);
         logger.info("Fee category created successfully with ID: {}", saved.getId());
@@ -92,6 +92,11 @@ public class FeeCategoryBusinessService {
         feeCategory.setDescription(request.getDescription());
         feeCategory.setFeeApplicability(request.getFeeApplicability());
         feeCategory.setPaymentFrequency(request.getPaymentFrequency());
+        
+        // Handle status change
+        if (request.getStatus() != null) {
+            feeCategory.setStatus(request.getStatus());
+        }
 
         FeeCategory updated = feeCategoryRepository.save(feeCategory);
         logger.info("Fee category updated successfully: {}", categoryId);
@@ -111,68 +116,39 @@ public class FeeCategoryBusinessService {
     }
 
     /**
-     * Get all active fee categories for a school
+     * List fee categories with optional filters
+     * @param schoolId School ID
+     * @param status Filter by status: ACTIVE, INACTIVE, or ALL (default)
+     * @param categoryType Filter by category type (optional)
      */
     @Transactional(readOnly = true)
-    public List<FeeCategoryResponse> getAllActiveFeeCategories(Long schoolId) {
-        logger.info("Fetching all active fee categories for school: {}", schoolId);
+    public List<FeeCategoryResponse> listFeeCategories(Long schoolId, String status, String categoryType) {
+        logger.info("Fetching fee categories for school: {}, status: {}, type: {}", schoolId, status, categoryType);
 
         SchoolProfile school = schoolProfileRepository.findById(schoolId)
             .orElseThrow(() -> new SmaAdminException("School not found with ID: " + schoolId));
 
-        List<FeeCategory> categories = feeCategoryRepository.findBySchoolAndIsActiveTrue(school);
+        List<FeeCategory> categories;
+        
+        // Fetch based on type filter first
+        if (categoryType != null && !categoryType.isEmpty()) {
+            categories = feeCategoryRepository.findBySchoolAndCategoryType(school, categoryType);
+        } else {
+            categories = feeCategoryRepository.findBySchool(school);
+        }
 
+        // Apply status filter
         return categories.stream()
+            .filter(cat -> {
+                if ("ACTIVE".equalsIgnoreCase(status)) {
+                    return "ACTIVE".equals(cat.getStatus());
+                } else if ("INACTIVE".equalsIgnoreCase(status)) {
+                    return "INACTIVE".equals(cat.getStatus());
+                }
+                return true; // ALL
+            })
             .map(this::mapToResponse)
             .collect(Collectors.toList());
-    }
-
-    /**
-     * Get fee categories by type
-     */
-    @Transactional(readOnly = true)
-    public List<FeeCategoryResponse> getFeeCategoriesByType(Long schoolId, String categoryType) {
-        logger.info("Fetching fee categories for school: {}, type: {}", schoolId, categoryType);
-
-        SchoolProfile school = schoolProfileRepository.findById(schoolId)
-            .orElseThrow(() -> new SmaAdminException("School not found with ID: " + schoolId));
-
-        List<FeeCategory> categories = feeCategoryRepository.findBySchoolAndCategoryType(school, categoryType);
-
-        return categories.stream()
-            .filter(FeeCategory::getIsActive)
-            .map(this::mapToResponse)
-            .collect(Collectors.toList());
-    }
-
-    /**
-     * Deactivate fee category (soft delete)
-     */
-    public void deactivateFeeCategory(Long categoryId) {
-        logger.info("Deactivating fee category: {}", categoryId);
-
-        FeeCategory feeCategory = feeCategoryRepository.findById(categoryId)
-            .orElseThrow(() -> new SmaAdminException("Fee category not found with ID: " + categoryId));
-
-        feeCategory.setIsActive(false);
-        feeCategoryRepository.save(feeCategory);
-
-        logger.info("Fee category deactivated successfully: {}", categoryId);
-    }
-
-    /**
-     * Activate fee category
-     */
-    public void activateFeeCategory(Long categoryId) {
-        logger.info("Activating fee category: {}", categoryId);
-
-        FeeCategory feeCategory = feeCategoryRepository.findById(categoryId)
-            .orElseThrow(() -> new SmaAdminException("Fee category not found with ID: " + categoryId));
-
-        feeCategory.setIsActive(true);
-        feeCategoryRepository.save(feeCategory);
-
-        logger.info("Fee category activated successfully: {}", categoryId);
     }
 
     /**
@@ -188,7 +164,7 @@ public class FeeCategoryBusinessService {
         response.setIsRefundable(feeCategory.getIsRefundable());
         response.setDisplayOrder(feeCategory.getDisplayOrder());
         response.setDescription(feeCategory.getDescription());
-        response.setIsActive(feeCategory.getIsActive());
+        response.setStatus(feeCategory.getStatus());
         response.setCreatedDate(feeCategory.getCreatedAt() != null ? feeCategory.getCreatedAt().toLocalDate() : null);
         response.setFeeApplicability(feeCategory.getFeeApplicability());
         response.setPaymentFrequency(feeCategory.getPaymentFrequency());

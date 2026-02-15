@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FeeCategoryService, FeeCategoryRequest } from 'sma-shared-lib';
 
 @Component({
@@ -14,7 +14,7 @@ export class FeeCategoryFormComponent implements OnInit {
   isEditMode = false;
   categoryId?: string;
   loading = false;
-  schoolId: number = 0;
+  schoolId: number;
   categoryTypes = ['TUITION', 'TRANSPORT', 'LIBRARY', 'EXAM', 'MISCELLANEOUS'];
   feeApplicabilities = ['ANNUAL', 'MONTHLY'];
   paymentFrequencies = ['ONCE', 'MONTHLY', 'QUARTERLY', 'HALF_YEARLY'];
@@ -22,40 +22,19 @@ export class FeeCategoryFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private feeCategoryService: FeeCategoryService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public dialogRef: MatDialogRef<FeeCategoryFormComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { schoolId: number, categoryId?: string }
   ) {
+    this.schoolId = data.schoolId;
+    this.categoryId = data.categoryId;
+    this.isEditMode = !!this.categoryId;
     this.createForm();
   }
 
   ngOnInit(): void {
-    this.categoryId = this.route.snapshot.paramMap.get('id') || undefined;
-    this.isEditMode = !!this.categoryId;
-
-    // Listen for school context from parent window (shell app)
-    window.addEventListener('message', (event) => {
-      if (event.origin !== 'http://localhost:4300') {
-        return;
-      }
-      
-      if (event.data && event.data.type === 'SCHOOL_CONTEXT') {
-        console.log('Received school context:', event.data);
-        const school = event.data.school;
-        
-        if (school) {
-          this.schoolId = school.schoolId;
-          
-          if (this.isEditMode && this.categoryId) {
-            this.loadCategory();
-          }
-        }
-      }
-    });
-    
-    // Request context from parent
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({ type: 'REQUEST_CONTEXT' }, 'http://localhost:4300');
+    if (this.isEditMode && this.categoryId) {
+      this.loadCategory();
     }
   }
 
@@ -120,7 +99,7 @@ export class FeeCategoryFormComponent implements OnInit {
           'Close',
           { duration: 3000 }
         );
-        this.router.navigate(['/admin/fee-categories']);
+        this.dialogRef.close(true);
       },
       error: (error: any) => {
         console.error('Error saving category:', error);
@@ -135,7 +114,7 @@ export class FeeCategoryFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/admin/fee-categories']);
+    this.dialogRef.close(false);
   }
 
   get f() {

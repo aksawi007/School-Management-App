@@ -48,7 +48,7 @@ public class FeeCategoryController extends ApiRestServiceBinding {
     }
 
     @PutMapping("/update/{categoryId}")
-    @ApiOperation(value = "Update fee category")
+    @ApiOperation(value = "Update fee category", notes = "Updates fee category including status changes (activate/deactivate)")
     ResponseEntity<FeeCategoryResponse> updateFeeCategory(
             @PathVariable("categoryId") Long categoryId,
             @Valid @RequestBody FeeCategoryRequest request) throws IOException {
@@ -78,64 +78,22 @@ public class FeeCategoryController extends ApiRestServiceBinding {
         }
     }
 
-    @GetMapping("/list/active")
-    @ApiOperation(value = "Get all active fee categories for a school")
-    ResponseEntity<List<FeeCategoryResponse>> getAllActiveFeeCategories(
-            @RequestParam("schoolId") Long schoolId) throws IOException {
+    @GetMapping("/list")
+    @ApiOperation(value = "Get fee categories with optional filters", 
+                  notes = "Filter by status (ACTIVE/INACTIVE/ALL) and/or categoryType (TUITION/TRANSPORT/etc)")
+    ResponseEntity<List<FeeCategoryResponse>> listFeeCategories(
+            @RequestParam("schoolId") Long schoolId,
+            @RequestParam(value = "status", required = false, defaultValue = "ALL") String status,
+            @RequestParam(value = "categoryType", required = false) String categoryType) throws IOException {
         
-        ServiceRequestContext context = createServiceRequestContext("ListActiveFeeCategories", 
+        ServiceRequestContext context = createServiceRequestContext("ListFeeCategories", 
             schoolId.toString(), schoolId.toString());
 
         try {
-            List<FeeCategoryResponse> response = feeCategoryBusinessService.getAllActiveFeeCategories(schoolId);
+            List<FeeCategoryResponse> response = feeCategoryBusinessService.listFeeCategories(schoolId, status, categoryType);
             return processResponse(context, response);
         } catch (SmaException e) {
             throw new RuntimeException("Unable to fetch fee categories: " + e.getMessage(), e);
-        }
-    }
-
-    @GetMapping("/list/by-type")
-    @ApiOperation(value = "Get fee categories by type")
-    ResponseEntity<List<FeeCategoryResponse>> getFeeCategoriesByType(
-            @RequestParam("schoolId") Long schoolId,
-            @RequestParam("categoryType") String categoryType) throws IOException {
-        
-        ServiceRequestContext context = createServiceRequestContext("ListFeeCategoriesByType", 
-            categoryType, categoryType);
-
-        try {
-            List<FeeCategoryResponse> response = feeCategoryBusinessService.getFeeCategoriesByType(schoolId, categoryType);
-            return processResponse(context, response);
-        } catch (SmaException e) {
-            throw new RuntimeException("Unable to fetch fee categories: " + e.getMessage(), e);
-        }
-    }
-
-    @PutMapping("/deactivate/{categoryId}")
-    @ApiOperation(value = "Deactivate fee category")
-    ResponseEntity<Void> deactivateFeeCategory(@PathVariable("categoryId") Long categoryId) throws IOException {
-        ServiceRequestContext context = createServiceRequestContext("DeactivateFeeCategory", 
-            categoryId.toString(), categoryId.toString());
-
-        try {
-            feeCategoryBusinessService.deactivateFeeCategory(categoryId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (SmaException e) {
-            throw new RuntimeException("Unable to deactivate fee category: " + e.getMessage(), e);
-        }
-    }
-
-    @PutMapping("/activate/{categoryId}")
-    @ApiOperation(value = "Activate fee category")
-    ResponseEntity<Void> activateFeeCategory(@PathVariable("categoryId") Long categoryId) throws IOException {
-        ServiceRequestContext context = createServiceRequestContext("ActivateFeeCategory", 
-            categoryId.toString(), categoryId.toString());
-
-        try {
-            feeCategoryBusinessService.activateFeeCategory(categoryId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (SmaException e) {
-            throw new RuntimeException("Unable to activate fee category: " + e.getMessage(), e);
         }
     }
 }

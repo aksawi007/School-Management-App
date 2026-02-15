@@ -1,124 +1,117 @@
-<div class="fee-category-form-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>{{ isEditMode ? 'Edit' : 'Create' }} Fee Category</mat-card-title>
-      <mat-card-subtitle>Core fee structure applicable throughout every year</mat-card-subtitle>
-    </mat-card-header>
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} Fee Category</h2>
 
-    <mat-card-content>
-      <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Category Code *</mat-label>
-            <input matInput formControlName="categoryCode" placeholder="e.g., TUITION" [readonly]="isEditMode">
-            <mat-error *ngIf="f['categoryCode'].hasError('required')">
-              Category code is required
-            </mat-error>
-            <mat-error *ngIf="f['categoryCode'].hasError('maxlength')">
-              Maximum 50 characters allowed
-            </mat-error>
-            <mat-hint>Unique code for this category</mat-hint>
-          </mat-form-field>
+<mat-dialog-content>
+  <form [formGroup]="categoryForm">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Category Code *</mat-label>
+        <input matInput formControlName="categoryCode" placeholder="e.g., TUITION" [readonly]="isEditMode">
+        <mat-error *ngIf="f['categoryCode'].hasError('required')">
+          Category code is required
+        </mat-error>
+        <mat-error *ngIf="f['categoryCode'].hasError('maxlength')">
+          Maximum 50 characters allowed
+        </mat-error>
+        <mat-hint>Unique code for this category</mat-hint>
+      </mat-form-field>
 
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Category Name *</mat-label>
-            <input matInput formControlName="categoryName" placeholder="e.g., Tuition Fee">
-            <mat-error *ngIf="f['categoryName'].hasError('required')">
-              Category name is required
-            </mat-error>
-            <mat-error *ngIf="f['categoryName'].hasError('maxlength')">
-              Maximum 150 characters allowed
-            </mat-error>
-          </mat-form-field>
-        </div>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Category Name *</mat-label>
+        <input matInput formControlName="categoryName" placeholder="e.g., Tuition Fee">
+        <mat-error *ngIf="f['categoryName'].hasError('required')">
+          Category name is required
+        </mat-error>
+        <mat-error *ngIf="f['categoryName'].hasError('maxlength')">
+          Maximum 150 characters allowed
+        </mat-error>
+      </mat-form-field>
+    </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Category Type *</mat-label>
-            <mat-select formControlName="categoryType">
-              <mat-option *ngFor="let type of categoryTypes" [value]="type">
-                {{ type }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="f['categoryType'].hasError('required')">
-              Category type is required
-            </mat-error>
-          </mat-form-field>
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Category Type *</mat-label>
+        <mat-select formControlName="categoryType">
+          <mat-option *ngFor="let type of categoryTypes" [value]="type">
+            {{ type }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="f['categoryType'].hasError('required')">
+          Category type is required
+        </mat-error>
+      </mat-form-field>
 
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Display Order</mat-label>
-            <input matInput type="number" formControlName="displayOrder" placeholder="1">
-            <mat-error *ngIf="f['displayOrder'].hasError('min')">
-              Order must be at least 1
-            </mat-error>
-            <mat-hint>Order in which this category appears</mat-hint>
-          </mat-form-field>
-        </div>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Display Order</mat-label>
+        <input matInput type="number" formControlName="displayOrder" placeholder="1">
+        <mat-error *ngIf="f['displayOrder'].hasError('min')">
+          Order must be at least 1
+        </mat-error>
+        <mat-hint>Order in which this category appears</mat-hint>
+      </mat-form-field>
+    </div>
 
-        <div class="form-row checkbox-row">
-          <mat-checkbox formControlName="isMandatory" color="primary">
-            Mandatory Fee
-          </mat-checkbox>
-          <mat-hint>This fee is mandatory for all students</mat-hint>
-        </div>
+    <div class="form-row checkbox-row">
+      <mat-checkbox formControlName="isMandatory" color="primary">
+        Mandatory Fee
+      </mat-checkbox>
+      <mat-hint>This fee is mandatory for all students</mat-hint>
+    </div>
 
-        <div class="form-row checkbox-row">
-          <mat-checkbox formControlName="isRefundable" color="primary">
-            Refundable Fee
-          </mat-checkbox>
-          <mat-hint>This fee can be refunded</mat-hint>
-        </div>
+    <div class="form-row checkbox-row">
+      <mat-checkbox formControlName="isRefundable" color="primary">
+        Refundable Fee
+      </mat-checkbox>
+      <mat-hint>This fee can be refunded</mat-hint>
+    </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Fee Applicability *</mat-label>
-            <mat-select formControlName="feeApplicability">
-              <mat-option *ngFor="let applicability of feeApplicabilities" [value]="applicability">
-                {{ applicability }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="f['feeApplicability'].hasError('required')">
-              Fee applicability is required
-            </mat-error>
-            <mat-hint>Is this fee applicable annually or monthly?</mat-hint>
-          </mat-form-field>
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Fee Applicability *</mat-label>
+        <mat-select formControlName="feeApplicability">
+          <mat-option *ngFor="let applicability of feeApplicabilities" [value]="applicability">
+            {{ applicability }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="f['feeApplicability'].hasError('required')">
+          Fee applicability is required
+        </mat-error>
+        <mat-hint>Is this fee applicable annually or monthly?</mat-hint>
+      </mat-form-field>
 
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Payment Frequency *</mat-label>
-            <mat-select formControlName="paymentFrequency">
-              <mat-option *ngFor="let frequency of paymentFrequencies" [value]="frequency">
-                {{ frequency }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="f['paymentFrequency'].hasError('required')">
-              Payment frequency is required
-            </mat-error>
-            <mat-hint>How often should this fee be paid?</mat-hint>
-          </mat-form-field>
-        </div>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Payment Frequency *</mat-label>
+        <mat-select formControlName="paymentFrequency">
+          <mat-option *ngFor="let frequency of paymentFrequencies" [value]="frequency">
+            {{ frequency }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="f['paymentFrequency'].hasError('required')">
+          Payment frequency is required
+        </mat-error>
+        <mat-hint>How often should this fee be paid?</mat-hint>
+      </mat-form-field>
+    </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" 
-                      rows="3" 
-                      placeholder="Additional details about this fee category"></textarea>
-            <mat-error *ngIf="f['description'].hasError('maxlength')">
-              Maximum 500 characters allowed
-            </mat-error>
-          </mat-form-field>
-        </div>
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" 
+                  rows="3" 
+                  placeholder="Additional details about this fee category"></textarea>
+        <mat-error *ngIf="f['description'].hasError('maxlength')">
+          Maximum 500 characters allowed
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
 
-        <div class="form-actions">
-          <button mat-raised-button type="button" (click)="onCancel()" [disabled]="loading">
-            Cancel
-          </button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="loading || categoryForm.invalid">
-            <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
-            <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }}</span>
-          </button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
-</div>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onCancel()" [disabled]="loading">
+    Cancel
+  </button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="loading || categoryForm.invalid">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <span *ngIf="!loading">{{ isEditMode ? 'Update' : 'Create' }}</span>
+  </button>
+</mat-dialog-actions>

@@ -44,6 +44,9 @@ public class FeeCategory extends BaseEntity {
     @Column(name = "payment_frequency", length = 20)
     private String paymentFrequency; // ONCE, MONTHLY, QUARTERLY, HALF_YEARLY
 
+    @Column(name = "status", length = 20)
+    private String status = "ACTIVE"; // ACTIVE, INACTIVE
+
     // Getters and Setters
     public SchoolProfile getSchool() {
         return school;
@@ -123,5 +126,13 @@ public class FeeCategory extends BaseEntity {
 
     public void setPaymentFrequency(String paymentFrequency) {
         this.paymentFrequency = paymentFrequency;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

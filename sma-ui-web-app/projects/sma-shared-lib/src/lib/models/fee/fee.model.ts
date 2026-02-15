@@ -9,6 +9,7 @@ export interface FeeCategoryRequest {
   description?: string;
   feeApplicability: string;
   paymentFrequency: string;
+  status?: string;
 }
 
 export interface FeeCategoryResponse {
@@ -20,7 +21,7 @@ export interface FeeCategoryResponse {
   isRefundable: boolean;
   displayOrder?: number;
   description?: string;
-  isActive: boolean;
+  status: string;
   createdDate: string;
   feeApplicability?: string;
   paymentFrequency?: string;

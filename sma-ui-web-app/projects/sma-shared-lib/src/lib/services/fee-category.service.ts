@@ -26,22 +26,17 @@ export class FeeCategoryService {
   }
 
   getAllActiveFeeCategories(schoolId: number): Observable<FeeCategoryResponse[]> {
-    return this.http.get<FeeCategoryResponse[]>(`${this.apiUrl}/list/active`, {
-      params: { schoolId: schoolId.toString() }
+    return this.http.get<FeeCategoryResponse[]>(`${this.apiUrl}/list`, {
+      params: { schoolId: schoolId.toString(), status: 'ACTIVE' }
     });
   }
 
-  getFeeCategoriesByType(schoolId: number, categoryType: string): Observable<FeeCategoryResponse[]> {
-    return this.http.get<FeeCategoryResponse[]>(`${this.apiUrl}/list/by-type`, {
-      params: { schoolId: schoolId.toString(), categoryType }
-    });
+  listFeeCategories(schoolId: number, status: string = 'ALL', categoryType?: string): Observable<FeeCategoryResponse[]> {
+    let params: any = { schoolId: schoolId.toString(), status: status };
+    if (categoryType) {
+      params.categoryType = categoryType;
+    }
+    return this.http.get<FeeCategoryResponse[]>(`${this.apiUrl}/list`, { params });
   }
 
-  deactivateFeeCategory(categoryId: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/deactivate/${categoryId}`, {});
-  }
-
-  activateFeeCategory(categoryId: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/activate/${categoryId}`, {});
-  }
 }

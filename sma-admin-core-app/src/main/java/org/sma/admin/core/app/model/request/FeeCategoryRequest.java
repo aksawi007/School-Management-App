@@ -37,6 +37,9 @@ public class FeeCategoryRequest {
     @Size(max = 20, message = "Payment frequency must not exceed 20 characters")
     private String paymentFrequency; // ONCE, MONTHLY, QUARTERLY, HALF_YEARLY
 
+    @Size(max = 20, message = "Status must not exceed 20 characters")
+    private String status; // ACTIVE, INACTIVE
+
     // Getters and Setters
     public String getCategoryCode() {
         return categoryCode;
@@ -108,5 +111,13 @@ public class FeeCategoryRequest {
 
     public void setPaymentFrequency(String paymentFrequency) {
         this.paymentFrequency = paymentFrequency;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
