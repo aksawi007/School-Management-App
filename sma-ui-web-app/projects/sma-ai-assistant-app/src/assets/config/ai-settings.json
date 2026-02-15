@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "description": "AI Assistant configuration and settings",
+  
+  "features": {
+    "voiceCommands": {
+      "enabled": true,
+      "provider": "webSpeechAPI",
+      "fallbackProvider": "annyang"
+    },
+    "naturalLanguageProcessing": {
+      "enabled": true,
+      "library": "compromise",
+      "fuzzyMatching": true,
+      "fuzzyThreshold": 0.6
+    },
+    "contextAwareness": {
+      "enabled": true,
+      "trackPageContext": true,
+      "trackUserActions": true
+    },
+    "machineLearning": {
+      "enabled": false,
+      "modelPath": "/assets/models/command-classifier",
+      "comment": "Future: Custom trained models for better accuracy"
+    }
+  },
+  
+  "ui": {
+    "floatingButton": {
+      "enabled": true,
+      "position": "bottom-right",
+      "offset": {
+        "bottom": "20px",
+        "right": "20px"
+      }
+    },
+    "commandPanel": {
+      "showHistory": true,
+      "maxHistoryItems": 10,
+      "showSuggestions": true
+    },
+    "feedback": {
+      "showToast": true,
+      "showAnimation": true,
+      "soundEffects": false
+    }
+  },
+  
+  "privacy": {
+    "storeCommandHistory": true,
+    "historyRetentionDays": 7,
+    "sendAnalytics": false,
+    "localProcessingOnly": true
+  },
+  
+  "advanced": {
+    "debugMode": false,
+    "logCommands": true,
+    "performanceMonitoring": false
+  }
+}

@@ -1,0 +1,243 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-02-15",
+  "description": "Voice command configuration for AI Assistant. Edit this file to add/modify commands.",
+  
+  "commands": {
+    "navigation": {
+      "enabled": true,
+      "description": "Navigate to different pages",
+      "commands": [
+        {
+          "id": "nav_dashboard",
+          "patterns": ["go to dashboard", "open dashboard", "show dashboard", "navigate to dashboard"],
+          "action": "navigate",
+          "target": "/admin/dashboard",
+          "confirmationRequired": false,
+          "allowedRoles": ["admin", "staff", "teacher"]
+        },
+        {
+          "id": "nav_students",
+          "patterns": ["go to student management", "open students", "show students", "student list"],
+          "action": "navigate",
+          "target": "/admin/students",
+          "confirmationRequired": false
+        },
+        {
+          "id": "nav_classes",
+          "patterns": ["go to class management", "open classes", "show classes", "class list"],
+          "action": "navigate",
+          "target": "/admin/classes",
+          "confirmationRequired": false
+        },
+        {
+          "id": "nav_sections",
+          "patterns": ["go to section management", "open sections", "show sections"],
+          "action": "navigate",
+          "target": "/admin/sections",
+          "confirmationRequired": false
+        },
+        {
+          "id": "nav_routine",
+          "patterns": ["go to routine", "open schedule", "show timetable", "class schedule"],
+          "action": "navigate",
+          "target": "/admin/routine",
+          "confirmationRequired": false
+        },
+        {
+          "id": "nav_attendance",
+          "patterns": ["go to attendance", "open attendance", "show attendance", "mark attendance"],
+          "action": "navigate",
+          "target": "/admin/attendance",
+          "confirmationRequired": false
+        }
+      ]
+    },
+    
+    "viewing": {
+      "enabled": true,
+      "description": "View and display information",
+      "commands": [
+        {
+          "id": "view_details",
+          "patterns": ["show details", "view details", "open details", "display details"],
+          "action": "viewDetails",
+          "confirmationRequired": false
+        },
+        {
+          "id": "refresh",
+          "patterns": ["refresh", "reload", "update data", "refresh page"],
+          "action": "refresh",
+          "confirmationRequired": false
+        },
+        {
+          "id": "search",
+          "patterns": ["search for {query}", "find {query}", "look for {query}", "search {query}"],
+          "action": "search",
+          "parameterExtraction": {
+            "query": ".*"
+          },
+          "confirmationRequired": false
+        }
+      ]
+    },
+    
+    "export": {
+      "enabled": true,
+      "description": "Export data to various formats",
+      "commands": [
+        {
+          "id": "export_excel",
+          "patterns": ["export to excel", "download excel", "save as excel", "excel export"],
+          "action": "export",
+          "format": "excel",
+          "confirmationRequired": true,
+          "confirmationMessage": "Do you want to export current data to Excel?"
+        },
+        {
+          "id": "export_csv",
+          "patterns": ["export to csv", "download csv", "save as csv", "csv export"],
+          "action": "export",
+          "format": "csv",
+          "confirmationRequired": true,
+          "confirmationMessage": "Do you want to export current data to CSV?"
+        },
+        {
+          "id": "export_pdf",
+          "patterns": ["export to pdf", "download pdf", "save as pdf", "pdf export"],
+          "action": "export",
+          "format": "pdf",
+          "confirmationRequired": true,
+          "confirmationMessage": "Do you want to export current data to PDF?"
+        }
+      ]
+    },
+    
+    "print": {
+      "enabled": true,
+      "description": "Print pages and reports",
+      "commands": [
+        {
+          "id": "print_page",
+          "patterns": ["print this page", "print current page", "take a print", "print now"],
+          "action": "print",
+          "confirmationRequired": true,
+          "confirmationMessage": "Do you want to print the current page?"
+        },
+        {
+          "id": "print_preview",
+          "patterns": ["show print preview", "preview print", "print preview"],
+          "action": "printPreview",
+          "confirmationRequired": false
+        }
+      ]
+    },
+    
+    "filters": {
+      "enabled": true,
+      "description": "Apply filters to data",
+      "commands": [
+        {
+          "id": "show_all",
+          "patterns": ["show all", "display all", "clear filters", "remove filters"],
+          "action": "clearFilters",
+          "confirmationRequired": false
+        },
+        {
+          "id": "filter_today",
+          "patterns": ["show today", "today's data", "filter today"],
+          "action": "applyFilter",
+          "filterType": "date",
+          "filterValue": "today",
+          "confirmationRequired": false
+        }
+      ]
+    },
+    
+    "help": {
+      "enabled": true,
+      "description": "Get help and information",
+      "commands": [
+        {
+          "id": "help",
+          "patterns": ["help", "what can you do", "show commands", "help me", "show help"],
+          "action": "showHelp",
+          "confirmationRequired": false
+        },
+        {
+          "id": "list_commands",
+          "patterns": ["list all commands", "what are the commands", "available commands"],
+          "action": "listCommands",
+          "confirmationRequired": false
+        }
+      ]
+    },
+    
+    "assistant": {
+      "enabled": true,
+      "description": "AI Assistant controls",
+      "commands": [
+        {
+          "id": "stop_listening",
+          "patterns": ["stop listening", "stop", "cancel", "never mind"],
+          "action": "stopListening",
+          "confirmationRequired": false
+        },
+        {
+          "id": "repeat",
+          "patterns": ["repeat that", "say again", "what did you say"],
+          "action": "repeatLast",
+          "confirmationRequired": false
+        }
+      ]
+    }
+  },
+  
+  "restrictions": {
+    "safeActionsOnly": true,
+    "description": "Security restrictions for voice commands",
+    "disallowedActions": [
+      "delete",
+      "remove",
+      "deactivate",
+      "update",
+      "edit",
+      "modify",
+      "create",
+      "add",
+      "save",
+      "submit"
+    ],
+    "disallowedPatterns": [
+      "delete.*",
+      "remove.*",
+      "drop.*",
+      "truncate.*",
+      "update.*",
+      "modify.*"
+    ],
+    "requireConfirmationFor": ["export", "print"]
+  },
+  
+  "settings": {
+    "language": "en-US",
+    "continuous": false,
+    "interimResults": true,
+    "maxAlternatives": 3,
+    "confidenceThreshold": 0.65,
+    "autoStopTimeout": 3000,
+    "feedbackEnabled": true,
+    "visualFeedback": true,
+    "audioFeedback": false
+  },
+  
+  "synonyms": {
+    "student": ["students", "pupil", "pupils", "learner", "learners"],
+    "class": ["classes", "grade", "grades"],
+    "section": ["sections", "division", "divisions"],
+    "routine": ["schedule", "timetable", "time table"],
+    "attendance": ["presence", "roll call"],
+    "export": ["download", "save"],
+    "show": ["display", "view", "open"]
+  }
+}
